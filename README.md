@@ -6,6 +6,14 @@
 | Mingtao Wang | 1011777579 |
 | Lisa Ji   | 1006093843 |
 | Shiyao Sun  | 1006769793 |
+<!--
+
+Generated with [markedpp](#markedpp). Get [nodejs](https://nodejs.org) first
+
+1. $ npm i -g markedpp
+2. $ markedpp --github -o README.md README.md
+
+-->
 <!-- !toc (minlevel=2 omit="Table of Contents") -->
 - [1. Motivation and Project Objective](#1.-Motivation-and-Project-Objective)
     - [1.1 Target Users](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
