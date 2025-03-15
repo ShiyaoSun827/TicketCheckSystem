@@ -6,6 +6,7 @@
 | Mingtao Wang | 1011777579 |
 | Lisa Ji   | 1006093843 |
 | Shiyao Sun  | 1006769793 |
+<!-- !toc (minlevel=2 omit="Table of Contents") -->
 - [1. Motivation and Project Objective](#1.-Motivation-and-Project-Objective)
     - [1.1 Target Users](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
     - [1.2 Existing Solutions & Limitations](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
@@ -35,7 +36,7 @@
     - [6.3 Collaboration Approach](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
 - [7. Schedule](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
 - [8. Conclusion](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
-
+<!-- toc! -->
 ## **1. Motivation and Project Objective**
 
 Ticketing management is a complex process that requires coordination between organizers, attendees, and staff. Traditional event ticketing systems often face challenges in ticket sales, payment processing, attendee tracking, and on-site check-ins. Existing solutions such as Eventbrite and Ticketmaster, charge high service fees, lack real-time check-in functionality, and offer limited customization options for event organizers.
