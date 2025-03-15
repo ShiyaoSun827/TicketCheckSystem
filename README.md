@@ -16,7 +16,7 @@ Generated with [markedpp](#markedpp). Get [nodejs](https://nodejs.org) first
 -->
 <!-- !toc (minlevel=2 omit="Table of Contents") -->
 - [1. Motivation and Project Objective](#1-Motivation-and-Project-Objective)
-    - [1.1 Target Users](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
+    - [1.1 Target Users](#11-Target-Users)
     - [1.2 Existing Solutions & Limitations](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
     - [1.3 How Our Project Solves These Issues](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
     - [1.4 Why This Project Is Worth Pursuing](https://www.notion.so/Intelligent-Cinema-Ticketing-and-QR-Code-Based-Entry-Management-System-Project-Proposal-1b7377804c80805791c8e5a3f3bd2ffb?pvs=21)
