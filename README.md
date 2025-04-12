@@ -7,3 +7,13 @@
 - [ ] 模拟支付系统
 - [ ] 账单系统
 
+*启动 PostgreSQL 服务：net start postgresql-x64-16 （使用postgresql16）
+
+*更新数据库
+```
+npx prisma generate
+npx prisma migrate dev --name add_user_roles
+
+```
+
+
