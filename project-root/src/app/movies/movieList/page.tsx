@@ -3,7 +3,7 @@ export default async function page() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-4xl font-bold text-center">Login page</h1>
+        <h1 className="text-4xl font-bold text-center">On show</h1>
       </header>
 
 
