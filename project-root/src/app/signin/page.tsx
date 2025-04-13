@@ -13,8 +13,8 @@ export default function SignInPage() {
     setMessage(result.message);
     console.log("Detailed Sign-in Result:", result);
 
-    if (result.success && result.redirectTo) {
-      router.push(result.redirectTo);
+    if (result.success) {
+      setTimeout(() => router.push("/dashboard"), 3000);
     }
   }
 

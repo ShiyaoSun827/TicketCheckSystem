@@ -1,16 +1,21 @@
 //src/app/signup/page.tsx
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signUpWithEmail } from "@/lib/auth-actions";
 
 export default function SignUpPage() {
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   async function handleSignUp(formData: FormData) {
     const result = await signUpWithEmail(formData);
-    setMessage(result.message);
+    setMessage(result.message+"redirect to signin page in 2 sec");
+    if (result.success) {
+      setTimeout(() => router.push("/siggnin"), 2000);
+    }
   }
+  
 
   return (
     <>
