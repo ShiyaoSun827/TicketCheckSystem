@@ -8,9 +8,14 @@
 - [ ] 账单系统
 
 *启动 PostgreSQL 服务：net start postgresql-x64-16 （使用postgresql16）
-
+*安装依赖
+```
+cd \project-root\
+npm install
+```
 *更新数据库
 ```
+npx prisma migrate reset
 npx prisma generate
 npx prisma migrate dev --name add_user_roles
 
