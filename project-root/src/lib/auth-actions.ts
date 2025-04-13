@@ -25,7 +25,9 @@ export async function signUpWithEmail(formData: FormData) {
   return {
     success: true,
     message: "Sign-up successful!",
+    redirectTo: "http://localhost:3000/",
   };
+  
 }
 
 export async function signInWithEmail(formData: FormData) {
@@ -51,5 +53,8 @@ export async function signInWithEmail(formData: FormData) {
   return {
     success: true,
     message: "Sign-in successful!",
+    redirectTo: "http://localhost:3000/dashboard",
+
+   
   };
 }

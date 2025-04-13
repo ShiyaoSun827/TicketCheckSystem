@@ -8,26 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Paper {
-  id          Int      @id @default(autoincrement())
-  title       String
-  publishedIn String
-  year        Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authors     Author[] @relation("PaperToAuthor")
-}
-
-model Author {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String?
-  affiliation String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  papers      Paper[]  @relation("PaperToAuthor")
-}
-
 model User {
   id              String    @id
   name            String
@@ -89,4 +69,49 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+model Ticket {
+  id          String   @id @default(uuid())
+  //user        User     @relation(fields: [userID], references: [id])
+  userID      String
+  show        Show     @relation(fields: [showID], references: [id])
+  showID      String
+  price       Float
+  seat        String
+  type        String
+  qrCode      String
+
+  // booking     BookingRecord? ← comment out
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Show {
+  id          String   @id @default(uuid())
+  beginTime   DateTime
+  endTime     DateTime
+  //movie       Movie    @relation(fields: [movieID], references: [id])
+  movieID     String
+
+  // theater     Theater? @relation(fields: [theaterID], references: [id])
+  // theaterID   String?
+
+  tickets     Ticket[]
+  // waitlist    WaitList[] ← comment out
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Movie {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  showTime  DateTime
+  //shows     Show[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
