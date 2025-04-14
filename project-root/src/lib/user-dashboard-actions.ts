@@ -1,5 +1,5 @@
 "use server";
-import prisma from "../lib/prisma";
+import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
@@ -16,8 +16,8 @@ type TicketWithShowMovie = Ticket & {
     headers: new Headers(await headers()),
     });
   
-    console.log("🎫 Logged-in user (from session):", session?.user);
-    console.log("Session object:", session);
+    // console.log("🎫 Logged-in user (from session):", session?.user);
+    // console.log("Session object:", session);
   
     if (!session?.user) return [];
   
