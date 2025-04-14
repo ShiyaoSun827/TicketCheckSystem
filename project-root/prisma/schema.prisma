@@ -98,11 +98,8 @@ model Show {
   id          String   @id @default(uuid())
   beginTime   DateTime
   endTime     DateTime
-  movie       Movie    @relation(fields: [movieID], references: [id])
+  movie       Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
   movieID     String
-
-  // theater     Theater? @relation(fields: [theaterID], references: [id])
-  // theaterID   String?
 
   tickets     Ticket[]
   waitlist    WaitList[] 
@@ -116,7 +113,7 @@ model Movie {
   id        String   @id @default(uuid())
   name      String
   type      String
-  showTime  DateTime
+  //showTime  DateTime
   shows     Show[]
 
   createdAt DateTime @default(now())
