@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMyTickets, getWaitlistStatus, getProfile } from "@/lib/dashboard-actions";
+import { getMyTickets, getWaitlistStatus, getProfile } from "@/lib/user-dashboard-actions";
 import Image from "next/image";
 
 interface Ticket {

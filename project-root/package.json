@@ -12,7 +12,7 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@radix-ui/react-slot": "^1.2.0",
-    "better-auth": "^1.2.6",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jsonwebtoken": "^9.0.2",
@@ -30,7 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "better-auth": "^1.2.6",
+    "better-auth": "^1.2.7",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "jest": "^29.7.0",
