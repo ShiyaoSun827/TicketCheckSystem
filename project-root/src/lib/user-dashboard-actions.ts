@@ -14,8 +14,6 @@ type TicketWithShowMovie = Ticket & {
   export async function getMyTickets() {
     const session = await auth.api.getSession({
     headers: new Headers(await headers()),
-
-
     });
   
     console.log("🎫 Logged-in user (from session):", session?.user);

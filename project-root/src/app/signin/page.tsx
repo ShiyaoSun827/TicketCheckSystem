@@ -4,8 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmail } from "@/lib/auth-actions";
-import { authClient } from "@/lib/auth-client";
-import Cookies from "js-cookie";
+import { auth } from "@/lib/auth";
 
 // import { auth } from "@/lib/auth";
 // import { headers } from "next/headers";
@@ -22,21 +21,21 @@ export default function SignInPage() {
     console.log("Detailed Sign-in Result:", result);
     if (result.success) {
       try {
-        // 把 token 保存到浏览器 cookie中
-        Cookies.set("auth_token", result.token, {
-          path: "/",
-          secure: true,
-          sameSite: "Strict",
-          expires: 1, // 单位是天
-        });
-        // 设置 session
-        await authClient.setSession(result.token);
-        console.log("Setting session...");
+        // // 把 token 保存到浏览器 cookie中
+        // Cookies.set("auth_token", result.token, {
+        //   path: "/",
+        //   secure: true,
+        //   sameSite: "Strict",
+        //   expires: 1, // 单位是天
+        // });
+        // // 设置 session
+        // await authClient.setSession(result.token);
+        // console.log("Setting session...");
         console.log("✅ Session set successfully");
       } catch (err) {
         console.error("Error setting session:", err);
       }
-      router.push("/dashboard");
+      router.push("/dashboard/user");
     }
   }
 

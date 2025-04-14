@@ -1,8 +1,11 @@
+//src/app/dashboard/user/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { getMyTickets, getWaitlistStatus, getProfile } from "@/lib/user-dashboard-actions";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
+import NavBarClient from "@/components/NavBarClient";
 
 interface Ticket {
   id: string;
@@ -42,9 +45,11 @@ export default function DashboardPage() {
     }
     fetchData();
   }, []);
-
+  const { session, isLoading: sessionLoading } = authClient.useSession();
+  console.log("Session from authClient:", session);
   return (
     <div className="p-6 space-y-8">
+      <NavBarClient session={session} />
       <h1 className="text-3xl font-bold">🎫 Attendee Dashboard</h1>
 
       {profile && (
@@ -98,17 +103,6 @@ export default function DashboardPage() {
         </a>
       </section>
 
-      <section className="pt-4 border-t mt-6">
-        <button
-          onClick={() => {
-            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-            window.location.href = "/";
-          }}
-          className="mt-2 text-red-500 underline"
-        >
-          🔐 Logout
-        </button>
-      </section>
     </div>
   );
 }
