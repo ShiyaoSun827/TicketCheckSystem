@@ -8,26 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Paper {
-  id          Int      @id @default(autoincrement())
-  title       String
-  publishedIn String
-  year        Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  authors     Author[] @relation("PaperToAuthor")
+enum WaitStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  READY
 }
-
-model Author {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String?
-  affiliation String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  papers      Paper[]  @relation("PaperToAuthor")
-}
-
 model User {
   id              String    @id
   name            String
@@ -40,6 +26,7 @@ model User {
   displayUsername String?
   sessions        Session[]
   accounts        Account[]
+  waitlist WaitList[] // ✅ reverse relation
 
   @@unique([email])
   @@unique([username])
@@ -89,4 +76,61 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+model Ticket {
+  id          String   @id @default(uuid())
+  //user        User     @relation(fields: [userID], references: [id])
+  userID      String
+  show        Show     @relation(fields: [showID], references: [id])
+  showID      String
+  price       Float
+  seat        String
+  type        String
+  qrCode      String
+
+  // booking     BookingRecord? ← comment out
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Show {
+  id          String   @id @default(uuid())
+  beginTime   DateTime
+  endTime     DateTime
+  movie       Movie    @relation(fields: [movieID], references: [id])
+  movieID     String
+
+  // theater     Theater? @relation(fields: [theaterID], references: [id])
+  // theaterID   String?
+
+  tickets     Ticket[]
+  waitlist    WaitList[] 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Movie {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  showTime  DateTime
+  shows     Show[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WaitList {
+  id        String   @id @default(uuid())
+  userID    String
+  showID    String
+  status    WaitStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User   @relation(fields: [userID], references: [id])
+  show      Show   @relation(fields: [showID], references: [id])
 }
