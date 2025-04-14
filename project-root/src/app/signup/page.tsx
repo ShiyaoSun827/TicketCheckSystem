@@ -10,9 +10,10 @@ export default function SignUpPage() {
 
   async function handleSignUp(formData: FormData) {
     const result = await signUpWithEmail(formData);
-    setMessage(result.message+"redirect to signin page in 2 sec");
+    setMessage(result.message);
     if (result.success) {
-      setTimeout(() => router.push("/siggnin"), 2000);
+      setMessage(result.message+"  redirect to signin page in 2 sec");
+      setTimeout(() => router.push("/signin"), 2000);
     }
   }
   

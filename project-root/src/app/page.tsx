@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 // import MovieList from "@/components/MovieList";
 import type { Movie } from "@prisma/client";
+import NavBar from "@/components/NavBar";
+
 
 // 异步获取电影数据，调用 /api/movies 接口
 async function getMovies(): Promise<{
@@ -37,24 +39,10 @@ async function MoviesSection() {
 export default async function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
+      <NavBar />
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-center">Movie Ticket System</h1>
-        {/* 导航栏 */}
-        <nav className="mt-4 flex justify-center space-x-6">
-          <Link href="/" className="text-blue-600 hover:text-blue-800">
-            Main Page
-          </Link>
-          <Link href="/test" className="text-blue-600 hover:text-blue-800">
-            login
-          </Link>
-          <Link href="/movies/movieList" className="text-blue-600 hover:text-blue-800">
-            On show
-          </Link>
-          <Link href="/contact" className="text-blue-600 hover:text-blue-800">
-            contract us
-          </Link>
-        </nav>
         {/* 搜索框 */}
         <div className="mt-6 flex justify-center">
           <input

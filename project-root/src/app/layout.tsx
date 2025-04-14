@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Paper Management System",
-  description: "A full-stack Next.js application for managing papers",
+  title: "Movie Ticket System",
+  description: "Your movie gateway",
 };
 
 export default function RootLayout({
