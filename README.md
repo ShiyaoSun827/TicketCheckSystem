@@ -8,17 +8,38 @@
 - [ ] 账单系统
 
 *启动 PostgreSQL 服务：net start postgresql-x64-16 （使用postgresql16）
+
 *安装依赖
 ```
 cd \project-root\
 npm install
 ```
+
 *更新数据库
 ```
 npx prisma migrate reset
 npx prisma generate
-npx prisma migrate dev --name add_user_roles
+npx @better-auth/cli migrate (忘了这一行要不要跑了)
+npx prisma migrate dev 
 
 ```
 
+*自动创建初始管理员 admin@example.com admin123
+```
+node src/scripts/seed-admin.cjs
+```
 
+git命令（老是忘）
+```
+git remote add upstream <upstream仓库链接>
+git remote -v
+git remote set-url upstream <新的仓库链接>
+
+git push upstream main 把main分支推到upstream仓库
+
+git fetch upstream
+git merge upstream/main     更新合并到你当前所在的 main 分支
+
+（git pull upstream main）
+
+```

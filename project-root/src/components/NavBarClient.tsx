@@ -10,17 +10,19 @@ import { authClient } from "@/lib/auth-client";
 export default function NavBarClient() {
     const router = useRouter();
     const handleSignOut = async () => {
-        // await authClient.signOut();
-        // // await fetch("/api/auth/signout", { method: "POST" });
-        // router.push("/"); // 跳转回主页
         console.log("🚪 Signing out...");
         await authClient.signOut({
             fetchOptions: {
               onSuccess: () => {
-                router.push("/"); // redirect to login page
+                if (window.location.pathname === "/") {     //refresh or direct to home page
+                    router.refresh();
+                  } else {
+                    router.push("/");
+                  }
               },
             },
           });
+          setSession(null);
       };
       
     const [session, setSession] = useState<any>(null);

@@ -14,8 +14,9 @@ enum WaitStatus {
   CANCELLED
   READY
 }
+
 model User {
-  id              String    @id
+  id              String     @id
   name            String
   email           String
   emailVerified   Boolean
@@ -26,7 +27,12 @@ model User {
   displayUsername String?
   sessions        Session[]
   accounts        Account[]
-  waitlist WaitList[] // ✅ reverse relation
+  waitlist        WaitList[] // ✅ reverse relation
+
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
 
   @@unique([email])
   @@unique([username])
@@ -43,6 +49,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -77,21 +85,22 @@ model Verification {
 
   @@map("verification")
 }
+
 model Ticket {
-  id          String   @id @default(uuid())
+  id     String @id @default(uuid())
   //user        User     @relation(fields: [userID], references: [id])
-  userID      String
-  show        Show     @relation(fields: [showID], references: [id])
-  showID      String
-  price       Float
-  seat        String
-  type        String
-  qrCode      String
+  userID String
+  show   Show   @relation(fields: [showID], references: [id])
+  showID String
+  price  Float
+  seat   String
+  type   String
+  qrCode String
 
   // booking     BookingRecord? ← comment out
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Show {
@@ -108,7 +117,6 @@ model Show {
   updatedAt   DateTime @updatedAt
 }
 
-
 model Movie {
   id        String   @id @default(uuid())
   name      String
@@ -121,13 +129,13 @@ model Movie {
 }
 
 model WaitList {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   userID    String
   showID    String
   status    WaitStatus @default(PENDING)
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
 
   // Relations
-  user      User   @relation(fields: [userID], references: [id])
-  show      Show   @relation(fields: [showID], references: [id])
+  user User @relation(fields: [userID], references: [id])
+  show Show @relation(fields: [showID], references: [id])
 }

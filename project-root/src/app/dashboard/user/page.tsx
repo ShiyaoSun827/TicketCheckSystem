@@ -46,7 +46,7 @@ export default function DashboardPage() {
     fetchData();
   }, []);
   const { session, isLoading: sessionLoading } = authClient.useSession();
-  console.log("Session from authClient:", session);
+  // console.log("Session from authClient:", session);
   return (
     <div className="p-6 space-y-8">
       <NavBarClient session={session} />

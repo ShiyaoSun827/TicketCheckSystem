@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Suspense } from "react";
 // import MovieList from "@/components/MovieList";
 import type { Movie } from "@prisma/client";
