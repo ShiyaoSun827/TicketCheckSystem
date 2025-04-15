@@ -107,6 +107,8 @@ model Show {
   id        String   @id @default(uuid())
   beginTime DateTime
   endTime   DateTime
+  status    ShowStatus @default(DRAFT) // ✅ 新增状态字段
+
   movie     Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
   movieID   String
 
@@ -114,6 +116,12 @@ model Show {
   waitlist  WaitList[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+}
+
+enum ShowStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
 }
 
 model Movie {
