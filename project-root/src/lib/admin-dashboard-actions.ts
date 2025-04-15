@@ -85,13 +85,53 @@ export async function submitShow(showId: string) {
   });
 }
 
+export async function updateShow({
+  showId,
+  beginTime,
+  endTime,
+}: {
+  showId: string;
+  beginTime: string;
+  endTime: string;
+}) {
+  const begin = new Date(beginTime);
+  const end = new Date(endTime);
+
+  const existing = await prisma.show.findFirst({
+    where: {
+      id: { not: showId },
+      movieID: {
+        in: (await prisma.show.findUnique({ where: { id: showId } }))?.movieID ?? "",
+      },
+      cancelled: false,
+      beginTime: { lt: end },
+      endTime: { gt: begin },
+    },
+  });
+
+  if (existing) throw new Error("修改后的时间段与其他排片冲突");
+
+  return await prisma.show.update({
+    where: { id: showId },
+    data: {
+      beginTime: begin,
+      endTime: end,
+    },
+  });
+}
+
+export async function cancelShow(showId: string) {
+  await prisma.show.update({
+    where: { id: showId },
+    data: { cancelled: true },
+  });
+}
 
 /**
  * 创建排片
  * 自动根据电影时长推算 endTime
- * 检查同电影是否存在时间冲突
+ * 检查同电影是否存在时间冲突（忽略已取消）
  */
-
 export async function createShow({
   movieID,
   beginTime,
@@ -108,12 +148,9 @@ export async function createShow({
   const conflict = await prisma.show.findFirst({
     where: {
       movieID,
-      OR: [
-        {
-          beginTime: { lt: end },
-          endTime: { gt: begin },
-        },
-      ],
+      cancelled: false,
+      beginTime: { lt: end },
+      endTime: { gt: begin },
     },
   });
 

@@ -1,11 +1,13 @@
-// src/app/dashboard/admin/manageMovies/[movieId]/shows/page.tsx
+export const dynamic = "force-dynamic";
 
-import AddShowForm from "@/components/AddShowForm"; 
+import AddShowForm from "@/app/dashboard/admin/manageMovie/[movieId]/shows/AddShowForm"; 
 import Image from "next/image";
 import * as adminAction from "@/lib/admin-dashboard-actions";
 import NavBar from "@/components/NavBar";
 import SubmitShowButton from "./SubmitShowButton";
 import DeleteShowButton from "./DeleteShowButton";
+import EditShowButton from "./EditShowButton";
+import CancelShowButton from "./CancelShowButton.tsx";
 
 interface PageProps {
   params: {
@@ -14,7 +16,8 @@ interface PageProps {
 }
 
 export default async function ShowManagementPage({ params }: PageProps) {
-  const movieId = params.movieId;
+  const resolvedParams = await Promise.resolve(params);
+  const movieId = resolvedParams.movieId;
   const movie = await adminAction.getMovieById(movieId);
 
   if (!movie) {
@@ -24,6 +27,10 @@ export default async function ShowManagementPage({ params }: PageProps) {
       </div>
     );
   }
+
+  const draftShows = movie.shows.filter((show) => show.status === "DRAFT" && !show.cancelled);
+  const publishedShows = movie.shows.filter((show) => show.status === "PUBLISHED" && !show.cancelled);
+  const cancelledShows = movie.shows.filter((show) => show.cancelled);
 
   return (
     <div className="p-6 space-y-8">
@@ -57,37 +64,87 @@ export default async function ShowManagementPage({ params }: PageProps) {
       <div>
         <h2 className="text-2xl font-semibold mb-4">🎟️ 排片管理</h2>
 
-        {/* 添加排片表单（客户端组件） */}
         <AddShowForm movieId={movie.id} length={movie.length} />
 
-        {/* 当前所有排片列表 */}
-        {movie.shows.length > 0 ? (
-        <ul className="space-y-2">
-          {movie.shows.map((show) => (
-            <li key={show.id} className="border p-2 rounded">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <p className="font-semibold whitespace-nowrap">🎬 《{movie.name}》</p>
-                  <p className="text-sm text-gray-700 ml-8">
-                    🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
-                  </p>
-                  <span className="text-xs text-gray-500">[{show.status}]</span>
-                </div>
-                <div className="flex gap-2">
-                  {show.status === "DRAFT" && (
-                    <>
+        {/* 未提交排片 */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-2">📝 待提交排片</h3>
+          {draftShows.length > 0 ? (
+            <ul className="space-y-2">
+              {draftShows.map((show) => (
+                <li key={show.id} className="border p-2 rounded">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <p className="font-semibold whitespace-nowrap">🎬 《{movie.name}》</p>
+                      <p className="text-sm text-gray-700 ml-8">
+                        🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
+                      </p>
+                      <span className="text-xs text-gray-500">[{show.status}]</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <EditShowButton showId={show.id} beginTime={show.beginTime} length={movie.length} />
                       <SubmitShowButton showId={show.id} />
                       <DeleteShowButton showId={show.id} />
-                    </>
-                  )}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>暂无排片信息</p>
-      )}
+                      <CancelShowButton showId={show.id} />
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-600">暂无待提交排片</p>
+          )}
+        </div>
+
+        {/* ✅ 已提交排片 */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-2">✅ 已提交排片</h3>
+          {publishedShows.length > 0 ? (
+            <ul className="space-y-2">
+              {publishedShows.map((show) => (
+                <li key={show.id} className="border p-2 rounded">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <p className="font-semibold whitespace-nowrap">🎬 《{movie.name}》</p>
+                      <p className="text-sm text-gray-700 ml-8">
+                        🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
+                      </p>
+                      <span className="text-xs text-gray-500">[{show.status}]</span>
+                    </div>
+                    <CancelShowButton showId={show.id} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-600">暂无已提交排片</p>
+          )}
+        </div>
+
+        {/* ✅ 已取消排片 */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-2">❌ 已取消排片</h3>
+          {cancelledShows.length > 0 ? (
+            <ul className="space-y-2">
+              {cancelledShows.map((show) => (
+                <li key={show.id} className="border p-2 rounded bg-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <p className="font-semibold text-gray-500">🎬 《{movie.name}》</p>
+                      <p className="text-sm text-gray-500">
+                        🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
+                      </p>
+                      <span className="text-xs text-red-500 font-semibold">[CANCELLED]</span>
+                    </div>
+                    <DeleteShowButton showId={show.id} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-600">暂无已取消排片</p>
+          )}
+        </div>
       </div>
     </div>
   );

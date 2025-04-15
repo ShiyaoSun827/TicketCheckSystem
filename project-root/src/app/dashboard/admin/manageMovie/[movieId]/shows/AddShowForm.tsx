@@ -1,4 +1,4 @@
-//src/components/AddShowForm.tsx
+//src/app/dashboard/admin/manageMovie/[movieId]/shows/AddShowForm.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -31,6 +31,12 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
 
   const handleSubmit = () => {
     setMessage("");
+  
+    if (!beginTime) {
+      setMessage("❌ 请选择开始时间");
+      return;
+    }
+  
     startTransition(async () => {
       try {
         await createShow({

@@ -108,7 +108,8 @@ model Show {
   beginTime DateTime
   endTime   DateTime
   status    ShowStatus @default(DRAFT) // ✅ 新增状态字段
-
+  cancelled Boolean    @default(false)
+  
   movie     Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
   movieID   String
 
