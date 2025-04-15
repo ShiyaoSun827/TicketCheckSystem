@@ -8,6 +8,7 @@ import SubmitShowButton from "./SubmitShowButton";
 import DeleteShowButton from "./DeleteShowButton";
 import EditShowButton from "./EditShowButton";
 import CancelShowButton from "./CancelShowButton.tsx";
+import EditPriceButton from "./EditPriceButton";
 
 interface PageProps {
   params: {
@@ -16,8 +17,7 @@ interface PageProps {
 }
 
 export default async function ShowManagementPage({ params }: PageProps) {
-  const resolvedParams = await Promise.resolve(params);
-  const movieId = resolvedParams.movieId;
+  const movieId = params.movieId;
   const movie = await adminAction.getMovieById(movieId);
 
   if (!movie) {
@@ -79,10 +79,12 @@ export default async function ShowManagementPage({ params }: PageProps) {
                       <p className="text-sm text-gray-700 ml-8">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
+                      <p className="text-sm text-blue-600 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
                       <span className="text-xs text-gray-500">[{show.status}]</span>
                     </div>
                     <div className="flex gap-2">
                       <EditShowButton showId={show.id} beginTime={show.beginTime} length={movie.length} />
+                      <EditPriceButton showId={show.id} currentPrice={show.price || 0} />
                       <SubmitShowButton showId={show.id} />
                       <DeleteShowButton showId={show.id} />
                       <CancelShowButton showId={show.id} />
@@ -109,6 +111,7 @@ export default async function ShowManagementPage({ params }: PageProps) {
                       <p className="text-sm text-gray-700 ml-8">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
+                      <p className="text-sm text-blue-600 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
                       <span className="text-xs text-gray-500">[{show.status}]</span>
                     </div>
                     <CancelShowButton showId={show.id} />
@@ -134,6 +137,7 @@ export default async function ShowManagementPage({ params }: PageProps) {
                       <p className="text-sm text-gray-500">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
+                      <p className="text-sm text-gray-500 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
                       <span className="text-xs text-red-500 font-semibold">[CANCELLED]</span>
                     </div>
                     <DeleteShowButton showId={show.id} />

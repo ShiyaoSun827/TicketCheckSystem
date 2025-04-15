@@ -27,6 +27,7 @@ async function seedShows() {
       endTime: new Date(baseTime.getTime() + movie.length * 1000),
       movieID: movie.id,
       status: "DRAFT",
+      price: 0,
       cancelled: false,
     });
 
@@ -37,6 +38,7 @@ async function seedShows() {
       endTime: new Date(publishedBegin.getTime() + movie.length * 1000),
       movieID: movie.id,
       status: "PUBLISHED",
+      price: 0,
       cancelled: false,
     });
 
@@ -47,6 +49,7 @@ async function seedShows() {
       endTime: new Date(cancelledBegin.getTime() + movie.length * 1000),
       movieID: movie.id,
       status: "PUBLISHED",
+      price: 0,
       cancelled: true,
     });
   }

@@ -1,4 +1,3 @@
-// src/lib/admin-dashboard-actions.ts
 "use server";
 
 import prisma from "@/lib/prisma";
@@ -74,6 +73,13 @@ export async function getAllShows() {
   });
 }
 
+export async function getShowById(id: string) {
+  return await prisma.show.findUnique({
+    where: { id },
+    include: { movie: true },
+  });
+}
+
 export async function deleteShow(id: string) {
   await prisma.show.delete({ where: { id } });
 }
@@ -89,10 +95,12 @@ export async function updateShow({
   showId,
   beginTime,
   endTime,
+  price,
 }: {
   showId: string;
   beginTime: string;
   endTime: string;
+  price?: number;
 }) {
   const begin = new Date(beginTime);
   const end = new Date(endTime);
@@ -116,9 +124,20 @@ export async function updateShow({
     data: {
       beginTime: begin,
       endTime: end,
+      ...(price !== undefined && { price }),
     },
   });
 }
+
+export async function updateShowPrice(showId: string, price: number) {
+  if (price <= 0) throw new Error("价格必须为正数");
+
+  return await prisma.show.update({
+    where: { id: showId },
+    data: { price },
+  });
+}
+
 
 export async function cancelShow(showId: string) {
   await prisma.show.update({
@@ -135,9 +154,11 @@ export async function cancelShow(showId: string) {
 export async function createShow({
   movieID,
   beginTime,
+  price,
 }: {
   movieID: string;
   beginTime: string;
+  price: number;
 }) {
   const movie = await prisma.movie.findUnique({ where: { id: movieID } });
   if (!movie) throw new Error("电影不存在");
@@ -163,6 +184,7 @@ export async function createShow({
       movieID,
       beginTime: begin,
       endTime: end,
+      price,
     },
   });
 }
