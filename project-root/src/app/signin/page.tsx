@@ -1,31 +1,29 @@
-//src/app/signin/page.tsx
+// src/app/signin/page.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmail } from "@/lib/auth-actions";
-import { auth } from "@/lib/auth";
-
-// import { auth } from "@/lib/auth";
-// import { headers } from "next/headers";
 
 export default function SignInPage() {
-
   const [message, setMessage] = useState("");
   const router = useRouter();
 
   async function handleSignIn(formData: FormData) {
-    const result = await signInWithEmail(formData);
-
-    setMessage(result.message);
-    console.log("Detailed Sign-in Result:", result);
-    if (result.success) {
-      try {
+    try {
+      const result = await signInWithEmail(formData);
+      setMessage(result.message);
+      console.log("Detailed Sign-in Result:", result);
+      if (result.success) {
         console.log("✅ Session set successfully");
-      } catch (err) {
-        console.error("Error setting session:", err);
+        router.push(result.redirectTo); // 根据返回的 redirectTo 跳转
+      } else {
+        console.error("Sign-in failed:", result.message);
+        router.push("/signin");
       }
-      router.push(result.redirectTo); // Redirect to the dashboard or home page
+    } catch (error) {
+      setMessage("Login failed, Reason: " + error.message);
+      router.push("/signin");
     }
   }
 

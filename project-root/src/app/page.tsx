@@ -1,38 +1,20 @@
+// src/app/page.tsx
+// "use client";
+
 import { Suspense } from "react";
-// import MovieList from "@/components/MovieList";
-import type { Movie } from "@prisma/client";
 import NavBar from "@/components/NavBar";
-
-
-// 异步获取电影数据，调用 /api/movies 接口
-async function getMovies(): Promise<{
-  movies: (Movie & { authors: { name: string }[] })[];
-  error: string | null;
-}> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const url = new URL("/api/movies", baseUrl);
-    const res = await fetch(url.toString(), { cache: "no-store" });
-    if (!res.ok) {
-      throw new Error("Failed to fetch movies");
-    }
-    const data = await res.json();
-    return { movies: data.movies ?? [], error: null };
-  } catch {
-    return { movies: [], error: "error loading movies" };
-  }
-}
+import MovieCard from "@/components/MovieCard";
+import { getMovies } from "@/lib/admin-dashboard-actions";
 
 async function MoviesSection() {
-  const { movies, error } = await getMovies();
-  if (error) {
-    return (
-      <p className="text-center text-red-500" data-testid="movies-error">
-        {error}
-      </p>
-    );
-  }
-  return <MovieList movies={movies} />;
+  const movies = await getMovies();
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {movies.map((movie) => (
+        <MovieCard key={movie.id} movie={movie} isAdmin={false} />
+      ))}
+    </div>
+  );
 }
 
 export default async function Home() {
@@ -42,7 +24,6 @@ export default async function Home() {
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-center">Movie Ticket System</h1>
-        {/* 搜索框 */}
         <div className="mt-6 flex justify-center">
           <input
             type="text"
@@ -51,17 +32,15 @@ export default async function Home() {
           />
         </div>
       </header>
-
       {/* Main 内容 */}
       <main>
         <section>
-          <h2 className="text-2xl font-semibold mb-4">on show</h2>
-          <Suspense fallback={<p>loading movie...</p>}>
+          <h2 className="text-2xl font-semibold mb-4">==Movies==</h2>
+          <Suspense fallback={<p>Loading movies...</p>}>
             <MoviesSection />
           </Suspense>
         </section>
       </main>
-
       {/* 页脚 */}
       <footer className="mt-12 text-center text-gray-600">
         &copy; {new Date().getFullYear()} Movie Ticket System. All rights reserved.
