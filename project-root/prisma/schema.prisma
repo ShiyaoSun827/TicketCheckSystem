@@ -104,25 +104,24 @@ model Ticket {
 }
 
 model Show {
-  id          String   @id @default(uuid())
-  beginTime   DateTime
-  endTime     DateTime
-  movie       Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
-  movieID     String
+  id        String   @id @default(uuid())
+  beginTime DateTime
+  endTime   DateTime
+  movie     Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
+  movieID   String
 
-  tickets     Ticket[]
-  waitlist    WaitList[] 
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  tickets   Ticket[]
+  waitlist  WaitList[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Movie {
   id          String   @id @default(uuid())
   name        String
-  length      Int      // 电影时长（单位：秒）
-  rate        Float    // 电影评分（0-10 的小数）
-  image       String?  // 保存图片 URL，例如 "/images/your-image.jpg"
+  length      Int // 电影时长（单位：秒）
+  rate        Float // 电影评分（0-10 的小数）
+  image       String? // 保存图片 URL，例如 "/images/your-image.jpg"
   description String?
   shows       Show[]
   createdAt   DateTime @default(now())
@@ -140,3 +139,12 @@ model WaitList {
   user User @relation(fields: [userID], references: [id])
   show Show @relation(fields: [showID], references: [id])
 }
+
+model QRScanRecord {
+  id        String   @id @default(uuid())
+  qrCode    String
+  scanTime  DateTime
+  status    String
+  scannedBy String
+}
+

@@ -36,6 +36,26 @@ export async function getAllShows() {
   });
 }
 
+export async function getAllUsers() {
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+export async function updateUserRole(userId: string, role: string) {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { role },
+  });
+}
+
+
 /**
  * 创建电影
  * 传入参数：name、length（电影时长，单位：秒）、rate（评分，0-10 的小数）、image（图片 URL，可选）、description（电影介绍，可选）

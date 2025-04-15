@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -H 0.0.0.0",
+
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -11,7 +12,7 @@
     "db:seed": "prisma db seed"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.6.0",
     "@radix-ui/react-slot": "^1.2.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
@@ -19,6 +20,7 @@
     "clsx": "^2.1.1",
     "formidable": "^3.5.2",
     "fs": "^0.0.1-security",
+    "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.483.0",
     "next": "^15.3.0",
@@ -39,7 +41,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "jest": "^29.7.0",
-    "prisma": "^6.5.0",
+    "prisma": "^6.6.0",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
