@@ -24,15 +24,14 @@ npx prisma migrate dev
 
 ```
 
-（这些脚本都要npm run dev之后运行）
+*自动创建初始管理员、添加一些电影、添加一些show的脚本（这些脚本都要npm run dev之后运行，因为直接用的prisma的方法）
 
-*自动创建初始管理员 admin@example.com admin123
+管理员账号： admin@example.com admin123
+
 ```
 node src/scripts/seed-admin.cjs
-```
-*自动添加一些电影 
-```
 node src/scripts/seed-movie.cjs
+node src/scripts/seed-show.cjs
 ```
 
 git命令（老是忘）

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -101,19 +100,100 @@ model Ticket {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Seat      Seat[]
 }
 
-model Show {
+model Wallet {
   id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  balance   Float    @default(0.0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id        String   @id @default(uuid())
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  walletId  String
+  type      String   // "RECHARGE", "PAYMENT", "REFUND"
+  amount    Float
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  show      Show     @relation(fields: [showId], references: [id])
+  showId    String
+  seat      String   // 预选座位
+  addedAt   DateTime @default(now())
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  total     Float
+  status    String   // "PENDING", "PAID", "FAILED", "CANCELLED"
+  createdAt DateTime @default(now())
+
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+  show    Show   @relation(fields: [showId], references: [id])
+  showId  String
+  seat    String
+  price   Float
+}
+
+
+model Show {
+  id        String     @id @default(uuid())
   beginTime DateTime
   endTime   DateTime
-  movie     Movie    @relation(fields: [movieID], references: [id], onDelete: Cascade)
-  movieID   String
+  status    ShowStatus @default(DRAFT)
+  cancelled Boolean    @default(false)
+
+  movie   Movie  @relation(fields: [movieID], references: [id], onDelete: Cascade)
+  movieID String
+
+  price Float // 🆕 添加价格字段（不带默认值）
 
   tickets   Ticket[]
   waitlist  WaitList[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  Seat      Seat[]
+}
+
+model Seat {
+  id     String @id @default(uuid())
+  row    String
+  col    Int
+  show   Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  showId String
+
+  reserved Boolean @default(false)
+
+  ticket   Ticket? @relation(fields: [ticketId], references: [id])
+  ticketId String?
+
+  @@unique([showId, row, col]) // 同一个场次不能重复座位
+}
+
+enum ShowStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
 }
 
 model Movie {
@@ -147,4 +227,3 @@ model QRScanRecord {
   status    String
   scannedBy String
 }
-

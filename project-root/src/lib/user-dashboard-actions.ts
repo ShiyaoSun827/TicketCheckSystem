@@ -4,6 +4,15 @@ import { auth } from "@/lib/auth";
 import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
 
+export async function getShowById(showId: string) {
+  return await prisma.show.findUnique({
+    where: { id: showId },
+    include: {
+      movie: true, // 包含关联电影信息
+    },
+  });
+}
+
 // Custom type that includes nested show and movie
 type TicketWithShowMovie = Ticket & {
     show: Show & {

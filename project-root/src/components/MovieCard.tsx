@@ -72,7 +72,7 @@ export default function MovieCard({ movie, isAdmin = false, onDelete, onEdit }: 
               Delete
             </button>
             <Link
-              href={`/dashboard/admin/movies/${movie.id}/shows`}
+              href={`/dashboard/admin/manageMovie/${movie.id}/shows`}
               className="bg-blue-500 text-white px-2 py-1 rounded text-center"
             >
               Manage Show

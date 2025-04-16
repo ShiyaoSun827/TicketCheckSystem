@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "prisma/seed.ts", "src/scripts/seed-admin.cjs"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "prisma/seed.ts", "src/scripts/seed-admin.cjs", "src/lib/admin-movie-actions"],
   "exclude": ["node_modules"]
 }
