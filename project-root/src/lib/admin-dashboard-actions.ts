@@ -154,7 +154,7 @@ export async function cancelShow(showId: string) {
 export async function createShow({
   movieID,
   beginTime,
-  price,
+  price, // ✅ 记得传入票价
 }: {
   movieID: string;
   beginTime: string;
@@ -179,7 +179,7 @@ export async function createShow({
     throw new Error("该时间段已有排片");
   }
 
-  await prisma.show.create({
+  const newShow = await prisma.show.create({
     data: {
       movieID,
       beginTime: begin,
@@ -187,6 +187,17 @@ export async function createShow({
       price,
     },
   });
+
+  // ✅ 初始化座位（8行 x 10列）
+  await prisma.seat.createMany({
+    data: Array.from({ length: 8 * 10 }, (_, i) => {
+      const row = String.fromCharCode(65 + Math.floor(i / 10)); // A-H
+      const col = (i % 10) + 1;
+      return { showId: newShow.id, row, col };
+    }),
+  });
+
+  return newShow;
 }
 
 // === 👤 用户管理 ===

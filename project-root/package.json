@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -H 0.0.0.0",
-
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -14,6 +13,7 @@
   "dependencies": {
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-slot": "^1.2.0",
+    "@radix-ui/react-tooltip": "^1.2.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
@@ -28,6 +28,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.2.0",
+    "tooltip": "^1.6.1",
     "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {

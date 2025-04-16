@@ -32,6 +32,9 @@ model User {
   banned     Boolean?
   banReason  String?
   banExpires DateTime?
+  Wallet     Wallet?
+  CartItem   CartItem[]
+  Order      Order[]
 
   @@unique([email])
   @@unique([username])
@@ -118,20 +121,20 @@ model WalletTransaction {
   id        String   @id @default(uuid())
   wallet    Wallet   @relation(fields: [walletId], references: [id])
   walletId  String
-  type      String   // "RECHARGE", "PAYMENT", "REFUND"
+  type      String // "RECHARGE", "PAYMENT", "REFUND"
   amount    Float
   note      String?
   createdAt DateTime @default(now())
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  show      Show     @relation(fields: [showId], references: [id])
-  showId    String
-  seat      String   // 预选座位
-  addedAt   DateTime @default(now())
+  id      String   @id @default(uuid())
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  show    Show     @relation(fields: [showId], references: [id])
+  showId  String
+  seat    String // 预选座位
+  addedAt DateTime @default(now())
 }
 
 model Order {
@@ -139,10 +142,10 @@ model Order {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   total     Float
-  status    String   // "PENDING", "PAID", "FAILED", "CANCELLED"
+  status    String // "PENDING", "PAID", "FAILED", "CANCELLED"
   createdAt DateTime @default(now())
 
-  items     OrderItem[]
+  items OrderItem[]
 }
 
 model OrderItem {
@@ -154,7 +157,6 @@ model OrderItem {
   seat    String
   price   Float
 }
-
 
 model Show {
   id        String     @id @default(uuid())
@@ -170,9 +172,11 @@ model Show {
 
   tickets   Ticket[]
   waitlist  WaitList[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   Seat      Seat[]
+  CartItem  CartItem[]
+  OrderItem OrderItem[]
 }
 
 model Seat {

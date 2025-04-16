@@ -1,38 +1,34 @@
+// src/app/tickets/[showId]/page.tsx
 import { getShowById } from "@/lib/user-dashboard-actions";
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import TicketClient from "./TicketClient";
+import { getCartItems } from "@/lib/user-dashboard-actions";
 
-interface PageProps {
-  params: { showId: string };
-}
+export const dynamic = "force-dynamic";
 
-export default async function TicketPage({ params }: PageProps) {
-  const show = await getShowById(params.showId);
-  if (!show) return <div className="p-6 text-red-600">❌ 无法找到排片信息</div>;
+export default async function TicketPage({ params }: { params: { showId: string } }) {
+  const { showId } = await Promise.resolve(params);
+
+  const show = await getShowById(showId);
+  if (!show) {
+    return <div className="p-6 text-red-600">❌ 无法找到排片信息</div>;
+  }
+
+  const seats = await prisma.seat.findMany({
+    where: { showId },
+    orderBy: [{ row: "asc" }, { col: "asc" }],
+  });
+
+  const cartItems = await getCartItems();
+  console.log("🧺 所有购物车数据：", cartItems);
+
+  const inCartSeats = cartItems
+    .filter((item) => item.showId === showId)
+    .map((item) => item.seat);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">🎫 购买 《{show.movie.name}》 的票</h1>
-
-      <div className="flex gap-6">
-        {show.movie.image && (
-          <Image
-            src={show.movie.image}
-            alt={show.movie.name}
-            width={200}
-            height={300}
-            className="rounded shadow"
-          />
-        )}
-
-        <div>
-          <p>🎬 电影名称：{show.movie.name}</p>
-          <p>📅 时间：{new Date(show.beginTime).toLocaleString()}</p>
-          <p>⌛ 时长：{Math.round(show.movie.length / 60)} 分钟</p>
-          <p>💰 票价：$12.00（可动态配置）</p>
-        </div>
-      </div>
-
-      {/* 购票表单可放这里 */}
+    <div className="container mx-auto p-6">
+      <TicketClient show={show} seats={seats} inCartSeats={inCartSeats} />
     </div>
   );
 }
