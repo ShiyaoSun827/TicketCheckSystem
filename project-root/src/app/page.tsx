@@ -1,52 +1,68 @@
-// src/app/page.tsx
-// "use client";
-
-import { Suspense } from "react";
+import { getMovies } from "@/lib/admin-dashboard-actions";
 import NavBar from "@/components/NavBar";
 import MovieCard from "@/components/MovieCard";
-import { getMovies } from "@/lib/admin-dashboard-actions";
 
-async function MoviesSection() {
+export default async function Home({ searchParams }: { searchParams?: { page?: string; search?: string } }) {
+  const page = parseInt(searchParams?.page || "1", 10);
+  const searchQuery = searchParams?.search?.toLowerCase() || "";
+
+  const itemsPerPage = 9;
   const movies = await getMovies();
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} isAdmin={false} />
-      ))}
-    </div>
-  );
-}
 
-export default async function Home() {
+  const filteredMovies = movies.filter((movie) =>
+    movie.name.toLowerCase().includes(searchQuery)
+  );
+
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
+  const startIndex = (page - 1) * itemsPerPage;
+  const paginatedMovies = filteredMovies.slice(startIndex, startIndex + itemsPerPage);
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <NavBar />
-      {/* Header */}
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-center">Movie Ticket System</h1>
-        <div className="mt-6 flex justify-center">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full max-w-md px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-          />
-        </div>
-      </header>
-      {/* Main 内容 */}
-      <main>
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">==Movies==</h2>
-          <Suspense fallback={<p>Loading movies...</p>}>
-            <MoviesSection />
-          </Suspense>
-        </section>
-      </main>
-      {/* 页脚 */}
-      <footer className="mt-12 text-center text-gray-600">
-        &copy; {new Date().getFullYear()} Movie Ticket System. All rights reserved.
-      </footer>
+      <h1 className="text-3xl font-bold p-4">==Movies==</h1>
+
+      <form className="px-4 mb-4 flex gap-2" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search movies..."
+          defaultValue={searchParams?.search || ""}
+          className="flex-1 p-2 border border-gray-300 rounded"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Search
+        </button>
+      </form>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-4">
+        {paginatedMovies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
+      </div>
+
+      <div className="flex justify-center items-center gap-4 py-6">
+        {page > 1 && (
+          <a
+            href={`/?page=${page - 1}&search=${searchQuery}`}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Previous
+          </a>
+        )}
+        <span className="font-medium">Page {page} of {totalPages}</span>
+        {page < totalPages && (
+          <a
+            href={`/?page=${page + 1}&search=${searchQuery}`}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Next
+          </a>
+        )}
+      </div>
     </div>
   );
 }
-
-export const dynamic = "force-dynamic";
