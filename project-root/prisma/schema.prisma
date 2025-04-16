@@ -35,6 +35,7 @@ model User {
   Wallet     Wallet?
   CartItem   CartItem[]
   Order      Order[]
+  Ticket     Ticket[]
 
   @@unique([email])
   @@unique([username])
@@ -90,19 +91,18 @@ model Verification {
 
 model Ticket {
   id     String @id @default(uuid())
-  //user        User     @relation(fields: [userID], references: [id])
+  user   User   @relation(fields: [userID], references: [id])
   userID String
-  show   Show   @relation(fields: [showID], references: [id])
-  showID String
-  price  Float
-  seat   String
-  type   String
-  qrCode String
 
-  // booking     BookingRecord? ← comment out
+  show   Show   @relation(fields: [showId], references: [id])
+  showId String
 
+  seatRow String
+  seatCol Int
+
+  qrCode    String? // 二维码内容或图片地址
+  status    String   @default("VALID") // VALID / CHECKED / CANCELLED 等
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   Seat      Seat[]
 }
 

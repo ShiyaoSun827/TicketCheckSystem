@@ -47,8 +47,9 @@ export default function NavBarClient() {
     <Link href="/contact" className="text-blue-600 hover:text-blue-800">Contact Us</Link>
     <Link href="/dashboard/user" className="text-blue-600 hover:text-blue-800">Dashboard</Link>
     <Link href="/dashboard/user/cart" className="text-blue-600 hover:text-blue-800">购物车</Link>
-    <Link href="/user/cart" className="text-blue-600 hover:text-blue-800">余额</Link>
-    <Link href="/" className="text-blue-600 hover:text-blue-800">Contact Us</Link>
+    <Link href="/dashboard/user/orders" className="text-blue-600 hover:text-blue-800">订单</Link>
+    <Link href="/dashboard/user/myTickets" className="text-blue-600 hover:text-blue-800">MyTickets</Link>
+    <Link href="/dashboard/user/wallet" className="text-blue-600 hover:text-blue-800">Wallet</Link>
     {!session?.user && (
     <Link href="/signup" className="text-blue-600 hover:text-blue-800">Sign up</Link>
   )}

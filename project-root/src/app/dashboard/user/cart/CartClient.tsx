@@ -1,4 +1,4 @@
-//src/app/dashboard/user/cart/CartClient.tsx
+// src/app/dashboard/user/cart/CartClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,8 +6,10 @@ import {
   getCartItems,
   deleteCartItem,
   deleteCartItems,
+  createOrderFromCart,
 } from "@/lib/user-dashboard-actions";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,7 @@ export default function CartPage() {
   const [items, setItems] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCart() {
@@ -60,6 +63,20 @@ export default function CartPage() {
     setSelectAll(false);
   };
 
+  const handleCreateOrder = async () => {
+    if (selectedIds.size === 0) {
+      alert("请先选择要生成订单的座位");
+      return;
+    }
+    try {
+      await createOrderFromCart(Array.from(selectedIds));
+      router.push("/dashboard/user/orders");
+    } catch (err) {
+      console.error("生成订单失败", err);
+      alert("生成订单失败");
+    }
+  };
+
   const total = items.reduce(
     (sum, item) => (selectedIds.has(item.id) ? sum + item.price : sum),
     0
@@ -67,21 +84,26 @@ export default function CartPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold">🛒 我的购物车</h1>
+
       {items.length === 0 ? (
         <p className="text-gray-600">购物车为空</p>
       ) : (
         <>
           <div className="flex items-center justify-between">
-          < div className="flex items-center gap-4">
-                <div className="text-right text-lg font-semibold">
-                    总计：¥{total.toFixed(2)}
-                </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right text-lg font-semibold">
+                总计：¥{total.toFixed(2)}
+              </div>
 
-                <div className="text-right">
-                    <button className="bg-green-600 text-white px-4 py-2 rounded mt-4">
-                    结算
-                    </button>
-                </div>
+              <div className="text-right">
+                <button
+                  onClick={handleCreateOrder}
+                  className="bg-green-600 text-white px-4 py-2 rounded mt-4"
+                >
+                  生成订单
+                </button>
+              </div>
             </div>
             <label className="flex items-center">
               <input
@@ -102,7 +124,10 @@ export default function CartPage() {
 
           <ul className="space-y-4">
             {items.map((item) => (
-              <li key={item.id} className="border p-4 rounded shadow-sm flex gap-4">
+              <li
+                key={item.id}
+                className="border p-4 rounded shadow-sm flex gap-4"
+              >
                 {item.image && (
                   <Image
                     src={item.image}
@@ -122,7 +147,7 @@ export default function CartPage() {
                     />
                     <span className="font-semibold">🎬 {item.movieTitle}</span>
                   </label>
-                  <p>📅 放映时间: {new Date(item.showTime).toLocaleString()}</p>
+                  <p>📅 {new Date(item.showTime).toLocaleString()}</p>
                   <p>💺 座位：{item.seat}</p>
                   <p>🕒 加入时间：{new Date(item.addedAt).toLocaleString()}</p>
                   <p>💰 单价：¥{item.price.toFixed(2)}</p>
@@ -136,8 +161,6 @@ export default function CartPage() {
               </li>
             ))}
           </ul>
-
-
         </>
       )}
     </div>
