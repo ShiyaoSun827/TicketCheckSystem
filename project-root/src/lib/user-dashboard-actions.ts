@@ -5,6 +5,192 @@ import { auth } from "@/lib/auth";
 import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
 
+// src/lib/user-dashboard-actions.ts
+
+import { getSession } from "@/hooks/getSession";
+
+export async function refundTicket(ticketId: string) {
+  const session = await getSession();
+  if (!session?.user?.id) {
+    return { success: false, message: "用户未登录" };
+  }
+
+  const ticket = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+    include: {
+      show: true,
+      user: true,
+    },
+  });
+
+  if (!ticket) {
+    return { success: false, message: "未找到该票" };
+  }
+
+  if (ticket.userID !== session.user.id) {
+    return { success: false, message: "无权退票" };
+  }
+
+  if (ticket.status !== "VALID") {
+    return { success: false, message: "该票不可退" };
+  }
+
+  // 修改票状态为 REFUNDED
+  await prisma.ticket.update({
+    where: { id: ticketId },
+    data: {
+      status: "REFUNDED",
+      refundedAt: new Date(),
+    },
+  });
+
+  // 将该座位的 reserved 状态设为 false
+  await prisma.seat.updateMany({
+    where: {
+      ticketId: ticketId,
+    },
+    data: {
+      reserved: false,
+      ticketId: null,
+    },
+  });
+
+  // 钱包退款
+  const wallet = await prisma.wallet.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (wallet) {
+    await prisma.wallet.update({
+      where: { id: wallet.id },
+      data: {
+        balance: { increment: ticket.show.price },
+      },
+    });
+
+    await prisma.walletTransaction.create({
+      data: {
+        walletId: wallet.id,
+        type: "REFUND",
+        amount: ticket.show.price,
+        note: `退票：${ticket.show.movieID} 场次`,
+      },
+    });
+  }
+
+  return { success: true, message: "退票成功" };
+}
+
+
+
+export async function createAndPayOrder(showId: string) {
+  const session = await getSession();
+  if (!session?.user) {
+    return { success: false, message: "请先登录" };
+  }
+
+  const userId = session.user.id;
+
+  const cartItems = await prisma.cartItem.findMany({
+    where: { userId, showId },
+  });
+
+  if (cartItems.length === 0) {
+    return { success: false, message: "购物车为空" };
+  }
+
+  const show = await prisma.show.findUnique({
+    where: { id: showId },
+    include: { movie: true },
+  });
+
+  if (!show || show.cancelled) {
+    return { success: false, message: "无效的场次" };
+  }
+
+  const total = cartItems.length * show.price;
+
+  const wallet = await prisma.wallet.findUnique({ where: { userId } });
+
+  if (!wallet || wallet.balance < total) {
+    return { success: false, message: "余额不足" };
+  }
+
+  // ✅ 使用事务确保原子性
+  await prisma.$transaction(async (tx) => {
+    // 1. 创建订单
+    const order = await tx.order.create({
+      data: {
+        userId,
+        total,
+        status: "PAID",
+        items: {
+          create: cartItems.map((item) => ({
+            seat: item.seat,
+            price: show.price,
+            showId,
+          })),
+        },
+      },
+    });
+
+    // 2. 钱包扣款并记录交易
+    await tx.wallet.update({
+      where: { userId },
+      data: {
+        balance: { decrement: total },
+        transactions: {
+          create: {
+            type: "PAYMENT",
+            amount: total,
+            note: `订单 ${order.id} 支付`,
+          },
+        },
+      },
+    });
+
+    // 3. 为每个 CartItem 创建 Ticket，并更新对应 Seat
+    for (const item of cartItems) {
+      const match = item.seat.match(/^([A-Z])(\d+)$/);
+      if (!match) {
+        throw new Error(`无效座位格式：${item.seat}`);
+      }
+      const [, row, col] = match;
+    
+      const ticket = await tx.ticket.create({
+        data: {
+          userID: userId,
+          showId,
+          seatRow: row,
+          seatCol: parseInt(col),
+          status: "VALID",
+          qrCode: `TICKET-${order.id}-${item.seat}`,
+        },
+      });
+    
+      await tx.seat.updateMany({
+        where: {
+          showId,
+          row,
+          col: parseInt(col),
+        },
+        data: {
+          reserved: true,
+          ticketId: ticket.id,
+        },
+      });
+    }
+    
+
+    // 4. 清空购物车
+    await tx.cartItem.deleteMany({
+      where: { userId, showId },
+    });
+  });
+
+  return { success: true };
+}
+
 export async function isFavorite(movieId: string) {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),

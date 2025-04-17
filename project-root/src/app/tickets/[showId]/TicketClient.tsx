@@ -1,11 +1,10 @@
-//src/app/tickets/[showId]/TicketClient.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SeatPicker from "./SeatPicker";
-import { addToCart, deleteCartItem } from "@/lib/user-dashboard-actions";
+import { addToCart, deleteCartItem, createAndPayOrder, getWalletInfo } from "@/lib/user-dashboard-actions";
 import { authClient } from "@/lib/auth-client";
 
 interface Seat {
@@ -24,9 +23,20 @@ interface TicketClientProps {
 export default function TicketClient({ show, seats, inCartSeats }: TicketClientProps) {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [cartSeats, setCartSeats] = useState<string[]>(inCartSeats);
-  const [refreshKey, setRefreshKey] = useState<number>(0); // ⏮️ SeatPicker 重置 key
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const router = useRouter();
   const { session } = authClient.useSession();
+
+  const totalPrice = cartSeats.length * show.price;
+
+  useEffect(() => {
+    async function fetchWallet() {
+      const wallet = await getWalletInfo();
+      setWalletBalance(wallet.balance);
+    }
+    fetchWallet();
+  }, [cartSeats]);
 
   const handleAddToCart = async () => {
     if (selectedSeats.length === 0) {
@@ -38,7 +48,7 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
       await addToCart(show.id, selectedSeats);
       setCartSeats([...cartSeats, ...selectedSeats]);
       setSelectedSeats([]);
-      setRefreshKey((k) => k + 1); // ⏮️ 触发 SeatPicker 重置
+      setRefreshKey((k) => k + 1);
     } catch (err) {
       console.error("加入购物车失败:", err);
       alert("加入购物车失败");
@@ -55,17 +65,26 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
     }
   };
 
+  const handleCheckout = async () => {
+    try {
+      const result = await createAndPayOrder(show.id, cartSeats);
+      if (result.success) {
+        alert("✅ 订单已生成并完成结算");
+        router.push("/dashboard/user/orders");
+      } else {
+        alert("❌ " + result.message);
+      }
+    } catch (err) {
+      console.error("结算失败:", err);
+      alert("结算失败");
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex gap-6">
         {show.movie.image && (
-          <Image
-            src={show.movie.image}
-            alt={show.movie.name}
-            width={200}
-            height={300}
-            className="rounded shadow"
-          />
+          <Image src={show.movie.image} alt={show.movie.name} width={200} height={300} className="rounded shadow" />
         )}
         <div className="space-y-1">
           <p>🎬 电影名称：{show.movie.name}</p>
@@ -79,7 +98,7 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-2">🎟️ 选择座位</h2>
           <SeatPicker
-            key={refreshKey} // ⏮️ 触发 SeatPicker 重置
+            key={refreshKey}
             seats={seats}
             inCartSeats={cartSeats}
             onSelect={setSelectedSeats}
@@ -101,12 +120,12 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
               取消选择
             </button>
           </div>
-            <button
-              onClick={() => router.push("/dashboard/user/cart")}
-              className="bg-gray-400 text-white px-6 py-2 rounded text-lg hover:bg-gray-500"
-            >
-              前往购物车页面
-            </button>
+          <button
+            onClick={() => router.push("/dashboard/user/cart")}
+            className="bg-gray-400 text-white px-6 py-2 rounded text-lg hover:bg-gray-500 mt-4"
+          >
+            前往购物车页面
+          </button>
         </div>
 
         <div className="w-full md:w-64 p-4 bg-gray-50 border rounded">
@@ -129,6 +148,35 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
             </ul>
           )}
 
+          <hr className="my-4" />
+          <div className="text-sm text-gray-800 space-y-1">
+            <p>🧮 总价：¥{totalPrice.toFixed(2)}</p>
+            <p>💰 余额：¥{walletBalance.toFixed(2)}</p>
+          </div>
+
+          <button
+            onClick={handleCheckout}
+            disabled={walletBalance < totalPrice || cartSeats.length === 0}
+            className={`mt-4 w-full py-2 rounded text-white text-center text-lg
+              ${walletBalance < totalPrice || cartSeats.length === 0
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"}
+            `}
+          >
+            💳 立即结算
+          </button>
+          {walletBalance < totalPrice && cartSeats.length > 0 && (
+            <p className="text-sm text-red-600 mt-1 text-center">
+              ❌ 余额不足，请先前往{" "}
+              <a
+                href="/dashboard/user/wallet"
+                className="text-blue-600 underline hover:text-blue-800"
+              >
+                My Wallet
+              </a>{" "}
+              充值
+            </p>
+          )}
           <hr className="my-4" />
           <h3 className="text-lg font-semibold mb-2">❓ 说明</h3>
           <ul className="text-sm text-gray-700 space-y-1">

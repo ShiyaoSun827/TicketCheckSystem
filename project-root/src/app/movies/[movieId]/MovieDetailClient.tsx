@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import NavBarClient from "@/components/NavBarClient";
-import { authClient } from "@/lib/auth-client";
 import {
   getMovieById,
   isFavorite,

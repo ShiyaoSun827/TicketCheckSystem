@@ -3,6 +3,7 @@ import { getShowById } from "@/lib/user-dashboard-actions";
 import { prisma } from "@/lib/prisma";
 import TicketClient from "./TicketClient";
 import { getCartItems } from "@/lib/user-dashboard-actions";
+import NavBar from "@/components/NavBar";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,8 @@ export default async function TicketPage({ params }: { params: { showId: string 
 
   return (
     <div className="container mx-auto p-6">
+      <NavBar/>
+      <div className="text-2xl font-bold mb-4">🎟️ 选座购票</div>
       <TicketClient show={show} seats={seats} inCartSeats={inCartSeats} />
     </div>
   );
