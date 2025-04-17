@@ -4,6 +4,8 @@
 import { useEffect, useState } from "react";
 import { getMyOrders, cancelOrder, payForOrder } from "@/lib/user-dashboard-actions";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import NavBarClient from "@/components/NavBarClient";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +41,10 @@ export default function OrdersPage() {
   const unpaid = orders.filter((o) => o.status === "PENDING");
   const paid = orders.filter((o) => o.status === "PAID");
 
+  const { session, isLoading: sessionLoading } = authClient.useSession();
   return (
     <div className="p-6 space-y-6">
-      
+      <NavBarClient session={session} />
       <h1 className="text-2xl font-bold">📦 我的订单</h1>
       <div className="text-center mt-8">
         <button

@@ -14,6 +14,17 @@ enum WaitStatus {
   READY
 }
 
+model Favorite {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  movieId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, movieId]) // 防止重复收藏
+}
+
 model User {
   id              String     @id
   name            String
@@ -36,6 +47,7 @@ model User {
   CartItem   CartItem[]
   Order      Order[]
   Ticket     Ticket[]
+  Favorite   Favorite[]
 
   @@unique([email])
   @@unique([username])
@@ -201,15 +213,16 @@ enum ShowStatus {
 }
 
 model Movie {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   length      Int // 电影时长（单位：秒）
   rate        Float // 电影评分（0-10 的小数）
   image       String? // 保存图片 URL，例如 "/images/your-image.jpg"
   description String?
   shows       Show[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Favorite    Favorite[]
 }
 
 model WaitList {

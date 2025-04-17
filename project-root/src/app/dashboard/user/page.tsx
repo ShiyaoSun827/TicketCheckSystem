@@ -2,10 +2,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMyTickets, getWaitlistStatus, getProfile } from "@/lib/user-dashboard-actions";
-import Image from "next/image";
-import { authClient } from "@/lib/auth-client";
+import { getMyTickets, getMyOrders, getCartItems, getWalletInfo, getProfile, getMyFavorites } from "@/lib/user-dashboard-actions";
+import Link from "next/link"; 
 import NavBarClient from "@/components/NavBarClient";
+import Image from "next/image";
+import ProfileEditor from "./ProfileEditor";
 
 interface Ticket {
   id: string;
@@ -15,9 +16,10 @@ interface Ticket {
   qrCodeUrl?: string;
 }
 
-interface WaitlistItem {
-  eventTitle: string;
-  status: string;
+interface FavoriteMovie {
+  id: string;
+  name: string;
+  image?: string;
 }
 
 interface Profile {
@@ -27,38 +29,73 @@ interface Profile {
 
 export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [waitlist, setWaitlist] = useState<WaitlistItem[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [cartCount, setCartCount] = useState(0);
+  const [ticketCount, setTicketCount] = useState(0);
+  const [pendingOrderCount, setPendingOrderCount] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      const [ticketData, waitlistData, profileData] = await Promise.all([
+    async function fetchDashboardData() {
+      const [tickets, orders, cart, wallet, profileData, favs] = await Promise.all([
         getMyTickets(),
-        getWaitlistStatus(),
+        getMyOrders(),
+        getCartItems(),
+        getWalletInfo(),
         getProfile(),
+        getMyFavorites(),
       ]);
-      setTickets(ticketData);
-      setWaitlist(waitlistData);
+
+      setTickets(tickets);
+      setTicketCount(tickets.length);
+      setCartCount(cart.length);
+      setPendingOrderCount(orders.filter((o) => o.status === "PENDING").length);
+      setTotalSpent(orders.filter((o) => o.status === "PAID").reduce((sum, o) => sum + o.total, 0));
+      setBalance(wallet.balance);
       setProfile(profileData);
+      setFavorites(favs);
       setLoading(false);
     }
-    fetchData();
+
+    fetchDashboardData();
   }, []);
-  const { session, isLoading: sessionLoading } = authClient.useSession();
-  // console.log("Session from authClient:", session);
+
   return (
     <div className="p-6 space-y-8">
-      <NavBarClient session={session} />
-      <h1 className="text-3xl font-bold">🎫 Attendee Dashboard</h1>
+      <NavBarClient />
+      <h1 className="text-3xl font-bold">🎫 User Dashboard</h1>
 
       {profile && (
         <section>
           <h2 className="text-2xl font-semibold mb-2">🧾 Profile Summary</h2>
-          <p><strong>Name:</strong> {profile.name}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
+          <ProfileEditor name={profile.name} email={profile.email} />
         </section>
       )}
+
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">📊 Overview</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gray-100 p-4 rounded shadow text-center">
+            <p className="text-sm text-gray-600">购物车条目</p>
+            <p className="text-xl font-bold">{cartCount}</p>
+          </div>
+          <div className="bg-gray-100 p-4 rounded shadow text-center">
+            <p className="text-sm text-gray-600">待支付订单</p>
+            <p className="text-xl font-bold">{pendingOrderCount}</p>
+          </div>
+          <div className="bg-gray-100 p-4 rounded shadow text-center">
+            <p className="text-sm text-gray-600">已购票数</p>
+            <p className="text-xl font-bold">{ticketCount}</p>
+          </div>
+          <div className="bg-gray-100 p-4 rounded shadow text-center">
+            <p className="text-sm text-gray-600">钱包余额</p>
+            <p className="text-xl font-bold">¥{balance.toFixed(2)}</p>
+          </div>
+        </div>
+      </section>
 
       <section>
         <h2 className="text-2xl font-semibold mb-2">🎟️ My Tickets</h2>
@@ -83,26 +120,36 @@ export default function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-2">📤 Waitlist Status</h2>
-        {waitlist.length === 0 ? (
-          <p>You are not currently on any waitlists.</p>
+        <h2 className="text-2xl font-semibold mb-2">⭐ Favorite Movies</h2>
+        {favorites.length === 0 ? (
+          <p className="text-gray-600">你还没有收藏任何电影。</p>
         ) : (
-          <ul className="list-disc list-inside">
-            {waitlist.map((item, index) => (
-              <li key={index}>
-                {item.eventTitle} - <span className="italic text-gray-600">{item.status}</span>
-              </li>
+          <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {favorites.map((movie) => (
+              <Link
+                key={movie.id}
+                href={`/movies/${movie.id}`}
+                className="block hover:shadow-lg transition"
+              >
+                <li className="border p-4 rounded shadow bg-white hover:bg-gray-50">
+                  {movie.image && (
+                    <Image
+                      src={movie.image}
+                      alt={movie.name}
+                      width={200}
+                      height={300}
+                      className="rounded"
+                    />
+                  )}
+                  <h3 className="mt-2 font-semibold text-lg text-center">
+                    {movie.name}
+                  </h3>
+                </li>
+              </Link>
             ))}
           </ul>
         )}
       </section>
-
-      <section>
-        <a href="/movies" className="inline-block bg-blue-600 text-white px-4 py-2 rounded">
-          📅 Browse Upcoming Events
-        </a>
-      </section>
-
     </div>
   );
 }

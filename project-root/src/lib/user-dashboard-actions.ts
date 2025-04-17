@@ -5,6 +5,91 @@ import { auth } from "@/lib/auth";
 import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
 
+export async function isFavorite(movieId: string) {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+
+  if (!session?.user) return false;
+
+  const favorite = await prisma.favorite.findUnique({
+    where: {
+      userId_movieId: {
+        userId: session.user.id,
+        movieId,
+      },
+    },
+  });
+
+  return !!favorite;
+}
+
+export async function toggleFavorite(movieId: string) {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+
+  if (!session?.user) return { success: false, message: "未登录" };
+
+  const existing = await prisma.favorite.findUnique({
+    where: {
+      userId_movieId: {
+        userId: session.user.id,
+        movieId,
+      },
+    },
+  });
+
+  if (existing) {
+    await prisma.favorite.delete({
+      where: { userId_movieId: { userId: session.user.id, movieId } },
+    });
+    return { success: true, action: "removed" };
+  } else {
+    await prisma.favorite.create({
+      data: { userId: session.user.id, movieId },
+    });
+    return { success: true, action: "added" };
+  }
+}
+
+export async function getMyFavorites() {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+
+  if (!session?.user) return [];
+
+  const favorites = await prisma.favorite.findMany({
+    where: { userId: session.user.id },
+    include: {
+      movie: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return favorites.map((f) => f.movie);
+}
+
+export async function getMovieById(movieId: string) {
+  const movie = await prisma.movie.findUnique({
+    where: { id: movieId },
+    include: {
+      shows: {
+        include: {
+          Seat: true,
+        },
+      },
+    },
+  });
+
+  if (!movie) return null;
+
+  return movie;
+}
+
 export async function getMyOrders() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
@@ -363,6 +448,62 @@ export async function deleteCartItems(cartItemIds: string[]) {
   });
 }
 
+// ✅ 获取当前登录用户的购物车数量
+export async function getCartCount() {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+  if (!session?.user) return 0;
+
+  const count = await prisma.cartItem.count({
+    where: { userId: session.user.id },
+  });
+
+  return count;
+}
+
+// ✅ 获取当前登录用户的订单数量（所有状态）
+export async function getOrderCount() {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+  if (!session?.user) return 0;
+
+  const count = await prisma.order.count({
+    where: { userId: session.user.id },
+  });
+
+  return count;
+}
+
+// ✅ 获取当前登录用户的已购票数量
+export async function getTicketCount() {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+  if (!session?.user) return 0;
+
+  const count = await prisma.ticket.count({
+    where: { userID: session.user.id },
+  });
+
+  return count;
+}
+
+// ✅ 获取当前登录用户的钱包余额
+export async function getWalletBalance() {
+  const session = await auth.api.getSession({
+    headers: new Headers(await headers()),
+  });
+  if (!session?.user) return 0;
+
+  const wallet = await prisma.wallet.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  return wallet?.balance ?? 0;
+}
+
 export async function getMyTickets() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
@@ -394,45 +535,6 @@ export async function getMyTickets() {
   }));
 }
 
-
-// // Define a type for the waitlist item
-// type WaitlistItem = {
-//   show: {
-//     movie: {
-//       name: string;
-//     };
-//   };
-//   status: string; // Adjust this type based on your actual status type
-// };
-
-// export async function getWaitlistStatus() {
-//   const session = await auth.api.getSession({
-//     headers: new Headers(await headers()),
-//   });
-
-//   if (!session?.user) return [];
-
-//   const waitlist: WaitlistItem[] = await prisma.waitList.findMany({
-//     where: { userID: session.user.id },
-//     include: {
-//       show: {
-//         include: {
-//           movie: true,
-//         },
-//       },
-//     },
-//   });
-
-//   return waitlist.map((item: WaitlistItem) => ({
-//     eventTitle: item.show.movie.name,
-//     status: capitalize(item.status), // optional helper formatting
-//   }));
-// }
-
-// // Optional: Capitalize status values
-// function capitalize(str: string) {
-//     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-//   }
 
 
 export async function getProfile() {

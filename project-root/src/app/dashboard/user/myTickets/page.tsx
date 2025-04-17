@@ -1,16 +1,28 @@
 // src/app/dashboard/user/myTickets/page.tsx
+"use client";
 
-import { getMyTickets } from "@/lib/user-dashboard-actions";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
+import { authClient } from "@/lib/auth-client";
+import NavBarClient from "@/components/NavBarClient";
+import { getMyTickets } from "@/lib/user-dashboard-actions";
 
-export const dynamic = "force-dynamic";
+export default function MyTicketsPage() {
+  const [tickets, setTickets] = useState<any[]>([]);
+  const { session } = authClient.useSession();
 
-export default async function MyTicketsPage() {
-  const tickets = await getMyTickets();
+  useEffect(() => {
+    async function fetchTickets() {
+      const result = await getMyTickets();
+      setTickets(result);
+    }
+    fetchTickets();
+  }, []);
 
   return (
     <div className="p-6 space-y-6">
+      <NavBarClient session={session} />
       <h1 className="text-2xl font-bold">🎫 我的电影票</h1>
 
       {tickets.length === 0 ? (
@@ -35,14 +47,16 @@ export default async function MyTicketsPage() {
                 <div className="flex-1 space-y-1">
                   <p className="font-semibold">🎬 {ticket.eventTitle}</p>
                   <p>
-                    📅 {new Date(ticket.date).toLocaleDateString("zh-CN", {
+                    📅{" "}
+                    {new Date(ticket.date).toLocaleDateString("zh-CN", {
                       year: "numeric",
                       month: "2-digit",
                       day: "2-digit",
                     }) + " --Y/M/D"}
                   </p>
                   <p>
-                    ⏰ {new Date(ticket.date).toLocaleTimeString("zh-CN", {
+                    ⏰{" "}
+                    {new Date(ticket.date).toLocaleTimeString("zh-CN", {
                       hour: "2-digit",
                       minute: "2-digit",
                       second: "2-digit",
