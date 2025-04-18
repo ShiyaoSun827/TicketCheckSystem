@@ -104,7 +104,7 @@ export async function createAndPayOrder(showId: string) {
     include: { movie: true },
   });
 
-  if (!show || show.cancelled) {
+  if (!show || show.status === "CANCELLED") {
     return { success: false, message: "无效的场次" };
   }
 

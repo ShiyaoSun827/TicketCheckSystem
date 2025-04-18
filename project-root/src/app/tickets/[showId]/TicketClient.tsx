@@ -1,10 +1,16 @@
+//src/app/tickets/[showId]/TicketClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SeatPicker from "./SeatPicker";
-import { addToCart, deleteCartItem, createAndPayOrder, getWalletInfo } from "@/lib/user-dashboard-actions";
+import {
+  addToCart,
+  deleteCartItem,
+  createAndPayOrder,
+  getWalletInfo,
+} from "@/lib/user-dashboard-actions";
 import { authClient } from "@/lib/auth-client";
 
 interface Seat {
@@ -20,11 +26,15 @@ interface TicketClientProps {
   inCartSeats: string[];
 }
 
-export default function TicketClient({ show, seats, inCartSeats }: TicketClientProps) {
+export default function TicketClient({
+  show,
+  seats,
+  inCartSeats,
+}: TicketClientProps) {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [cartSeats, setCartSeats] = useState<string[]>(inCartSeats);
   const [walletBalance, setWalletBalance] = useState<number>(0);
-  const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [refreshKey, setRefreshKey] = useState<number>(0); // 用于 SeatPicker 组件清除
   const router = useRouter();
   const { session } = authClient.useSession();
 
@@ -48,7 +58,7 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
       await addToCart(show.id, selectedSeats);
       setCartSeats([...cartSeats, ...selectedSeats]);
       setSelectedSeats([]);
-      setRefreshKey((k) => k + 1);
+      setRefreshKey((prev) => prev + 1); // ✅ 触发 SeatPicker 清除选择
     } catch (err) {
       console.error("加入购物车失败:", err);
       alert("加入购物车失败");
@@ -67,10 +77,10 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
 
   const handleCheckout = async () => {
     try {
-      const result = await createAndPayOrder(show.id, cartSeats);
+      const result = await createAndPayOrder(show.id);
       if (result.success) {
         alert("✅ 订单已生成并完成结算");
-        router.push("/dashboard/user/orders");
+        window.location.reload();
       } else {
         alert("❌ " + result.message);
       }
@@ -84,7 +94,13 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
     <div className="space-y-8">
       <div className="flex gap-6">
         {show.movie.image && (
-          <Image src={show.movie.image} alt={show.movie.name} width={200} height={300} className="rounded shadow" />
+          <Image
+            src={show.movie.image}
+            alt={show.movie.name}
+            width={200}
+            height={300}
+            className="rounded shadow"
+          />
         )}
         <div className="space-y-1">
           <p>🎬 电影名称：{show.movie.name}</p>
@@ -97,11 +113,13 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
       <div className="flex flex-col md:flex-row gap-8">
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-2">🎟️ 选择座位</h2>
+          <p className="text-sm text-gray-600 mb-4">可长按并滑动来多重选择或取消</p>
           <SeatPicker
             key={refreshKey}
             seats={seats}
             inCartSeats={cartSeats}
             onSelect={setSelectedSeats}
+            clearTrigger={refreshKey}
           />
           <div className="mt-4 text-center text-gray-700">
             已选择：{selectedSeats.length > 0 ? selectedSeats.join(", ") : "无"}
@@ -114,7 +132,10 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
               加入购物车（共 {selectedSeats.length} 个）
             </button>
             <button
-              onClick={() => setSelectedSeats([])}
+              onClick={() => {
+                setSelectedSeats([]);
+                setRefreshKey((k) => k + 1); // ✅ 手动触发 SeatPicker 清除
+              }}
               className="bg-gray-400 text-white px-6 py-2 rounded text-lg hover:bg-gray-500"
             >
               取消选择
@@ -129,24 +150,45 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
         </div>
 
         <div className="w-full md:w-64 p-4 bg-gray-50 border rounded">
-          <h3 className="text-lg font-semibold mb-2">🧾 当前购物车座位</h3>
+          <h3 className="text-lg font-semibold mb-2">🧾 Seats in cart for currunt show</h3>
           {cartSeats.length === 0 ? (
-            <p className="text-sm text-gray-600">暂无座位加入购物车</p>
-          ) : (
-            <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
-              {cartSeats.map((seat) => (
-                <li key={seat} className="flex justify-between items-center">
-                  <span>{seat}</span>
-                  <button
-                    onClick={() => handleRemoveFromCart(seat)}
-                    className="text-red-500 text-xs hover:underline"
-                  >
-                    移除
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+              <p className="text-sm text-gray-600">暂无座位加入购物车</p>
+            ) : (
+              <>
+                <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
+                  {cartSeats.map((seat) => (
+                    <li key={seat} className="flex justify-between items-center">
+                      <span>{seat}</span>
+                      <button
+                        onClick={() => handleRemoveFromCart(seat)}
+                        className="text-red-500 text-xs hover:underline"
+                      >
+                        移除
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={async () => {
+                    const confirmClear = confirm("确定要清空当前场次购物车中的所有座位吗？");
+                    if (!confirmClear) return;
+                    try {
+                      await Promise.all(
+                        cartSeats.map((seat) => deleteCartItem(show.id, seat))
+                      );
+                      setCartSeats([]);
+                      alert("🗑️ 已清空当前场次购物车");
+                    } catch (err) {
+                      console.error("清空购物车失败:", err);
+                      alert("清空购物车失败");
+                    }
+                  }}
+                  className="mt-2 w-full text-sm text-red-600 hover:underline"
+                >
+                  🗑️ 清空当前场次购物车
+                </button>
+              </>
+            )}
 
           <hr className="my-4" />
           <div className="text-sm text-gray-800 space-y-1">
@@ -158,9 +200,11 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
             onClick={handleCheckout}
             disabled={walletBalance < totalPrice || cartSeats.length === 0}
             className={`mt-4 w-full py-2 rounded text-white text-center text-lg
-              ${walletBalance < totalPrice || cartSeats.length === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700"}
+              ${
+                walletBalance < totalPrice || cartSeats.length === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              }
             `}
           >
             💳 立即结算
@@ -180,9 +224,22 @@ export default function TicketClient({ show, seats, inCartSeats }: TicketClientP
           <hr className="my-4" />
           <h3 className="text-lg font-semibold mb-2">❓ 说明</h3>
           <ul className="text-sm text-gray-700 space-y-1">
-            <li><span className="inline-block w-4 h-4 bg-green-500 mr-2 rounded"></span> 可选座位</li>
-            <li><span className="inline-block w-4 h-4 bg-gray-400 mr-2 rounded"></span> 已被购买</li>
-            <li><span className="inline-block w-4 h-4 bg-yellow-300 mr-2 rounded"></span> 已加入购物车</li>
+            <li>
+              <span className="inline-block w-4 h-4 bg-blue-100 mr-2 rounded border"></span>
+              可选座位
+            </li>
+            <li>
+              <span className="inline-block w-4 h-4 bg-green-500 mr-2 rounded"></span>
+              已选择座位
+            </li>
+            <li>
+              <span className="inline-block w-4 h-4 bg-yellow-300 mr-2 rounded"></span>
+              已加入购物车
+            </li>
+            <li>
+              <span className="inline-block w-4 h-4 bg-gray-400 mr-2 rounded"></span>
+              已被购买
+            </li>
           </ul>
         </div>
       </div>
