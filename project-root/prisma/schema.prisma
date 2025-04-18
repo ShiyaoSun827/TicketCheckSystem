@@ -7,6 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TicketStatus {
+  VALID
+  CHECKED
+  CANCELLED
+  REFUNDED
+}
+
+model Ticket {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userID], references: [id])
+  userID String
+
+  show   Show   @relation(fields: [showId], references: [id])
+  showId String
+
+  seatRow String
+  seatCol Int
+
+  qrCode     String? // 二维码内容或图片地址
+  status TicketStatus @default(VALID)
+  createdAt  DateTime  @default(now())
+  refundedAt DateTime? // ✅ 退票时间（可选）
+
+  Seat Seat[]
+}
+
 enum WaitStatus {
   PENDING
   CONFIRMED
@@ -99,25 +125,6 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
-}
-
-model Ticket {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userID], references: [id])
-  userID String
-
-  show   Show   @relation(fields: [showId], references: [id])
-  showId String
-
-  seatRow String
-  seatCol Int
-
-  qrCode     String? // 二维码内容或图片地址
-  status     String    @default("VALID") // VALID / CHECKED / CANCELLED / REFUNDED
-  createdAt  DateTime  @default(now())
-  refundedAt DateTime? // ✅ 退票时间（可选）
-
-  Seat Seat[]
 }
 
 model Wallet {

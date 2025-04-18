@@ -5,11 +5,25 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-// === 🎬 Movie 管理 ===
 
+export async function getSeatsByShowId(showId: string) {
+  const seats = await prisma.seat.findMany({
+    where: { showId: showId },
+    orderBy: [{ row: "asc" }, { col: "asc" }],
+  });
+  return seats;
+}
+
+// === 🎬 Movie 管理 ===
 export async function getMovies() {
   return await prisma.movie.findMany({
-    orderBy: { createdAt: "desc" },
+    include: {
+      shows: true,
+      Favorite: true, // ✅ 这里改成大写 F
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 }
 

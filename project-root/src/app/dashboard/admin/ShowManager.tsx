@@ -217,7 +217,8 @@ export default function ShowManager() {
                   </p>
                 </div>
                 <button
-                  onClick={() => router.push(`/dashboard/admin/manageMovie/${show.movie.id}/shows`)}
+
+                  onClick={() => router.push(`/dashboard/admin/manageShow/${show.id}`)}
                   className="text-blue-600 hover:underline"
                 >
                   🔍 详情
