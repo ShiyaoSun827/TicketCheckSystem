@@ -21,6 +21,8 @@
 ~~基础的退票~~
 
 
+
+
 - [ ] 上传头像
 - [ ] 工单系统
 - [ ] 管理员功能扩充
@@ -75,4 +77,21 @@ git merge upstream/main     更新合并到你当前所在的 main 分支
 
 （git pull upstream main）
 
+```
+
+
+
+** 增加了 手机端scanner的功能
+Note: 注意在这个分支下的 project-root/src/app/api/checkin/route.ts 的api被修改。现在该API被用于手机端和后端数据库的交互。
+```
+cd project-root
+cd check_in_mobile
+cd check-in-system 
+```
+如果没有安装react-native的按照以下步骤安装
+```
+npm install
+```
+```
+npx expo start --clear
 ```
