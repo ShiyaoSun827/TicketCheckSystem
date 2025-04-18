@@ -80,44 +80,47 @@ export default function NavBarClient() {
   };
 
   return (
-    <nav className="flex justify-between items-center p-4 border-b">
-      {/* 左边链接 */}
-      <div className="flex gap-4">
-        <Link href="/" className="text-blue-600 hover:text-blue-800">Main Page</Link>
-        <Link href="/dashboard/user" className="text-blue-600 hover:text-blue-800">Dashboard</Link>
-        <Link href="/dashboard/user/cart" className="text-blue-600 hover:text-blue-800">
-          🛒 My Cart（{cartCount}）
-        </Link>
-        <Link href="/dashboard/user/orders" className="text-blue-600 hover:text-blue-800">
-          📦 My Orders（{orderCount}）
-        </Link>
-        <Link href="/dashboard/user/myTickets" className="text-blue-600 hover:text-blue-800">
-          🎫 My tickets（{ticketCount}）
-        </Link>
-        <Link href="/dashboard/user/wallet" className="text-blue-600 hover:text-blue-800">
-          💰 My Wallet（¥{walletBalance.toFixed(2)}）
-        </Link>
-        {!session?.user && (
-          <Link href="/signup" className="text-blue-600 hover:text-blue-800">Sign up</Link>
-        )}
-      </div>
+      <nav className="w-full border-b bg-white shadow px-4 py-3 space-y-2">
+        {/* App Title */}
+        <div className="text-xl font-bold text-blue-700">🎬 Ticketing System</div>
 
-      {/* 右边用户信息 */}
-      <div className="flex items-center gap-4">
-        {session?.user ? (
-          <div className="flex items-center gap-4">
-            <span>Welcome: {session.user.name}</span>
-            <button
-              onClick={handleSignOut}
-              className="text-red-600 hover:underline"
-            >
-              Sign Out
-            </button>
-          </div>
-        ) : (
-          <Link href="/signin" className="text-blue-600 hover:text-blue-800">Sign In</Link>
-        )}
-      </div>
-    </nav>
+        {/* Main Navigation Links */}
+        <div className="flex flex-wrap gap-3 text-sm sm:text-base">
+          <Link href="/" className="text-blue-600 hover:underline">Home</Link>
+          <Link href="/dashboard/user" className="text-blue-600 hover:underline">Dashboard</Link>
+          <Link href="/dashboard/user/cart" className="text-blue-600 hover:underline">
+            🛒 Cart ({cartCount})
+          </Link>
+          <Link href="/dashboard/user/orders" className="text-blue-600 hover:underline">
+            📦 Orders ({orderCount})
+          </Link>
+          <Link href="/dashboard/user/myTickets" className="text-blue-600 hover:underline">
+            🎫 Tickets ({ticketCount})
+          </Link>
+          <Link href="/dashboard/user/wallet" className="text-blue-600 hover:underline">
+            💰 Wallet (¥{walletBalance.toFixed(2)})
+          </Link>
+          {!session?.user && (
+              <Link href="/signup" className="text-blue-600 hover:underline">Sign Up</Link>
+          )}
+        </div>
+
+        {/* User Info / Actions */}
+        <div className="flex flex-wrap items-center gap-4 text-sm">
+          {session?.user ? (
+              <>
+                <span className="text-gray-700">Welcome, {session.user.name}</span>
+                <button
+                    onClick={handleSignOut}
+                    className="text-red-600 hover:underline"
+                >
+                  Sign Out
+                </button>
+              </>
+          ) : (
+              <Link href="/signin" className="text-blue-600 hover:underline">Sign In</Link>
+          )}
+        </div>
+      </nav>
   );
 }

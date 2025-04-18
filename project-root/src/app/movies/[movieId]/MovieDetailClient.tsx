@@ -54,9 +54,14 @@ export default function MovieDetailClient({ movieId }: { movieId: string }) {
     setTimeout(() => setMessage(""), 3000);
   };
 
+  if (loading) {
+    return <div className="p-6 text-gray-600 text-xl">⌛ 正在加载电影信息...</div>;
+  }
+
   if (!movie) {
     return <div className="p-6 text-red-600 text-xl">❌ 未找到该电影</div>;
   }
+
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-12">
@@ -107,7 +112,7 @@ export default function MovieDetailClient({ movieId }: { movieId: string }) {
         {movie.shows.length > 0 ? (
           <ul className="space-y-2">
             {movie.shows
-              .filter((s: any) => s.status === "PUBLISHED" && !s.cancelled)
+              .filter((s: any) => s.status === "PUBLISHED")
               .sort((a: any, b: any) => new Date(a.beginTime).getTime() - new Date(b.beginTime).getTime())
               .map((show: any) => {
                 const total = show.Seat.length;

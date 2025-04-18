@@ -1,14 +1,29 @@
+//src/app/lib/admin-dashboard-actions.ts
 "use server";
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-// === 🎬 Movie 管理 ===
 
+export async function getSeatsByShowId(showId: string) {
+  const seats = await prisma.seat.findMany({
+    where: { showId: showId },
+    orderBy: [{ row: "asc" }, { col: "asc" }],
+  });
+  return seats;
+}
+
+// === 🎬 Movie 管理 ===
 export async function getMovies() {
   return await prisma.movie.findMany({
-    orderBy: { createdAt: "desc" },
+    include: {
+      shows: true,
+      Favorite: true, // ✅ 这里改成大写 F
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 }
 
@@ -66,11 +81,36 @@ export async function deleteMovie(id: string) {
 
 // === 🎟️ Show 排片管理 ===
 
+// export async function getAllShows() {
+//   return await prisma.show.findMany({
+//     include: { movie: true },
+//     orderBy: { beginTime: "asc" },
+//   });
+// }
+
 export async function getAllShows() {
-  return await prisma.show.findMany({
-    include: { movie: true },
+  const rawShows = await prisma.show.findMany({
+    include: {
+      movie: true,
+      _count: {
+        select: {
+          tickets: true, // 用于计算已售票数
+        },
+      },
+    },
     orderBy: { beginTime: "asc" },
   });
+
+  return rawShows.map((show) => ({
+    id: show.id,
+    movie: show.movie,
+    beginTime: show.beginTime,
+    endTime: show.endTime,
+    price: show.price,
+    status: show.status,
+    soldTickets: show._count.tickets,
+    totalSeats: 80, // 或者从 room 信息中读取（如果你的系统支持多放映厅）
+  }));
 }
 
 export async function getShowById(id: string) {
@@ -111,7 +151,6 @@ export async function updateShow({
       movieID: {
         in: (await prisma.show.findUnique({ where: { id: showId } }))?.movieID ?? "",
       },
-      cancelled: false,
       beginTime: { lt: end },
       endTime: { gt: begin },
     },
@@ -142,7 +181,7 @@ export async function updateShowPrice(showId: string, price: number) {
 export async function cancelShow(showId: string) {
   await prisma.show.update({
     where: { id: showId },
-    data: { cancelled: true },
+    data: { status: "CANCELLED" },
   });
 }
 
@@ -169,7 +208,6 @@ export async function createShow({
   const conflict = await prisma.show.findFirst({
     where: {
       movieID,
-      cancelled: false,
       beginTime: { lt: end },
       endTime: { gt: begin },
     },

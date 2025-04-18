@@ -4,26 +4,52 @@ import prisma from "@/lib/prisma";
 
 // 获取最近签到记录（5条）
 export async function getRecentCheckins() {
-    const records = await prisma.qRScanRecord.findMany({
+    const scans = await prisma.qRScanRecord.findMany({
         orderBy: { scanTime: "desc" },
-        take: 5,
+        take: 10,
     });
 
-    // 假设你通过 qrCode 能找到对应的 Ticket → User
-    const enriched = await Promise.all(records.map(async (record) => {
-        const ticket = await prisma.ticket.findUnique({
-            where: { qrCode: record.qrCode },
-            include: { show: { include: { movie: true } } },
-        });
-        const user = await prisma.user.findUnique({ where: { id: ticket?.userID } });
-        return {
-            userName: user?.name ?? "Unknown",
-            seat: ticket?.seat ?? "-",
-            time: record.scanTime,
-        };
-    }));
+    const results = await Promise.all(
+        scans.map(async (scan) => {
+            const ticket = await prisma.ticket.findUnique({
+                where: { qrCode: scan.qrCode },
+                include: {
+                    user: true,
+                },
+            });
 
-    return enriched;
+            if (!ticket) return null;
+
+            return {
+                userName: ticket.user.name,
+                seat: `${ticket.seatRow}${ticket.seatCol}`,
+                time: scan.scanTime,
+            };
+        })
+    );
+
+    return results.filter(Boolean);
+}
+
+export async function getSeatStatusByShow(showId: string) {
+    const seats = await prisma.seat.findMany({
+        where: { showId },
+        include: {
+            ticket: {
+                select: {
+                    status: true,
+                },
+            },
+        },
+    });
+
+    return seats.map((seat) => ({
+        id: seat.id,
+        row: seat.row,
+        col: seat.col,
+        reserved: !!seat.ticketId,
+        status: seat.ticket?.status ?? null,
+    }));
 }
 
 // 获取当天的 Show
@@ -47,10 +73,48 @@ export async function getTodayShows() {
         orderBy: { beginTime: "asc" },
     });
 
+
+
     return shows.map((s) => ({
         id: s.id,
         movieName: s.movie.name,
         beginTime: s.beginTime,
         endTime: s.endTime,
+    }));
+}
+
+export async function getAllShowsWithMovieNames() {
+    const shows = await prisma.show.findMany({
+        orderBy: { beginTime: "asc" },
+        include: {
+            movie: true,
+        },
+    });
+
+    return shows.map((show) => ({
+        id: show.id,
+        movieName: show.movie.name,
+        beginTime: show.beginTime,
+        endTime: show.endTime,
+    }));
+}
+
+export async function getCheckedSeats(showId: string) {
+    const seats = await prisma.seat.findMany({
+        where: { showId },
+        include: {
+            ticket: {
+                select: {
+                    status: true, // 获取 VALID / CHECKED 等状态
+                },
+            },
+        },
+    });
+
+    return seats.map((s) => ({
+        id: s.id,
+        row: s.row,
+        col: s.col,
+        status: s.ticket?.status ?? null, // CHECKED / VALID / null
     }));
 }

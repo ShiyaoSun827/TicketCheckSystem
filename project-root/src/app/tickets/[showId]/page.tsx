@@ -27,11 +27,18 @@ export default async function TicketPage({ params }: { params: { showId: string 
     .filter((item) => item.showId === showId)
     .map((item) => item.seat);
 
+  const clearKey = Date.now(); // 用于 SeatPicker 清除标记
+
   return (
     <div className="container mx-auto p-6">
-      <NavBar/>
+      <NavBar />
       <div className="text-2xl font-bold mb-4">🎟️ 选座购票</div>
-      <TicketClient show={show} seats={seats} inCartSeats={inCartSeats} />
+      <TicketClient
+        show={show}
+        seats={seats}
+        inCartSeats={inCartSeats}
+        clearKey={clearKey} // ✅ 传递清除信号
+      />
     </div>
   );
 }

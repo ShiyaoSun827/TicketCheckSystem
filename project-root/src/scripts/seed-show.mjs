@@ -15,32 +15,36 @@ async function seedShows() {
 
   for (let i = 0; i < movies.length; i++) {
     const movie = movies[i];
-    const baseTime = new Date(baseDate.getTime() + i * 86400000); // 一天间隔
+    const baseTime = new Date(baseDate.getTime() + i * 86400000); // 每部电影相隔一天
 
     try {
+      // Draft
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: baseTime,
         price: 50,
         status: "DRAFT",
       });
+
+      // Published
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: new Date(baseTime.getTime() + 3 * 3600000),
         price: 60,
         status: "PUBLISHED",
       });
+
+      // Cancelled (now using status)
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: new Date(baseTime.getTime() + 6 * 3600000),
         price: 40,
-        status: "PUBLISHED",
-        cancelled: true,
+        status: "CANCELLED", // ✅ 替代 cancelled: true
       });
 
       console.log(`✅ Done for movie: ${movie.name}`);
     } catch (err) {
-      console.error("❌ Failed:", err.message);
+      console.error(`❌ Failed for ${movie.name}:`, err.message);
     }
   }
 
