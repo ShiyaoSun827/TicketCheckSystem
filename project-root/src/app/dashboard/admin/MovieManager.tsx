@@ -159,7 +159,7 @@ export default function MovieManager() {
                       
 
                     <p className="text-sm text-gray-700">
-                    🎬发布: {movie.shows.filter((s) => s.status === "PUBLISHED").length} 
+                    🎬 发布: {movie.shows.filter((s) => s.status === "PUBLISHED").length} 
                     {"  "}草稿: {movie.shows.filter((s) => s.status === "DRAFT").length} 
                     {"  "}已取消: {movie.shows.filter((s) => s.status === "CANCELLED").length} 
                     </p>

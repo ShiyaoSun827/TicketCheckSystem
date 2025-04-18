@@ -10,8 +10,9 @@ import {
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import NavBarClient from "@/components/NavBarClient";
-import MovieManager from "./MovieManager"; // ✅ 新增导入
-import ShowManager from "./ShowManager";   // ✅ 保持原有功能
+import MovieManager from "./MovieManager";
+import ShowManager from "./ShowManager";
+import TicketManager from "./TicketManager";
 
 export default function AdminDashboardPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -38,21 +39,11 @@ export default function AdminDashboardPage() {
     setUserMsg(`✅ Role updated to ${newRole}`);
   };
 
-  async function handleRoleChange(userId: string, newRole: string) {
-    await updateUserRole(userId, newRole);
-    const updated = await getAllUsers();
-    setUsers(updated);
-    setUserMsg(`✅ Role updated to ${newRole}`);
-  }
-
   return (
 
     <div className="p-6 space-y-10">
       <NavBarClient />
       <h1 className="text-3xl font-bold">🧑‍💼 Admin Dashboard</h1>
-
-
-
       {/* 🧾 Profile 区域 */}
       {profile && (
         <section className="bg-white p-4 rounded-lg shadow">
@@ -68,6 +59,9 @@ export default function AdminDashboardPage() {
 
       {/* 🎥 所有排片模块 */}
       <ShowManager />
+
+      {/* 🎥 所有排片模块 */}
+      <TicketManager />
 
       {/* 👥 用户角色管理模块 */}
       <section className="bg-white p-4 rounded-lg shadow">

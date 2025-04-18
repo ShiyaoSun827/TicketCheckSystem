@@ -5,6 +5,140 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export async function cancelShowAndRefundTickets(showId: string) {
+  try {
+    // 更新该场排片为 CANCELLED 状态
+    await prisma.show.update({
+      where: { id: showId },
+      data: { status: "CANCELLED" },
+    });
+
+    // 查询所有 VALID 状态的票（已购买未使用）
+    const tickets = await prisma.ticket.findMany({
+      where: {
+        showId,
+        status: "VALID",
+      },
+      include: {
+        user: { include: { Wallet: true } },
+      },
+    });
+
+    // 获取价格信息
+    const show = await prisma.show.findUnique({
+      where: { id: showId },
+    });
+    const price = show?.price ?? 0;
+
+    // 为每张票退款并修改状态
+    for (const ticket of tickets) {
+      const wallet = ticket.user.Wallet;
+      if (!wallet) continue;
+
+      // 1. 修改票状态为 CANCELLED
+      await prisma.ticket.update({
+        where: { id: ticket.id },
+        data: {
+          status: "CANCELLED",
+          refundedAt: new Date(),
+        },
+      });
+
+      // 2. 给钱包退款
+      await prisma.wallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: wallet.balance + price,
+        },
+      });
+
+      // 3. 添加退款记录
+      await prisma.walletTransaction.create({
+        data: {
+          walletId: wallet.id,
+          type: "REFUND",
+          amount: price,
+          note: `排片取消自动退款（票号: ${ticket.id}）`,
+        },
+      });
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("取消排片失败:", error);
+    return { success: false, message: error.message };
+  }
+}
+
+export async function cancelTickets(ticketIds: string[]) {
+  for (const ticketId of ticketIds) {
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      include: {
+        user: { include: { Wallet: true } },
+        show: true,
+      },
+    });
+
+    if (!ticket || ticket.status !== "VALID") continue;
+
+    const wallet = ticket.user.Wallet;
+    const price = ticket.show.price;
+    if (!wallet || price == null) continue;
+
+    await prisma.$transaction([
+      prisma.ticket.update({
+        where: { id: ticketId },
+        data: {
+          status: "CANCELLED",
+          refundedAt: new Date(),
+        },
+      }),
+      prisma.wallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: { increment: price },
+        },
+      }),
+      prisma.walletTransaction.create({
+        data: {
+          walletId: wallet.id,
+          type: "REFUND",
+          amount: price,
+          note: `🎫 退票退款 (票号: ${ticketId})`,
+        },
+      }),
+    ]);
+  }
+
+  return { success: true };
+}
+
+export async function getAllTickets() {
+  return await prisma.ticket.findMany({
+    include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      show: {
+        select: {
+          beginTime: true,
+          movie: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
 
 export async function getSeatsByShowId(showId: string) {
   const seats = await prisma.seat.findMany({
@@ -80,13 +214,6 @@ export async function deleteMovie(id: string) {
 }
 
 // === 🎟️ Show 排片管理 ===
-
-// export async function getAllShows() {
-//   return await prisma.show.findMany({
-//     include: { movie: true },
-//     orderBy: { beginTime: "asc" },
-//   });
-// }
 
 export async function getAllShows() {
   const rawShows = await prisma.show.findMany({
