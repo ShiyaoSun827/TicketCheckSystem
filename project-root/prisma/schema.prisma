@@ -26,8 +26,8 @@ model Ticket {
   seatCol Int
 
   qrCode     String? // 二维码内容或图片地址
-  status TicketStatus @default(VALID)
-  createdAt  DateTime  @default(now())
+  status     TicketStatus @default(VALID)
+  createdAt  DateTime     @default(now())
   refundedAt DateTime? // ✅ 退票时间（可选）
 
   Seat Seat[]

@@ -1,4 +1,3 @@
-// src/app/dashboard/admin/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import NavBarClient from "@/components/NavBarClient";
 import MovieManager from "./MovieManager";
 import ShowManager from "./ShowManager";
 import TicketManager from "./TicketManager";
+import TransactionManager from "./TransactionManager"; // ✅ 新增
 
 export default function AdminDashboardPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -40,10 +40,10 @@ export default function AdminDashboardPage() {
   };
 
   return (
-
     <div className="p-6 space-y-10">
       <NavBarClient />
       <h1 className="text-3xl font-bold">🧑‍💼 Admin Dashboard</h1>
+
       {/* 🧾 Profile 区域 */}
       {profile && (
         <section className="bg-white p-4 rounded-lg shadow">
@@ -60,8 +60,11 @@ export default function AdminDashboardPage() {
       {/* 🎥 所有排片模块 */}
       <ShowManager />
 
-      {/* 🎥 所有排片模块 */}
+      {/* 🎫 所有票模块 */}
       <TicketManager />
+
+      {/* 💰 交易记录模块 */}
+      <TransactionManager />
 
       {/* 👥 用户角色管理模块 */}
       <section className="bg-white p-4 rounded-lg shadow">
@@ -78,7 +81,6 @@ export default function AdminDashboardPage() {
           </thead>
           <tbody>
             {users.map((user: any) => (
-
               <tr key={user.id} className="border-t">
                 <td className="p-2">{user.name}</td>
                 <td className="p-2">{user.email}</td>

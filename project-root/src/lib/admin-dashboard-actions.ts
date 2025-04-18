@@ -5,6 +5,21 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export async function getAllTransactions() {
+  return await prisma.walletTransaction.findMany({
+    include: {
+      wallet: {
+        include: {
+          user: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
 export async function cancelShowAndRefundTickets(showId: string) {
   try {
     // 更新该场排片为 CANCELLED 状态
