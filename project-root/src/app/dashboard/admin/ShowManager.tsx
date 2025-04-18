@@ -77,170 +77,170 @@ export default function ShowManager() {
   const paginated = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <section className="bg-white p-4 rounded-lg shadow space-y-4">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-semibold">🎥 All Shows</h2>
-          <button
-            onClick={() => router.push("/dashboard/admin/manageShow")}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 text-sm rounded"
-          >
-            ➕ 添加新场次
-          </button>
-        </div>
-        <button
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          {isExpanded ? "🔽 折叠" : "▶️ 展开"}
-        </button>
-      </div>
-
-      {isExpanded && (
-        <>
-          {/* 筛选器 */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <label>
-              🎞️ 电影：
-              <select
-                value={filterMovieId}
-                onChange={(e) => setFilterMovieId(e.target.value)}
-                className="border p-2 rounded ml-2"
-              >
-                <option value="">全部</option>
-                {movies.map((movie) => (
-                  <option key={movie.id} value={movie.id}>{movie.name}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              📅 起始日期：
-              <input
-                type="date"
-                value={filterStartDate}
-                onChange={(e) => setFilterStartDate(e.target.value)}
-                className="border p-2 rounded ml-2"
-              />
-            </label>
-
-            <label>
-              📅 结束日期：
-              <input
-                type="date"
-                value={filterEndDate}
-                onChange={(e) => setFilterEndDate(e.target.value)}
-                className="border p-2 rounded ml-2"
-              />
-            </label>
-
-            <label>
-              📦 状态：
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="border p-2 rounded ml-2"
-              >
-                <option value="">全部</option>
-                <option value="DRAFT">待提交</option>
-                <option value="PUBLISHED">已提交</option>
-                <option value="CANCELLED">已取消</option>
-              </select>
-            </label>
-
-            <label>
-              📊 排序：
-              <select
-                value={sortKey}
-                onChange={(e) => setSortKey(e.target.value)}
-                className="border p-2 rounded ml-2"
-              >
-                <option value="time">按时间</option>
-                <option value="name">按电影名称</option>
-              </select>
-            </label>
-
+      <section className="bg-white p-4 rounded-lg shadow space-y-4">
+        <div className="flex justify-between items-center flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-semibold">🎥 All Shows</h2>
             <button
-              onClick={() => {
-                setFilterMovieId("");
-                setFilterStartDate("");
-                setFilterEndDate("");
-                setFilterStatus("");
-              }}
-              className="text-sm text-blue-600 hover:underline"
+                onClick={() => router.push("/dashboard/admin/manageShow")}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 text-sm rounded"
             >
-              🔄 清除筛选
+              ➕ Add New Show
             </button>
           </div>
+          <button
+              onClick={() => setIsExpanded((prev) => !prev)}
+              className="text-sm text-blue-600 hover:underline"
+          >
+            {isExpanded ? "🔽 Collapse" : "▶️ Expand"}
+          </button>
+        </div>
 
-          {/* 总条数 & 分页 */}
-          <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
-            <span>
-              共 {filtered.length} 条记录，当前第 {currentPage} 页 / 共 {totalPages} 页
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white"}`}
-              >
-                ⬅️ 上一页
-              </button>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white"}`}
-              >
-                下一页 ➡️
-              </button>
-            </div>
-          </div>
+        {isExpanded && (
+            <>
+              {/* Filters */}
+              <div className="flex flex-wrap gap-4 items-center">
+                <label>
+                  🎞️ Movie:
+                  <select
+                      value={filterMovieId}
+                      onChange={(e) => setFilterMovieId(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  >
+                    <option value="">All</option>
+                    {movies.map((movie) => (
+                        <option key={movie.id} value={movie.id}>{movie.name}</option>
+                    ))}
+                  </select>
+                </label>
 
-          {/* Show 列表 */}
-          {paginated.length === 0 ? (
-            <p className="text-gray-500 text-center">暂无符合条件的排片</p>
-          ) : (
-            paginated.map((show) => (
-              <div key={show.id} className="flex justify-between items-center border p-2 rounded mb-2">
-                <div className="space-y-1">
-                  <p className="text-lg font-semibold">{show.movie.name}</p>
-                  <p className="text-sm text-gray-700">⏰ {formatDate(show.beginTime)} - {formatDate(show.endTime)}</p>
-                  <p className="text-sm text-gray-600">💰 票价：¥{show.price?.toFixed(2) ?? "未设定"}</p>
-                  <p className="text-sm text-gray-600">
-                    📦 状态：
-                    {show.status === "DRAFT" && <span className="text-yellow-600 font-medium">待提交</span>}
-                    {show.status === "PUBLISHED" && <span className="text-green-600 font-medium">已提交</span>}
-                    {show.status === "CANCELLED" && <span className="text-gray-500 line-through">已取消</span>}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    🎟️ 售票：{show.soldTickets} / {show.totalSeats ?? "?"} 张
-                  </p>
-                </div>
+                <label>
+                  📅 Start Date:
+                  <input
+                      type="date"
+                      value={filterStartDate}
+                      onChange={(e) => setFilterStartDate(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  />
+                </label>
+
+                <label>
+                  📅 End Date:
+                  <input
+                      type="date"
+                      value={filterEndDate}
+                      onChange={(e) => setFilterEndDate(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  />
+                </label>
+
+                <label>
+                  📦 Status:
+                  <select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  >
+                    <option value="">All</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="PUBLISHED">Published</option>
+                    <option value="CANCELLED">Cancelled</option>
+                  </select>
+                </label>
+
+                <label>
+                  📊 Sort by:
+                  <select
+                      value={sortKey}
+                      onChange={(e) => setSortKey(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  >
+                    <option value="time">By Time</option>
+                    <option value="name">By Movie Name</option>
+                  </select>
+                </label>
+
                 <button
-                  onClick={() => router.push(`/dashboard/admin/manageMovie/${show.movie.id}/shows`)}
-                  className="text-blue-600 hover:underline"
+                    onClick={() => {
+                      setFilterMovieId("");
+                      setFilterStartDate("");
+                      setFilterEndDate("");
+                      setFilterStatus("");
+                    }}
+                    className="text-sm text-blue-600 hover:underline"
                 >
-                  🔍 详情
+                  🔄 Clear Filters
                 </button>
               </div>
-            ))
-          )}
 
-          {/* 分页页码按钮 */}
-          <div className="flex justify-center gap-2 mt-4">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded border ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-white"}`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </section>
+              {/* Total & Pagination */}
+              <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
+            <span>
+              {filtered.length} total records, page {currentPage} of {totalPages}
+            </span>
+                <div className="flex gap-2">
+                  <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      className={`px-3 py-1 rounded border ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white"}`}
+                  >
+                    ⬅️ Previous
+                  </button>
+                  <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                      className={`px-3 py-1 rounded border ${currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white"}`}
+                  >
+                    Next ➡️
+                  </button>
+                </div>
+              </div>
+
+              {/* Show List */}
+              {paginated.length === 0 ? (
+                  <p className="text-gray-500 text-center">No matching shows found.</p>
+              ) : (
+                  paginated.map((show) => (
+                      <div key={show.id} className="flex justify-between items-center border p-2 rounded mb-2">
+                        <div className="space-y-1">
+                          <p className="text-lg font-semibold">{show.movie.name}</p>
+                          <p className="text-sm text-gray-700">⏰ {formatDate(show.beginTime)} - {formatDate(show.endTime)}</p>
+                          <p className="text-sm text-gray-600">💰 Price: ¥{show.price?.toFixed(2) ?? "N/A"}</p>
+                          <p className="text-sm text-gray-600">
+                            📦 Status:
+                            {show.status === "DRAFT" && <span className="text-yellow-600 font-medium">Draft</span>}
+                            {show.status === "PUBLISHED" && <span className="text-green-600 font-medium">Published</span>}
+                            {show.status === "CANCELLED" && <span className="text-gray-500 line-through">Cancelled</span>}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            🎟️ Tickets Sold: {show.soldTickets} / {show.totalSeats ?? "?"}
+                          </p>
+                        </div>
+                        <button
+                            onClick={() => router.push(`/dashboard/admin/manageMovie/${show.movie.id}/shows`)}
+                            className="text-blue-600 hover:underline"
+                        >
+                          🔍 Details
+                        </button>
+                      </div>
+                  ))
+              )}
+
+              {/* Page Numbers */}
+              <div className="flex justify-center gap-2 mt-4">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                        key={i + 1}
+                        onClick={() => setCurrentPage(i + 1)}
+                        className={`px-3 py-1 rounded border ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-white"}`}
+                    >
+                      {i + 1}
+                    </button>
+                ))}
+              </div>
+            </>
+        )}
+      </section>
   );
 }
 

@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-// 获取最近签到记录（5条）
+// get recent checkin history
 export async function getRecentCheckins() {
     const scans = await prisma.qRScanRecord.findMany({
         orderBy: { scanTime: "desc" },
@@ -52,7 +52,7 @@ export async function getSeatStatusByShow(showId: string) {
     }));
 }
 
-// 获取当天的 Show
+// get today's Show
 export async function getTodayShows() {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
@@ -105,7 +105,7 @@ export async function getCheckedSeats(showId: string) {
         include: {
             ticket: {
                 select: {
-                    status: true, // 获取 VALID / CHECKED 等状态
+                    status: true, // VALID / CHECKED
                 },
             },
         },

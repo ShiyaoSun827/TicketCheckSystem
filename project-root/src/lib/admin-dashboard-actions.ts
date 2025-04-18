@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-// === 🎬 Movie 管理 ===
+// === 🎬 Movie Management ===
 
 export async function getMovies() {
   return await prisma.movie.findMany({
@@ -17,7 +17,7 @@ export async function getMovieById(id: string) {
   return await prisma.movie.findUnique({
     where: { id },
     include: {
-      shows: true, // 显示排片信息
+      shows: true, // show movie informaion
     },
   });
 }
@@ -65,7 +65,7 @@ export async function deleteMovie(id: string) {
   await prisma.movie.delete({ where: { id } });
 }
 
-// === 🎟️ Show 排片管理 ===
+// === 🎟️ Show  ===
 
 // export async function getAllShows() {
 //   return await prisma.show.findMany({
@@ -95,7 +95,7 @@ export async function getAllShows() {
     price: show.price,
     status: show.status,
     soldTickets: show._count.tickets,
-    totalSeats: 80, // 或者从 room 信息中读取（如果你的系统支持多放映厅）
+    totalSeats: 80, // get data from 'room'
   }));
 }
 
@@ -142,7 +142,7 @@ export async function updateShow({
     },
   });
 
-  if (existing) throw new Error("修改后的时间段与其他排片冲突");
+  if (existing) throw new Error("The modified time slots conflict with other");
 
   return await prisma.show.update({
     where: { id: showId },
@@ -155,7 +155,7 @@ export async function updateShow({
 }
 
 export async function updateShowPrice(showId: string, price: number) {
-  if (price <= 0) throw new Error("价格必须为正数");
+  if (price <= 0) throw new Error("Price must be positive");
 
   return await prisma.show.update({
     where: { id: showId },
@@ -171,22 +171,18 @@ export async function cancelShow(showId: string) {
   });
 }
 
-/**
- * 创建排片
- * 自动根据电影时长推算 endTime
- * 检查同电影是否存在时间冲突（忽略已取消）
- */
+
 export async function createShow({
   movieID,
   beginTime,
-  price, // ✅ 记得传入票价
+  price,
 }: {
   movieID: string;
   beginTime: string;
   price: number;
 }) {
   const movie = await prisma.movie.findUnique({ where: { id: movieID } });
-  if (!movie) throw new Error("电影不存在");
+  if (!movie) throw new Error("Movies don't exist");
 
   const begin = new Date(beginTime);
   const end = new Date(begin.getTime() + (movie.length ?? 120) * 1000);
@@ -200,7 +196,7 @@ export async function createShow({
   });
 
   if (conflict) {
-    throw new Error("该时间段已有排片");
+    throw new Error("This time period has been arranged");
   }
 
   const newShow = await prisma.show.create({
@@ -212,7 +208,7 @@ export async function createShow({
     },
   });
 
-  // ✅ 初始化座位（8行 x 10列）
+  // ✅ initialize seat
   await prisma.seat.createMany({
     data: Array.from({ length: 8 * 10 }, (_, i) => {
       const row = String.fromCharCode(65 + Math.floor(i / 10)); // A-H
@@ -224,7 +220,7 @@ export async function createShow({
   return newShow;
 }
 
-// === 👤 用户管理 ===
+// === 👤 User Management ===
 
 export async function getAllUsers() {
   return await prisma.user.findMany({
@@ -245,7 +241,7 @@ export async function updateUserRole(userId: string, role: string) {
   });
 }
 
-// === 🔐 获取当前登录用户信息（仅 Staff 面板用） ===
+// === 🔐 Get user login information ===
 
 export async function getStaffProfile() {
   const session = await auth.api.getSession({

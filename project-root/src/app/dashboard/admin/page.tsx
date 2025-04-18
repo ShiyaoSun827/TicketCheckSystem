@@ -10,8 +10,8 @@ import {
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import NavBarClient from "@/components/NavBarClient";
-import MovieManager from "./MovieManager"; // ✅ 新增导入
-import ShowManager from "./ShowManager";   // ✅ 保持原有功能
+import MovieManager from "./MovieManager";
+import ShowManager from "./ShowManager";
 
 export default function AdminDashboardPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
         </button>
       </div>
 
-      {/* 🧾 Profile 区域 */}
+      {/* 🧾 Profile */}
       {profile && (
         <section className="bg-white p-4 rounded-lg shadow">
           <h2 className="text-2xl font-semibold mb-2">🧾 Profile</h2>
@@ -71,13 +71,13 @@ export default function AdminDashboardPage() {
         </section>
       )}
 
-      {/* 🎞️ 所有电影模块 */}
+      {/* 🎞️ All movie */}
       <MovieManager />
 
-      {/* 🎥 所有排片模块 */}
+      {/* 🎥 All session row */}
       <ShowManager />
 
-      {/* 👥 用户角色管理模块 */}
+      {/* 👥 User Management */}
       <section className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-2xl font-semibold mb-4">👥 Manage User Roles</h2>
         {userMsg && <p className="text-green-600">{userMsg}</p>}

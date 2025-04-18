@@ -12,7 +12,7 @@ import { getSession } from "@/hooks/getSession";
 export async function refundTicket(ticketId: string) {
   const session = await getSession();
   if (!session?.user?.id) {
-    return { success: false, message: "用户未登录" };
+    return { success: false, message: "User not logged in" };
   }
 
   const ticket = await prisma.ticket.findUnique({
@@ -24,18 +24,18 @@ export async function refundTicket(ticketId: string) {
   });
 
   if (!ticket) {
-    return { success: false, message: "未找到该票" };
+    return { success: false, message: "Ticket not found" };
   }
 
   if (ticket.userID !== session.user.id) {
-    return { success: false, message: "无权退票" };
+    return { success: false, message: "Unauthorized to refund this ticket" };
   }
 
   if (ticket.status !== "VALID") {
-    return { success: false, message: "该票不可退" };
+    return { success: false, message: "Ticket is not refundable" };
   }
 
-  // 修改票状态为 REFUNDED
+  // change status to REFUNDED
   await prisma.ticket.update({
     where: { id: ticketId },
     data: {
@@ -44,7 +44,7 @@ export async function refundTicket(ticketId: string) {
     },
   });
 
-  // 将该座位的 reserved 状态设为 false
+  // set reserve to false
   await prisma.seat.updateMany({
     where: {
       ticketId: ticketId,
@@ -55,7 +55,7 @@ export async function refundTicket(ticketId: string) {
     },
   });
 
-  // 钱包退款
+  // redfund
   const wallet = await prisma.wallet.findUnique({
     where: { userId: session.user.id },
   });
@@ -73,12 +73,12 @@ export async function refundTicket(ticketId: string) {
         walletId: wallet.id,
         type: "REFUND",
         amount: ticket.show.price,
-        note: `退票：${ticket.show.movieID} 场次`,
+        note: `Refund for show：${ticket.show.movieID} Number of shows`,
       },
     });
   }
 
-  return { success: true, message: "退票成功" };
+  return { success: true, message: "Ticket refunded successfully" };
 }
 
 
@@ -86,7 +86,7 @@ export async function refundTicket(ticketId: string) {
 export async function createAndPayOrder(showId: string) {
   const session = await getSession();
   if (!session?.user) {
-    return { success: false, message: "请先登录" };
+    return { success: false, message: "Please log in first" };
   }
 
   const userId = session.user.id;
@@ -96,7 +96,7 @@ export async function createAndPayOrder(showId: string) {
   });
 
   if (cartItems.length === 0) {
-    return { success: false, message: "购物车为空" };
+    return { success: false, message: "Shopping cart is empty" };
   }
 
   const show = await prisma.show.findUnique({
@@ -105,7 +105,7 @@ export async function createAndPayOrder(showId: string) {
   });
 
   if (!show || show.status === "CANCELLED") {
-    return { success: false, message: "无效的场次" };
+    return { success: false, message: "Invalid sessions" };
   }
 
   const total = cartItems.length * show.price;
@@ -113,12 +113,12 @@ export async function createAndPayOrder(showId: string) {
   const wallet = await prisma.wallet.findUnique({ where: { userId } });
 
   if (!wallet || wallet.balance < total) {
-    return { success: false, message: "余额不足" };
+    return { success: false, message: "Insufficient balance" };
   }
 
-  // ✅ 使用事务确保原子性
+  // ✅ Use transactions to ensure atomicity
   await prisma.$transaction(async (tx) => {
-    // 1. 创建订单
+    // 1. Creating an order
     const order = await tx.order.create({
       data: {
         userId,
@@ -134,7 +134,7 @@ export async function createAndPayOrder(showId: string) {
       },
     });
 
-    // 2. 钱包扣款并记录交易
+    // 2. Wallet debits and records transactions
     await tx.wallet.update({
       where: { userId },
       data: {
@@ -143,17 +143,17 @@ export async function createAndPayOrder(showId: string) {
           create: {
             type: "PAYMENT",
             amount: total,
-            note: `订单 ${order.id} 支付`,
+            note: `order ${order.id} payment`,
           },
         },
       },
     });
 
-    // 3. 为每个 CartItem 创建 Ticket，并更新对应 Seat
+    // 3. Create a Ticket for each CartItem and update the corresponding Seat
     for (const item of cartItems) {
       const match = item.seat.match(/^([A-Z])(\d+)$/);
       if (!match) {
-        throw new Error(`无效座位格式：${item.seat}`);
+        throw new Error(`Invalid seat format：${item.seat}`);
       }
       const [, row, col] = match;
     
@@ -182,7 +182,7 @@ export async function createAndPayOrder(showId: string) {
     }
     
 
-    // 4. 清空购物车
+    // 4. Empty the shopping cart
     await tx.cartItem.deleteMany({
       where: { userId, showId },
     });
@@ -215,7 +215,7 @@ export async function toggleFavorite(movieId: string) {
     headers: new Headers(await headers()),
   });
 
-  if (!session?.user) return { success: false, message: "未登录" };
+  if (!session?.user) return { success: false, message: "Not logged in" };
 
   const existing = await prisma.favorite.findUnique({
     where: {
@@ -317,7 +317,7 @@ export async function payForOrder(orderId: string) {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
   });
-  if (!session?.user) throw new Error("未登录用户");
+  if (!session?.user) throw new Error("User is not logged in");
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -325,7 +325,7 @@ export async function payForOrder(orderId: string) {
   });
 
   if (!order || order.status !== "PENDING") {
-    throw new Error("订单不存在或无法支付");
+    throw new Error("Order does not exist or cannot be paid");
   }
 
   const total = order.total;
@@ -335,33 +335,32 @@ export async function payForOrder(orderId: string) {
   });
 
   if (!wallet || wallet.balance < total) {
-    throw new Error("余额不足");
+    throw new Error("Insufficient balance");
   }
 
   await prisma.$transaction([
-    // 1. 扣款
     prisma.wallet.update({
       where: { userId: session.user.id },
       data: { balance: { decrement: total } },
     }),
 
-    // 2. 添加交易记录
+    // 2. Adding transaction records
     prisma.walletTransaction.create({
       data: {
         walletId: wallet.id,
         type: "PAYMENT",
         amount: -total,
-        note: `支付订单 ${orderId}`,
+        note: `Payment for order ${orderId}`,
       },
     }),
 
-    // 3. 更新订单状态
+    // 3. Update order status
     prisma.order.update({
       where: { id: orderId },
       data: { status: "PAID" },
     }),
 
-    // 4. 生成电影票
+    // 4. Generate movie tickets
     ...order.items.map((item) =>
       prisma.ticket.create({
         data: {
@@ -369,12 +368,12 @@ export async function payForOrder(orderId: string) {
           showId: item.showId,
           seatRow: item.seat[0],
           seatCol: parseInt(item.seat.slice(1), 10),
-          qrCode: `TICKET-${item.showId}-${item.seat}`, // ✅ 作为二维码内容
+          qrCode: `TICKET-${item.showId}-${item.seat}`, // ✅ save qrcode
         },
       })
     ),
 
-    // 5. 标记座位为 reserved
+    // 5. Mark the seat as reserved
     ...order.items.map((item) =>
       prisma.seat.updateMany({
         where: {
@@ -410,9 +409,9 @@ export async function createOrderFromCart(selectedIds: string[]) {
     headers: new Headers(await headers()),
   });
   const user = session?.user;
-  if (!user) throw new Error("未登录");
+  if (!user) throw new Error("not log in");
 
-  // 获取用户选中的购物车条目
+  // Gets the shopping cart item selected by the user
   const cartItems = await prisma.cartItem.findMany({
     where: {
       id: { in: selectedIds },
@@ -423,12 +422,11 @@ export async function createOrderFromCart(selectedIds: string[]) {
     },
   });
 
-  if (cartItems.length === 0) throw new Error("购物车为空");
+  if (cartItems.length === 0) throw new Error("Shopping cart is empty");
 
-  // 计算总价
   const total = cartItems.reduce((sum, item) => sum + item.show.price, 0);
 
-  // 创建订单
+  //  Create order
   const order = await prisma.order.create({
     data: {
       userId: user.id,
@@ -447,7 +445,7 @@ export async function createOrderFromCart(selectedIds: string[]) {
     },
   });
 
-  // 删除已生成订单的购物车项
+  // Delete cart item for generated order
   await prisma.cartItem.deleteMany({
     where: {
       id: { in: selectedIds },
@@ -463,7 +461,7 @@ export async function rechargeWallet(amount: number) {
     headers: new Headers(await headers()),
   });
 
-  if (!session?.user) throw new Error("未登录用户无法充值");
+  if (!session?.user) throw new Error("Cannot recharge user if not logged in");
 
   const userId = session.user.id;
 
@@ -485,7 +483,7 @@ export async function rechargeWallet(amount: number) {
       walletId: wallet.id,
       type: "RECHARGE",
       amount,
-      note: "用户充值",
+      note: "RECHARGE",
     },
   });
 
@@ -499,7 +497,7 @@ export async function getWalletInfo() {
 
   if (!session?.user) return null;
 
-  // 查询钱包和交易记录
+  // Query wallet and transaction history
   const wallet = await prisma.wallet.findUnique({
     where: { userId: session.user.id },
     include: {
@@ -509,7 +507,7 @@ export async function getWalletInfo() {
     },
   });
 
-  // 若钱包尚未初始化（可能用户首次登录），创建新钱包
+  // Create a new wallet if the wallet is not initialized yet (maybe the user is logged in for the first time)
   if (!wallet) {
     const newWallet = await prisma.wallet.create({
       data: {
@@ -534,7 +532,7 @@ export async function getShowById(showId: string) {
   return await prisma.show.findUnique({
     where: { id: showId },
     include: {
-      movie: true, // 包含关联电影信息
+      movie: true,
     },
   });
 }
@@ -545,10 +543,10 @@ export async function addToCart(showId: string, seats: string[]) {
   });
 
   const userId = session?.user?.id;
-  if (!userId) throw new Error("用户未登录");
+  if (!userId) throw new Error("User is not logged in");
 
   if (!Array.isArray(seats)) {
-    throw new Error("无效的座位格式");
+    throw new Error("Invalid seating format");
   }
 
   const data = seats.map((seat) => ({
@@ -580,7 +578,7 @@ export async function getCartItems() {
 
   return rawItems.map((item) => ({
     id: item.id,
-    showId: item.showId, // ✅ 添加 showId 用于页面比对
+    showId: item.showId,
     movieTitle: item.show.movie.name,
     image: item.show.movie.image,
     showTime: item.show.beginTime,
@@ -600,7 +598,7 @@ export async function deleteCartItem(
   if (!session?.user) return;
 
   if (typeof identifier === "string") {
-    // ✅ 添加 userId 限制
+
     await prisma.cartItem.deleteMany({
       where: {
         id: identifier,
@@ -608,7 +606,7 @@ export async function deleteCartItem(
       },
     });
   } else {
-    // ✅ 传入的是 { showId, seat }
+
     const { showId, seat } = identifier;
     await prisma.cartItem.deleteMany({
       where: {
@@ -634,7 +632,7 @@ export async function deleteCartItems(cartItemIds: string[]) {
   });
 }
 
-// ✅ 获取当前登录用户的购物车数量
+
 export async function getCartCount() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
@@ -648,7 +646,6 @@ export async function getCartCount() {
   return count;
 }
 
-// ✅ 获取当前登录用户的订单数量（所有状态）
 export async function getOrderCount() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
@@ -662,7 +659,6 @@ export async function getOrderCount() {
   return count;
 }
 
-// ✅ 获取当前登录用户的已购票数量
 export async function getTicketCount() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),
@@ -676,7 +672,6 @@ export async function getTicketCount() {
   return count;
 }
 
-// ✅ 获取当前登录用户的钱包余额
 export async function getWalletBalance() {
   const session = await auth.api.getSession({
     headers: new Headers(await headers()),

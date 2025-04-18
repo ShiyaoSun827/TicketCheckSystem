@@ -6,15 +6,15 @@ import Link from "next/link";
 export interface Movie {
   id: string;
   name: string;
-  length: number; // 电影时长（秒）
-  rate: number;   // 电影评分（0～10 的一位小数）
+  length: number; // film time
+  rate: number;   // film rate
   image?: string;
   description?: string;
 }
 
 interface MovieCardProps {
   movie: Movie;
-  isAdmin?: boolean; // 如果为 true，则显示管理员操作按钮
+  isAdmin?: boolean; // show admin button
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
 }
@@ -22,7 +22,7 @@ interface MovieCardProps {
 export default function MovieCard({ movie, isAdmin = false, onDelete, onEdit }: MovieCardProps) {
     return (
         <div className="flex flex-col sm:flex-row items-start gap-4 border p-4 rounded bg-white shadow-sm">
-            {/* 图片区域 */}
+            {/* pic */}
             <div className="flex-shrink-0 self-center sm:self-start">
                 {movie.image ? (
                     <img
@@ -37,9 +37,9 @@ export default function MovieCard({ movie, isAdmin = false, onDelete, onEdit }: 
                 )}
             </div>
 
-            {/* 文字 + 按钮区域 */}
+
             <div className="flex-1 flex flex-col gap-2">
-                {/* 电影信息 */}
+
                 <div>
                     <h3 className="text-xl font-semibold">{movie.name}</h3>
                     <p className="text-sm text-gray-600">
@@ -50,12 +50,12 @@ export default function MovieCard({ movie, isAdmin = false, onDelete, onEdit }: 
                     </p>
                 </div>
 
-                {/* 描述 */}
+                {/* description */}
                 <p className="text-sm text-gray-500">
                     {movie.description || <i className="text-gray-400">No description available</i>}
                 </p>
 
-                {/* 按钮 */}
+                {/* button */}
                 <div className="flex flex-wrap gap-2 mt-2">
                     {isAdmin ? (
                         <>

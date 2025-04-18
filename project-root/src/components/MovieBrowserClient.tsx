@@ -15,7 +15,7 @@ export default function MovieBrowserClient() {
 
     useEffect(() => {
         async function fetchData() {
-            const allMovies = await getMovies(); // ✅ 注意这里要支持 client 调用（或通过 API proxy）
+            const allMovies = await getMovies(); // ✅ allow client to apply
             setMovies(allMovies);
             setLoading(false);
         }

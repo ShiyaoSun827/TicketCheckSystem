@@ -47,136 +47,136 @@ export default function MovieManager() {
   const paginated = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <section className="bg-white p-4 rounded-lg shadow space-y-4">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <h2 className="text-2xl font-semibold">🎞️ All Movies</h2>
-        <button
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          {isExpanded ? "🔽 折叠" : "▶️ 展开"}
-        </button>
-      </div>
-
-      {isExpanded && (
-        <>
-          {/* 筛选器 */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <label>
-              🔍 名称：
-              <input
-                type="text"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                className="border p-2 rounded ml-2"
-              />
-            </label>
-
-            <label>
-              🎭 类型：
-              <input
-                type="text"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="border p-2 rounded ml-2"
-              />
-            </label>
-
-            <label>
-              📊 排序：
-              <select
-                value={sortKey}
-                onChange={(e) => setSortKey(e.target.value)}
-                className="border p-2 rounded ml-2"
-              >
-                <option value="name">按名称</option>
-                <option value="time">按上映时间</option>
-              </select>
-            </label>
-
-            <button
-              onClick={() => {
-                setSearchName("");
-                setTypeFilter("");
-              }}
+      <section className="bg-white p-4 rounded-lg shadow space-y-4">
+        <div className="flex justify-between items-center flex-wrap gap-4">
+          <h2 className="text-2xl font-semibold">🎞️ All Movies</h2>
+          <button
+              onClick={() => setIsExpanded((prev) => !prev)}
               className="text-sm text-blue-600 hover:underline"
-            >
-              🔄 清除筛选
-            </button>
-          </div>
+          >
+            {isExpanded ? "🔽 Collapse" : "▶️ Expand"}
+          </button>
+        </div>
 
-          {/* 总条数 & 翻页 */}
-          <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
-            <span>
-              共 {filtered.length} 部电影，当前第 {currentPage} 页 / 共 {totalPages} 页
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === 1 ? "bg-gray-200 text-gray-400" : "bg-white"
-                }`}
-              >
-                ⬅️ 上一页
-              </button>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === totalPages ? "bg-gray-200 text-gray-400" : "bg-white"
-                }`}
-              >
-                下一页 ➡️
-              </button>
-            </div>
-          </div>
+        {isExpanded && (
+            <>
+              {/* Filters */}
+              <div className="flex flex-wrap gap-4 items-center">
+                <label>
+                  🔍 Name:
+                  <input
+                      type="text"
+                      value={searchName}
+                      onChange={(e) => setSearchName(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  />
+                </label>
 
-          {/* Movie 列表，每行一个，简介独立列 */}
-          <div className="space-y-4">
-            {paginated.map((movie) => (
-              <div
-                key={movie.id}
-                className="flex justify-between items-start border p-4 rounded shadow hover:shadow-md transition"
-              >
-                {/* 左侧信息栏 */}
-                <div className="flex gap-4 w-2/3">
-                  {movie.image && (
-                    <img
-                      src={movie.image}
-                      alt={movie.name}
-                      className="w-24 h-32 object-cover rounded"
-                    />
-                  )}
-                  <div>
-                    <h3 className="text-xl font-semibold">{movie.name}</h3>
-                    <p className="text-sm text-gray-700 mt-1">
-                      ⏰ 上映时间：{new Date(movie.showTime).toLocaleString() || "N/A"}
-                    </p>
-                    <p className="text-sm text-gray-700">🎬 类型：{movie.type}</p>
-                    <p className="text-sm text-gray-700">⌛ 时长：{movie.length} 秒</p>
-                  </div>
-                </div>
+                <label>
+                  🎭 Type:
+                  <input
+                      type="text"
+                      value={typeFilter}
+                      onChange={(e) => setTypeFilter(e.target.value)}
+                      className="border p-2 rounded ml-2"
+                  />
+                </label>
 
-                {/* 中间简介栏 */}
-                <div className="w-full max-w-[500px] text-sm text-gray-600 px-4 line-clamp-6">
-                  📖 简介：{movie.description}
-                </div>
-
-                {/* 右侧详情按钮 */}
-                <div className="flex items-center">
-                  <button
-                    onClick={() => router.push(`/dashboard/admin/manageMovie/${movie.id}/shows`)}
-                    className="text-blue-600 hover:underline whitespace-nowrap"
+                <label>
+                  📊 Sort by:
+                  <select
+                      value={sortKey}
+                      onChange={(e) => setSortKey(e.target.value)}
+                      className="border p-2 rounded ml-2"
                   >
-                    🔍 详情
+                    <option value="name">By Name</option>
+                    <option value="time">By Showtime</option>
+                  </select>
+                </label>
+
+                <button
+                    onClick={() => {
+                      setSearchName("");
+                      setTypeFilter("");
+                    }}
+                    className="text-sm text-blue-600 hover:underline"
+                >
+                  🔄 Reset Filters
+                </button>
+              </div>
+
+              {/* Total Count & Pagination */}
+              <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
+            <span>
+              Total: {filtered.length} movies, Page {currentPage} of {totalPages}
+            </span>
+                <div className="flex gap-2">
+                  <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                      className={`px-3 py-1 rounded border ${
+                          currentPage === 1 ? "bg-gray-200 text-gray-400" : "bg-white"
+                      }`}
+                  >
+                    ⬅️ Previous
+                  </button>
+                  <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                      className={`px-3 py-1 rounded border ${
+                          currentPage === totalPages ? "bg-gray-200 text-gray-400" : "bg-white"
+                      }`}
+                  >
+                    Next ➡️
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </>
-      )}
-    </section>
+
+              {/* Movie List - One per row, with separate description section */}
+              <div className="space-y-4">
+                {paginated.map((movie) => (
+                    <div
+                        key={movie.id}
+                        className="flex justify-between items-start border p-4 rounded shadow hover:shadow-md transition"
+                    >
+                      {/* Left Column: Movie Info */}
+                      <div className="flex gap-4 w-2/3">
+                        {movie.image && (
+                            <img
+                                src={movie.image}
+                                alt={movie.name}
+                                className="w-24 h-32 object-cover rounded"
+                            />
+                        )}
+                        <div>
+                          <h3 className="text-xl font-semibold">{movie.name}</h3>
+                          <p className="text-sm text-gray-700 mt-1">
+                            ⏰ Showtime: {new Date(movie.showTime).toLocaleString() || "N/A"}
+                          </p>
+                          <p className="text-sm text-gray-700">🎬 Type: {movie.type}</p>
+                          <p className="text-sm text-gray-700">⌛ Duration: {movie.length} seconds</p>
+                        </div>
+                      </div>
+
+                      {/* Center Column: Description */}
+                      <div className="w-full max-w-[500px] text-sm text-gray-600 px-4 line-clamp-6">
+                        📖 Description: {movie.description}
+                      </div>
+
+                      {/* Right Column: Details Button */}
+                      <div className="flex items-center">
+                        <button
+                            onClick={() => router.push(`/dashboard/admin/manageMovie/${movie.id}/shows`)}
+                            className="text-blue-600 hover:underline whitespace-nowrap"
+                        >
+                          🔍 Details
+                        </button>
+                      </div>
+                    </div>
+                ))}
+              </div>
+            </>
+        )}
+      </section>
   );
 }
