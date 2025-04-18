@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9"
+  },
+  "dependencies": {
+    "html5-qrcode": "^2.3.8"
   }
 }

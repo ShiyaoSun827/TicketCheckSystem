@@ -55,8 +55,10 @@ export async function signInWithEmail(formData: FormData) {
   console.log("TTTTTTTTTT User data role:", userData.role);
   const role = userData?.role || "user";
   let targetUrl = "/dashboard/user";
-  if(userData?.role === "admin"){
+  if (role === "admin") {
     targetUrl = "/dashboard/admin";
+  } else if (role === "staff") {
+    targetUrl = "/dashboard/staff";
   }
   console.log("TTTTTTTtargetUrl:", targetUrl);
   return {
