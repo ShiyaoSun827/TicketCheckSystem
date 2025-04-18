@@ -112,7 +112,7 @@ model Ticket {
   seatRow String
   seatCol Int
 
-  qrCode     String? // 二维码内容或图片地址
+  qrCode     String?   @unique // 二维码内容或图片地址
   status     String    @default("VALID") // VALID / CHECKED / CANCELLED / REFUNDED
   createdAt  DateTime  @default(now())
   refundedAt DateTime? // ✅ 退票时间（可选）

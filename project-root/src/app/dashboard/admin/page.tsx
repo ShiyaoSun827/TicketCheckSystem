@@ -91,18 +91,20 @@ export default function StaffDashboardPage() {
 
   const { session } = authClient.useSession();
 
+  async function handleRoleChange(userId: string, newRole: string) {
+    await updateUserRole(userId, newRole);
+    const updated = await getAllUsers();
+    setUsers(updated);
+    setUserMsg(`✅ Role updated to ${newRole}`);
+  }
+
   return (
-      <div className="p-6 space-y-10">
+      <div className="p-4 md:p-6 space-y-10 max-w-screen-xl mx-auto">
         <NavBarClient session={session} />
         <h1 className="text-3xl font-bold">🧑‍💼 Admin Dashboard</h1>
 
-        {/* Grid 左右布局 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          {/* 左侧：Profile + Create Showtimes */}
           <div className="space-y-8">
-
-            {/* 🧾 Profile 区块 */}
             {profile && (
                 <section className="bg-white p-4 rounded-lg shadow">
                   <h2 className="text-2xl font-semibold mb-2">🧾 Profile</h2>
@@ -112,21 +114,41 @@ export default function StaffDashboardPage() {
                 </section>
             )}
 
-            {/* 🎭 Create Showtimes */}
             <section className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-2xl font-semibold mb-4">🎭 Create Showtimes</h2>
-              <div className="flex flex-wrap gap-2 items-center mb-4">
-                <select className="border p-2 rounded" value={selectedMovie} onChange={(e) => setSelectedMovie(e.target.value)}>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 mb-4">
+                <select
+                    className="border p-2 rounded-md"
+                    value={selectedMovie}
+                    onChange={(e) => setSelectedMovie(e.target.value)}
+                >
                   <option value="">Select Movie</option>
                   {movies.map((movie) => (
                       <option key={movie.id} value={movie.id}>{movie.name}</option>
                   ))}
                 </select>
 
-                <input type="datetime-local" value={beginTime} onChange={(e) => setBeginTime(e.target.value)} className="border p-2 rounded" />
-                <input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="border p-2 rounded" />
+                <input
+                    type="datetime-local"
+                    placeholder="Start Time"
+                    value={beginTime}
+                    onChange={(e) => setBeginTime(e.target.value)}
+                    className="border p-2 rounded-md"
+                />
+                <input
+                    type="datetime-local"
+                    placeholder="End Time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="border p-2 rounded-md"
+                />
 
-                <button onClick={handleAddShow} className="bg-blue-600 text-white px-4 py-2 rounded">Add Show</button>
+                <button
+                    onClick={handleAddShow}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Add Show
+                </button>
               </div>
 
               {shows.map((show) => (
@@ -135,20 +157,32 @@ export default function StaffDashboardPage() {
                       <p><strong>Movie:</strong> {show.movie.name}</p>
                       <p><strong>Time:</strong> {formatDate(show.beginTime)} - {formatDate(show.endTime)}</p>
                     </div>
-                    <button onClick={() => handleDeleteShow(show.id)} className="text-red-500 hover:underline">Delete</button>
+                    <button
+                        onClick={() => handleDeleteShow(show.id)}
+                        className="text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
                   </div>
               ))}
 
-              <button onClick={() => router.push("/dashboard/admin/manageMovie")} className="bg-yellow-600 text-white px-4 py-2 rounded mt-4 mr-2">
-                Manage Movies
-              </button>
-              <button onClick={() => router.push("/")} className="bg-red-600 text-white px-4 py-2 rounded mt-4">
-                🔐 Logout
-              </button>
+              <div className="flex gap-2 mt-4 flex-wrap">
+                <button
+                    onClick={() => router.push("/dashboard/admin/manageMovie")}
+                    className="bg-yellow-600 text-white px-4 py-2 rounded-md"
+                >
+                  Manage Movies
+                </button>
+                <button
+                    onClick={() => router.push("/")}
+                    className="bg-red-600 text-white px-4 py-2 rounded-md"
+                >
+                  🔐 Logout
+                </button>
+              </div>
             </section>
           </div>
 
-          {/* 右侧：🎥 All Shows */}
           <div className="bg-white p-4 rounded-lg shadow h-fit">
             <h2 className="text-2xl font-semibold mb-4 text-center">🎥 All Shows</h2>
             {shows.map((show) => (
@@ -159,11 +193,10 @@ export default function StaffDashboardPage() {
           </div>
         </div>
 
-        {/* 👥 Manage User Roles：独立展示 */}
-        <section className="bg-white p-4 rounded-lg shadow">
+        <section className="bg-white p-4 rounded-lg shadow overflow-x-auto">
           <h2 className="text-2xl font-semibold mb-4">👥 Manage User Roles</h2>
           {userMsg && <p className="text-green-600">{userMsg}</p>}
-          <table className="w-full border text-sm">
+          <table className="w-full min-w-[600px] border text-sm">
             <thead className="bg-gray-100">
             <tr>
               <th className="p-2 text-left">Name</th>
@@ -179,7 +212,7 @@ export default function StaffDashboardPage() {
                   <td className="p-2">{user.email}</td>
                   <td className="p-2">
                     <select
-                        className="border p-1"
+                        className="border p-1 rounded"
                         value={user.role ?? "attendee"}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     >
@@ -195,6 +228,5 @@ export default function StaffDashboardPage() {
           </table>
         </section>
       </div>
-
   );
 }
