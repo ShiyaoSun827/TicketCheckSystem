@@ -81,8 +81,8 @@ git merge upstream/main     更新合并到你当前所在的 main 分支
 
 
 
-** 增加了 手机端scanner的功能
-Note: 注意在这个分支下的 project-root/src/app/api/checkin/route.ts 的api被修改。现在该API被用于手机端和后端数据库的交互。
+** 增加了 手机端scanner的功能 **
+- Note: 注意在这个分支下的 project-root/src/app/api/checkin/route.ts 的api被修改。现在该API被用于手机端和后端数据库的交互。
 ```
 cd project-root
 cd check_in_mobile
@@ -95,3 +95,5 @@ npm install
 ```
 npx expo start --clear
 ```
+- Note:如果需要测试手机端，从Apple store或者Google store上下载 Expo Go
+- npx expo start --clear 该指令会生成一个二维码，用手机相机扫描即可
