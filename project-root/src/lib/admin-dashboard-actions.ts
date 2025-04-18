@@ -20,15 +20,14 @@ export async function getAllTransactions() {
   });
 }
 
+// Cancel a show and refund all valid tickets
 export async function cancelShowAndRefundTickets(showId: string) {
   try {
-    // 更新该场排片为 CANCELLED 状态
     await prisma.show.update({
       where: { id: showId },
       data: { status: "CANCELLED" },
     });
 
-    // 查询所有 VALID 状态的票（已购买未使用）
     const tickets = await prisma.ticket.findMany({
       where: {
         showId,
@@ -39,18 +38,15 @@ export async function cancelShowAndRefundTickets(showId: string) {
       },
     });
 
-    // 获取价格信息
     const show = await prisma.show.findUnique({
       where: { id: showId },
     });
     const price = show?.price ?? 0;
 
-    // 为每张票退款并修改状态
     for (const ticket of tickets) {
       const wallet = ticket.user.Wallet;
       if (!wallet) continue;
 
-      // 1. 修改票状态为 CANCELLED
       await prisma.ticket.update({
         where: { id: ticket.id },
         data: {
@@ -59,7 +55,6 @@ export async function cancelShowAndRefundTickets(showId: string) {
         },
       });
 
-      // 2. 给钱包退款
       await prisma.wallet.update({
         where: { id: wallet.id },
         data: {
@@ -67,24 +62,24 @@ export async function cancelShowAndRefundTickets(showId: string) {
         },
       });
 
-      // 3. 添加退款记录
       await prisma.walletTransaction.create({
         data: {
           walletId: wallet.id,
           type: "REFUND",
           amount: price,
-          note: `排片取消自动退款（票号: ${ticket.id}）`,
+          note: `Auto refund due to show cancellation (Ticket ID: ${ticket.id})`,
         },
       });
     }
 
     return { success: true };
   } catch (error) {
-    console.error("取消排片失败:", error);
+    console.error("Failed to cancel show:", error);
     return { success: false, message: error.message };
   }
 }
 
+// Cancel individual tickets and issue refund
 export async function cancelTickets(ticketIds: string[]) {
   for (const ticketId of ticketIds) {
     const ticket = await prisma.ticket.findUnique({
@@ -120,7 +115,7 @@ export async function cancelTickets(ticketIds: string[]) {
           walletId: wallet.id,
           type: "REFUND",
           amount: price,
-          note: `🎫 退票退款 (票号: ${ticketId})`,
+          note: `🎫 Ticket refund (Ticket ID: ${ticketId})`,
         },
       }),
     ]);
@@ -163,12 +158,12 @@ export async function getSeatsByShowId(showId: string) {
   return seats;
 }
 
-// === 🎬 Movie 管理 ===
+// === 🎬 Movie Management ===
 export async function getMovies() {
   return await prisma.movie.findMany({
     include: {
       shows: true,
-      Favorite: true, // ✅ 这里改成大写 F
+      Favorite: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -180,7 +175,7 @@ export async function getMovieById(id: string) {
   return await prisma.movie.findUnique({
     where: { id },
     include: {
-      shows: true, // 显示排片信息
+      shows: true,
     },
   });
 }
@@ -228,15 +223,14 @@ export async function deleteMovie(id: string) {
   await prisma.movie.delete({ where: { id } });
 }
 
-// === 🎟️ Show 排片管理 ===
-
+// === 🎟️ Show Management ===
 export async function getAllShows() {
   const rawShows = await prisma.show.findMany({
     include: {
       movie: true,
       _count: {
         select: {
-          tickets: true, // 用于计算已售票数
+          tickets: true,
         },
       },
     },
@@ -251,7 +245,7 @@ export async function getAllShows() {
     price: show.price,
     status: show.status,
     soldTickets: show._count.tickets,
-    totalSeats: 80, // 或者从 room 信息中读取（如果你的系统支持多放映厅）
+    totalSeats: 80,
   }));
 }
 
@@ -290,15 +284,15 @@ export async function updateShow({
   const existing = await prisma.show.findFirst({
     where: {
       id: { not: showId },
-      movieID: {
-        in: (await prisma.show.findUnique({ where: { id: showId } }))?.movieID ?? "",
-      },
+      movieID: (
+          await prisma.show.findUnique({ where: { id: showId } })
+      )?.movieID ?? "",
       beginTime: { lt: end },
       endTime: { gt: begin },
     },
   });
 
-  if (existing) throw new Error("修改后的时间段与其他排片冲突");
+  if (existing) throw new Error("The updated time conflicts with another show.");
 
   return await prisma.show.update({
     where: { id: showId },
@@ -311,7 +305,7 @@ export async function updateShow({
 }
 
 export async function updateShowPrice(showId: string, price: number) {
-  if (price <= 0) throw new Error("价格必须为正数");
+  if (price <= 0) throw new Error("Price must be greater than zero");
 
   return await prisma.show.update({
     where: { id: showId },
@@ -328,21 +322,21 @@ export async function cancelShow(showId: string) {
 }
 
 /**
- * 创建排片
- * 自动根据电影时长推算 endTime
- * 检查同电影是否存在时间冲突（忽略已取消）
+ * Create a new show
+ * Calculates endTime based on movie duration
+ * Checks for time conflicts within same movie (excluding cancelled shows)
  */
 export async function createShow({
                                    movieID,
                                    beginTime,
-                                   price, // ✅ 记得传入票价
+                                   price,
                                  }: {
   movieID: string;
   beginTime: string;
   price: number;
 }) {
   const movie = await prisma.movie.findUnique({ where: { id: movieID } });
-  if (!movie) throw new Error("电影不存在");
+  if (!movie) throw new Error("Movie not found");
 
   const begin = new Date(beginTime);
   const end = new Date(begin.getTime() + (movie.length ?? 120) * 1000);
@@ -355,9 +349,7 @@ export async function createShow({
     },
   });
 
-  if (conflict) {
-    throw new Error("该时间段已有排片");
-  }
+  if (conflict) throw new Error("This time slot is already taken by another show.");
 
   const newShow = await prisma.show.create({
     data: {
@@ -368,7 +360,7 @@ export async function createShow({
     },
   });
 
-  // ✅ 初始化座位（8行 x 10列）
+// Initialize seats (8 rows x 10 columns)
   await prisma.seat.createMany({
     data: Array.from({ length: 8 * 10 }, (_, i) => {
       const row = String.fromCharCode(65 + Math.floor(i / 10)); // A-H
@@ -380,7 +372,7 @@ export async function createShow({
   return newShow;
 }
 
-// === 👤 用户管理 ===
+// === 👤 User Management ===
 
 export async function getAllUsers() {
   return await prisma.user.findMany({
@@ -401,7 +393,7 @@ export async function updateUserRole(userId: string, role: string) {
   });
 }
 
-// === 🔐 获取当前登录用户信息（仅 Staff 面板用） ===
+// === 🔐 Staff Authentication Info ===
 
 export async function getStaffProfile() {
   const session = await auth.api.getSession({

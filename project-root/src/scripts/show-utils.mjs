@@ -8,7 +8,7 @@ const NUM_ROWS = 8;
 const NUM_COLS = 10;
 
 /**
- * 创建一场排片，并自动生成座位。
+ * create session and session seat
  * @param {{
  *   movieID: string,
  *   beginTime: Date,
@@ -25,9 +25,9 @@ export async function createShowWithSeats({
   const movie = await prisma.movie.findUnique({ where: { id: movieID } });
   if (!movie) throw new Error("Movie not found");
 
-  const endTime = new Date(beginTime.getTime() + movie.length * 60 * 1000); // 以电影时长推算结束时间
+  const endTime = new Date(beginTime.getTime() + movie.length * 60 * 1000);
 
-  // 创建 Show 及其 Seat（事务处理）
+  // create Show and Seat
   const result = await prisma.$transaction(async (tx) => {
     const show = await tx.show.create({
       data: {

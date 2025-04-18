@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, message: '❌ Missing QR Code' }, { status: 400 });
         }
 
-        // 查找票据
         const ticket = await prisma.ticket.findFirst({
             where: { qrCode },
         });
@@ -23,19 +22,18 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, message: '⚠️ Ticket already checked in' }, { status: 409 });
         }
 
-        // 更新票据状态
         await prisma.ticket.update({
             where: { id: ticket.id },
             data: { status: 'CHECKED' },
         });
 
-        // 写入扫码记录
+        // write scan history
         await prisma.qRScanRecord.create({
             data: {
                 qrCode,
                 scanTime: new Date(),
                 status: 'SCANNED',
-                scannedBy: 'MOBILE', // 或者根据需要传入身份
+                scannedBy: 'MOBILE',
             },
         });
 

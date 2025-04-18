@@ -12,7 +12,7 @@ import NavBarClient from "@/components/NavBarClient";
 import MovieManager from "./MovieManager";
 import ShowManager from "./ShowManager";
 import TicketManager from "./TicketManager";
-import TransactionManager from "./TransactionManager"; // ✅ 新增
+import TransactionManager from "./TransactionManager";
 
 export default function AdminDashboardPage() {
     const [profile, setProfile] = useState<any>(null);
@@ -44,7 +44,7 @@ export default function AdminDashboardPage() {
             <NavBarClient />
             <h1 className="text-3xl font-bold">🧑‍💼 Admin Dashboard</h1>
 
-            {/* 🧾 Profile 区域 */}
+            {/* 🧾 Profile Section */}
             {profile && (
                 <section className="bg-white p-4 rounded-lg shadow">
                     <h2 className="text-2xl font-semibold mb-2">🧾 Profile</h2>
@@ -54,19 +54,19 @@ export default function AdminDashboardPage() {
                 </section>
             )}
 
-            {/* 🎞️ 所有电影模块 */}
+            {/* 🎞️ All Movies */}
             <MovieManager />
 
-            {/* 🎥 所有排片模块 */}
+            {/* 🎥 All Shows */}
             <ShowManager />
 
-            {/* 🎫 所有票模块 */}
+            {/* 🎫 All Tickets */}
             <TicketManager />
 
-            {/* 💰 交易记录模块 */}
+            {/* 💰 Transactions */}
             <TransactionManager />
 
-            {/* 👥 用户角色管理模块 */}
+            {/* 👥 User Role Management */}
             <section className="bg-white p-4 rounded-lg shadow">
                 <h2 className="text-2xl font-semibold mb-4">👥 Manage User Roles</h2>
                 {userMsg && <p className="text-green-600">{userMsg}</p>}

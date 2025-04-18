@@ -75,159 +75,159 @@ export default function TicketManager() {
   const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <section className="bg-white p-4 rounded-lg shadow space-y-4">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <h2 className="text-2xl font-semibold">🎫 All Tickets</h2>
-        <button
-          onClick={() => setIsExpanded((prev) => !prev)}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          {isExpanded ? "🔽 折叠" : "▶️ 展开"}
-        </button>
-      </div>
-
-      {isExpanded && (
-        <>
-          {/* 筛选器 */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <input
-              placeholder="📧 用户邮箱"
-              value={emailFilter}
-              onChange={(e) => setEmailFilter(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <input
-              placeholder="🎬 电影名"
-              value={movieFilter}
-              onChange={(e) => setMovieFilter(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <input
-              placeholder="💺 座位"
-              value={seatFilter}
-              onChange={(e) => setSeatFilter(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <input
-              placeholder="💰 票价"
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="border p-2 rounded"
-            >
-              <option value="">全部状态</option>
-              <option value="VALID">VALID</option>
-              <option value="CHECKED">CHECKED</option>
-              <option value="CANCELLED">CANCELLED</option>
-              <option value="REFUNDED">REFUNDED</option>
-            </select>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="border p-2 rounded"
-            />
-            <button
-              onClick={() => {
-                setEmailFilter("");
-                setMovieFilter("");
-                setSeatFilter("");
-                setPriceFilter("");
-                setStatusFilter("");
-                setStartDate("");
-                setEndDate("");
-              }}
+      <section className="bg-white p-4 rounded-lg shadow space-y-4">
+        <div className="flex justify-between items-center flex-wrap gap-4">
+          <h2 className="text-2xl font-semibold">🎫 All Tickets</h2>
+          <button
+              onClick={() => setIsExpanded((prev) => !prev)}
               className="text-sm text-blue-600 hover:underline"
-            >
-              🔄 清除筛选
-            </button>
-          </div>
+          >
+            {isExpanded ? "🔽 Collapse" : "▶️ Expand"}
+          </button>
+        </div>
 
-          {/* 批量操作按钮 */}
-          <div className="flex justify-end">
-            <button
-              disabled={selectedIds.size === 0}
-              onClick={handleBulkCancel}
-              className="bg-red-600 text-white px-4 py-1 rounded disabled:bg-gray-400"
-            >
-              ❌ 批量取消所选票
-            </button>
-          </div>
-
-          {/* 分页 */}
-          <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
-            <span>
-              共 {filtered.length} 张票，当前第 {currentPage} 页 / 共 {totalPages} 页
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === 1 ? "bg-gray-200 text-gray-400" : "bg-white"
-                }`}
-              >
-                ⬅️ 上一页
-              </button>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                className={`px-3 py-1 rounded border ${
-                  currentPage === totalPages ? "bg-gray-200 text-gray-400" : "bg-white"
-                }`}
-              >
-                下一页 ➡️
-              </button>
-            </div>
-          </div>
-
-          {/* Ticket 列表 */}
-          {paginated.map((ticket) => (
-            <div
-              key={ticket.id}
-              className="border p-2 rounded flex justify-between items-center"
-            >
-              <label className="flex gap-2 items-center">
+        {isExpanded && (
+            <>
+              {/* Filters */}
+              <div className="flex flex-wrap gap-4 items-center">
                 <input
-                  type="checkbox"
-                  checked={selectedIds.has(ticket.id)}
-                  onChange={() => toggleSelection(ticket.id)}
+                    placeholder="📧 User Email"
+                    value={emailFilter}
+                    onChange={(e) => setEmailFilter(e.target.value)}
+                    className="border p-2 rounded"
                 />
-                <div>
-                  <p className="font-semibold">🎬 {ticket.show.movie.name}</p>
-                  <p className="text-sm text-gray-700">
-                    ⏰ {new Date(ticket.show.beginTime).toLocaleString()} -{" "}
-                    {new Date(ticket.show.endTime).toLocaleString()}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    💺 座位：{ticket.seatRow}
-                    {ticket.seatCol + 1}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    💰 票价：¥{ticket.show.price?.toFixed?.(2) ?? "未知"}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    👤 用户：{ticket.user.name} ({ticket.user.email})
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    🎟️ 状态：<span className="font-semibold">{ticket.status}</span>
-                  </p>
+                <input
+                    placeholder="🎬 Movie Title"
+                    value={movieFilter}
+                    onChange={(e) => setMovieFilter(e.target.value)}
+                    className="border p-2 rounded"
+                />
+                <input
+                    placeholder="💺 Seat"
+                    value={seatFilter}
+                    onChange={(e) => setSeatFilter(e.target.value)}
+                    className="border p-2 rounded"
+                />
+                <input
+                    placeholder="💰 Price"
+                    value={priceFilter}
+                    onChange={(e) => setPriceFilter(e.target.value)}
+                    className="border p-2 rounded"
+                />
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="border p-2 rounded"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="VALID">VALID</option>
+                  <option value="CHECKED">CHECKED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                  <option value="REFUNDED">REFUNDED</option>
+                </select>
+                <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="border p-2 rounded"
+                />
+                <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="border p-2 rounded"
+                />
+                <button
+                    onClick={() => {
+                      setEmailFilter("");
+                      setMovieFilter("");
+                      setSeatFilter("");
+                      setPriceFilter("");
+                      setStatusFilter("");
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                    className="text-sm text-blue-600 hover:underline"
+                >
+                  🔄 Reset Filters
+                </button>
+              </div>
+
+              {/* Bulk Cancel */}
+              <div className="flex justify-end">
+                <button
+                    disabled={selectedIds.size === 0}
+                    onClick={handleBulkCancel}
+                    className="bg-red-600 text-white px-4 py-1 rounded disabled:bg-gray-400"
+                >
+                  ❌ Cancel Selected Tickets
+                </button>
+              </div>
+
+              {/* Pagination */}
+              <div className="text-sm text-gray-600 text-center flex flex-wrap justify-center items-center gap-4">
+            <span>
+              Total {filtered.length} tickets, Page {currentPage} of {totalPages}
+            </span>
+                <div className="flex gap-2">
+                  <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                      className={`px-3 py-1 rounded border ${
+                          currentPage === 1 ? "bg-gray-200 text-gray-400" : "bg-white"
+                      }`}
+                  >
+                    ⬅️ Prev
+                  </button>
+                  <button
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                      className={`px-3 py-1 rounded border ${
+                          currentPage === totalPages ? "bg-gray-200 text-gray-400" : "bg-white"
+                      }`}
+                  >
+                    Next ➡️
+                  </button>
                 </div>
-              </label>
-            </div>
-          ))}
-        </>
-      )}
-    </section>
+              </div>
+
+              {/* Ticket List */}
+              {paginated.map((ticket) => (
+                  <div
+                      key={ticket.id}
+                      className="border p-2 rounded flex justify-between items-center"
+                  >
+                    <label className="flex gap-2 items-center">
+                      <input
+                          type="checkbox"
+                          checked={selectedIds.has(ticket.id)}
+                          onChange={() => toggleSelection(ticket.id)}
+                      />
+                      <div>
+                        <p className="font-semibold">🎬 {ticket.show.movie.name}</p>
+                        <p className="text-sm text-gray-700">
+                          ⏰ {new Date(ticket.show.beginTime).toLocaleString()} -{" "}
+                          {new Date(ticket.show.endTime).toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          💺 Seat: {ticket.seatRow}
+                          {ticket.seatCol + 1}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          💰 Price: ¥{ticket.show.price?.toFixed?.(2) ?? "Unknown"}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          👤 User: {ticket.user.name} ({ticket.user.email})
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          🎟️ Status: <span className="font-semibold">{ticket.status}</span>
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+              ))}
+            </>
+        )}
+      </section>
   );
 }
