@@ -31,6 +31,10 @@
 - [ ] 登录系统--提供修改邮箱、验证邮箱功能（要查better auth文档
 
 
+
+
+
+
 - 启动 PostgreSQL 服务：net start postgresql-x64-16 （使用postgresql16）
 
 - 安装依赖
@@ -46,6 +50,9 @@ npx prisma migrate reset
 npx prisma generate
 npx prisma migrate dev 
 ```
+
+
+
 
 - 有时候突发恶疾的话可以试一下这个`npx @better-auth/cli migrate` (忘了这一行要不要跑了)
 
