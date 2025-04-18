@@ -16,13 +16,30 @@ export default function NavBarClient() {
   const [ticketCount, setTicketCount] = useState(0);
   const [walletBalance, setWalletBalance] = useState(0);
 
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     const result = await getSession();
+  //     console.log("✅ Session loaded:", result);
+  //     setSession(result);
+  //   }
+
+  //   fetchSession();
+  // }, []);
   useEffect(() => {
     async function fetchSession() {
       const result = await getSession();
       console.log("✅ Session loaded:", result);
+  
+      // ❗️Prevent session display for unverified users
+      if (result?.user?.role === "user" && !result.user.emailVerified) {
+        console.log(" User not verified. Clearing session...");
+        setSession(null); // Don't show as signed in
+        return;
+      }
+  
       setSession(result);
     }
-
+  
     fetchSession();
   }, []);
 

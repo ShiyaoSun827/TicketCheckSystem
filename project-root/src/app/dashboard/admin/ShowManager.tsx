@@ -161,13 +161,11 @@ export default function ShowManager() {
                 </label>
 
                 <button
-                    onClick={() => {
-                      setFilterMovieId("");
-                      setFilterStartDate("");
-                      setFilterEndDate("");
-                      setFilterStatus("");
-                    }}
-                    className="text-sm text-blue-600 hover:underline"
+
+
+                  onClick={() => router.push(`/dashboard/admin/manageShow/${show.id}`)}
+                  className="text-blue-600 hover:underline"
+
                 >
                   🔄 Clear Filters
                 </button>

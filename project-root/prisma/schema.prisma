@@ -7,6 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TicketStatus {
+  VALID
+  CHECKED
+  CANCELLED
+  REFUNDED
+}
+
+model Ticket {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userID], references: [id])
+  userID String
+
+  show   Show   @relation(fields: [showId], references: [id])
+  showId String
+
+  seatRow String
+  seatCol Int
+
+  qrCode     String? // 二维码内容或图片地址
+  status     TicketStatus @default(VALID)
+  createdAt  DateTime     @default(now())
+  refundedAt DateTime? // ✅ 退票时间（可选）
+
+  Seat Seat[]
+}
+
 enum WaitStatus {
   PENDING
   CONFIRMED
@@ -22,7 +48,7 @@ model Favorite {
   movieId   String
   createdAt DateTime @default(now())
 
-  @@unique([userId, movieId]) // prevent repeated favorite
+  @@unique([userId, movieId]) // 防止重复收藏
 }
 
 model User {
@@ -101,25 +127,6 @@ model Verification {
   @@map("verification")
 }
 
-model Ticket {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userID], references: [id])
-  userID String
-
-  show   Show   @relation(fields: [showId], references: [id])
-  showId String
-
-  seatRow String
-  seatCol Int
-
-  qrCode     String?   @unique // qrCode
-  status     String    @default("VALID") // VALID / CHECKED / CANCELLED / REFUNDED
-  createdAt  DateTime  @default(now())
-  refundedAt DateTime?
-
-  Seat Seat[]
-}
-
 model Wallet {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])
@@ -147,7 +154,7 @@ model CartItem {
   userId  String
   show    Show     @relation(fields: [showId], references: [id])
   showId  String
-  seat    String
+  seat    String // 预选座位
   addedAt DateTime @default(now())
 }
 
@@ -181,7 +188,7 @@ model Show {
   movie   Movie  @relation(fields: [movieID], references: [id], onDelete: Cascade)
   movieID String
 
-  price Float // 🆕 price without default
+  price Float // 🆕 添加价格字段（不带默认值）
 
   tickets   Ticket[]
   waitlist  WaitList[]
@@ -210,15 +217,15 @@ model Seat {
   ticket   Ticket? @relation(fields: [ticketId], references: [id])
   ticketId String?
 
-  @@unique([showId, row, col]) // no repeated seat in one movie
+  @@unique([showId, row, col]) // 同一个场次不能重复座位
 }
 
 model Movie {
   id          String     @id @default(uuid())
   name        String
-  length      Int // film time length（单位：秒）
-  rate        Float // movie rate（0-10 的小数）
-  image       String? // save pic URL，like "/images/your-image.jpg"
+  length      Int // 电影时长（单位：秒）
+  rate        Float // 电影评分（0-10 的小数）
+  image       String? // 保存图片 URL，例如 "/images/your-image.jpg"
   description String?
   shows       Show[]
   createdAt   DateTime   @default(now())

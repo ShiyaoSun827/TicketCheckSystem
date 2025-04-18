@@ -16,10 +16,14 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    verification: {
+      enabled: true,
+    }
   },
    // ✅ Add the cookie plugin here — LAST!
    plugins: [nextCookies(),admin() ],
    
 });
+
 
 
