@@ -88,7 +88,7 @@ cd project-root
 cd check_in_mobile
 cd check-in-system 
 ```
-如果没有安装react-native的按照以下步骤安装
+如果没有安装react-native/expo的按照以下步骤安装
 ```
 npm install
 ```
