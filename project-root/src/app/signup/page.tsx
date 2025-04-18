@@ -22,20 +22,23 @@ export default function SignUpPage() {
     setPasswordError("");
     setFormMessage("");
 
-    if (!email.includes("@") || !email.includes(".com")) {
-      setEmailError("❌ 请输入有效邮箱（需包含 @ 和 .com）");
+    if (!email.includes("@") &&(!email.includes(".com")||!email.includes(".ca")) ) {
+      setEmailError("❌ Please enter a valid email (must contain @, .com or .ca)");
       return;
     }
 
     if (password.length < 8) {
-      setPasswordError("❌ 密码至少需要 8 位字符");
+      setPasswordError("❌ Password must be at least 8 characters long");
       return;
     }
 
     const result = await signUpWithEmail(formData);
     setFormMessage(result.message);
 
+  
+     
     if (result.success && result.redirectTo) {
+      setFormMessage("✅ Signup successful! Please check your email to verify your account.");
       setTimeout(() => {
         router.push(result.redirectTo!);
       }, 2000);
@@ -47,11 +50,11 @@ export default function SignUpPage() {
       <NavBarClient />
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-6">
-          <h1 className="text-3xl font-bold text-center">📝 注册新账号</h1>
+          <h1 className="text-3xl font-bold text-center">📝 Create a New Account</h1>
 
           <form action={handleSignUp} className="flex flex-col space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">邮箱</label>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
                 type="email"
                 name="email"
@@ -66,7 +69,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">密码（至少8位）</label>
+              <label className="block text-sm font-medium text-gray-700">Password (at least 8 characters)</label>
               <input
                 type="password"
                 name="password"
@@ -81,7 +84,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">昵称</label>
+              <label className="block text-sm font-medium text-gray-700">Display Name</label>
               <input
                 type="text"
                 name="name"
@@ -96,7 +99,7 @@ export default function SignUpPage() {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
             >
-              注册
+              Sign Up
             </button>
           </form>
 
@@ -105,9 +108,9 @@ export default function SignUpPage() {
           )}
 
           <p className="text-center text-sm text-gray-600">
-            已有账号？
+            Already have an account?
             <Link href="/signin" className="text-blue-600 hover:underline ml-1">
-              去登录
+              Sign in
             </Link>
           </p>
         </div>

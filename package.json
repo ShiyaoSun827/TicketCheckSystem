@@ -3,6 +3,7 @@
     "@types/jsonwebtoken": "^9.0.9"
   },
   "dependencies": {
+    "nodemailer": "^6.10.1",
     "html5-qrcode": "^2.3.8"
   }
 }
