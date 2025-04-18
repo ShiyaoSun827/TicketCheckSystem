@@ -96,29 +96,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
-
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">🎟️ My Tickets</h2>
-        {loading ? (
-          <p>Loading tickets...</p>
-        ) : tickets.length === 0 ? (
-          <p>You haven’t booked any tickets yet.</p>
-        ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {tickets.map((ticket) => (
-              <li key={ticket.id} className="border p-4 rounded-lg shadow-md space-y-2">
-                <h3 className="text-xl font-semibold">{ticket.eventTitle}</h3>
-                <p><strong>Date:</strong> {ticket.date}</p>
-                <p><strong>Seat:</strong> {ticket.seat}</p>
-                {ticket.qrCodeUrl && (
-                  <Image src={ticket.qrCodeUrl} alt="QR Code" width={100} height={100} />
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
       <section>
         <h2 className="text-2xl font-semibold mb-2">⭐ Favorite Movies</h2>
         {favorites.length === 0 ? (
@@ -150,6 +127,30 @@ export default function DashboardPage() {
           </ul>
         )}
       </section>
+      
+      <section>
+        <h2 className="text-2xl font-semibold mb-2">🎟️ My Tickets</h2>
+        {loading ? (
+          <p>Loading tickets...</p>
+        ) : tickets.length === 0 ? (
+          <p>You haven’t booked any tickets yet.</p>
+        ) : (
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tickets.map((ticket) => (
+              <li key={ticket.id} className="border p-4 rounded-lg shadow-md space-y-2">
+                <h3 className="text-xl font-semibold">{ticket.eventTitle}</h3>
+                <p><strong>Date:</strong> {ticket.date}</p>
+                <p><strong>Seat:</strong> {ticket.seat}</p>
+                {ticket.qrCodeUrl && (
+                  <Image src={ticket.qrCodeUrl} alt="QR Code" width={100} height={100} />
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+
     </div>
   );
 }

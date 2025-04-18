@@ -1,37 +1,61 @@
-// src/scripts/show-utils.mjs
+//src/app/dashboard/admin/ShowManager.tsx
 import { PrismaClient } from "@prisma/client";
+
 const prisma = new PrismaClient();
 
+// 默认的每场的座位布局：8 行 × 10 列
+const NUM_ROWS = 8;
+const NUM_COLS = 10;
+
+/**
+ * 创建一场排片，并自动生成座位。
+ * @param {{
+ *   movieID: string,
+ *   beginTime: Date,
+ *   price: number,
+ *   status: "DRAFT" | "PUBLISHED" | "CANCELLED"
+ * }} options
+ */
 export async function createShowWithSeats({
   movieID,
   beginTime,
   price,
   status = "DRAFT",
-  cancelled = false,
 }) {
   const movie = await prisma.movie.findUnique({ where: { id: movieID } });
-  if (!movie) throw new Error("电影不存在");
+  if (!movie) throw new Error("Movie not found");
 
-  const endTime = new Date(beginTime.getTime() + movie.length * 1000);
+  const endTime = new Date(beginTime.getTime() + movie.length * 60 * 1000); // 以电影时长推算结束时间
 
-  const newShow = await prisma.show.create({
-    data: {
-      movieID,
-      beginTime,
-      endTime,
-      price,
-      status,
-      cancelled,
-    },
+  // 创建 Show 及其 Seat（事务处理）
+  const result = await prisma.$transaction(async (tx) => {
+    const show = await tx.show.create({
+      data: {
+        movieID,
+        beginTime,
+        endTime,
+        price,
+        status,
+      },
+    });
+
+    const seatData = [];
+
+    for (let r = 0; r < NUM_ROWS; r++) {
+      const row = String.fromCharCode(65 + r); // A, B, C...
+      for (let c = 1; c <= NUM_COLS; c++) {
+        seatData.push({
+          showId: show.id,
+          row,
+          col: c,
+        });
+      }
+    }
+
+    await tx.seat.createMany({ data: seatData });
+
+    return show;
   });
 
-  await prisma.seat.createMany({
-    data: Array.from({ length: 8 * 10 }, (_, i) => {
-      const row = String.fromCharCode(65 + Math.floor(i / 10));
-      const col = (i % 10) + 1;
-      return { showId: newShow.id, row, col };
-    }),
-  });
-
-  return newShow;
+  return result;
 }

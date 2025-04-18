@@ -107,7 +107,7 @@ export default function MovieDetailClient({ movieId }: { movieId: string }) {
         {movie.shows.length > 0 ? (
           <ul className="space-y-2">
             {movie.shows
-              .filter((s: any) => s.status === "PUBLISHED" && !s.cancelled)
+              .filter((s: any) => s.status === "PUBLISHED")
               .sort((a: any, b: any) => new Date(a.beginTime).getTime() - new Date(b.beginTime).getTime())
               .map((show: any) => {
                 const total = show.Seat.length;

@@ -1,3 +1,4 @@
+// src/app/dashboard/admin/manageMovie/[movieId]/shows/page.tsx
 export const dynamic = "force-dynamic";
 
 import AddShowForm from "@/app/dashboard/admin/manageMovie/[movieId]/shows/AddShowForm"; 
@@ -7,7 +8,7 @@ import NavBar from "@/components/NavBar";
 import SubmitShowButton from "./SubmitShowButton";
 import DeleteShowButton from "./DeleteShowButton";
 import EditShowButton from "./EditShowButton";
-import CancelShowButton from "./CancelShowButton.tsx";
+import CancelShowButton from "./CancelShowButton";
 import EditPriceButton from "./EditPriceButton";
 
 interface PageProps {
@@ -16,8 +17,8 @@ interface PageProps {
   };
 }
 
-export default async function ShowManagementPage({ params }: PageProps) {
-  const movieId = params.movieId;
+export default async function ShowManagementPage(props: PageProps) {
+  const { movieId } = props.params;
   const movie = await adminAction.getMovieById(movieId);
 
   if (!movie) {
@@ -28,9 +29,9 @@ export default async function ShowManagementPage({ params }: PageProps) {
     );
   }
 
-  const draftShows = movie.shows.filter((show) => show.status === "DRAFT" && !show.cancelled);
-  const publishedShows = movie.shows.filter((show) => show.status === "PUBLISHED" && !show.cancelled);
-  const cancelledShows = movie.shows.filter((show) => show.cancelled);
+  const draftShows = movie.shows.filter((show) => show.status === "DRAFT");
+  const publishedShows = movie.shows.filter((show) => show.status === "PUBLISHED");
+  const cancelledShows = movie.shows.filter((show) => show.status === "CANCELLED");
 
   return (
     <div className="p-6 space-y-8">
@@ -124,7 +125,7 @@ export default async function ShowManagementPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* ✅ 已取消排片 */}
+        {/* ❌ 已取消排片 */}
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-2">❌ 已取消排片</h3>
           {cancelledShows.length > 0 ? (
