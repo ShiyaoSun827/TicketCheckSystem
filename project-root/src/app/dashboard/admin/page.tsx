@@ -38,7 +38,15 @@ export default function AdminDashboardPage() {
     setUserMsg(`✅ Role updated to ${newRole}`);
   };
 
+  async function handleRoleChange(userId: string, newRole: string) {
+    await updateUserRole(userId, newRole);
+    const updated = await getAllUsers();
+    setUsers(updated);
+    setUserMsg(`✅ Role updated to ${newRole}`);
+  }
+
   return (
+
     <div className="p-6 space-y-10">
       <NavBarClient />
       <h1 className="text-3xl font-bold">🧑‍💼 Admin Dashboard</h1>
@@ -76,6 +84,7 @@ export default function AdminDashboardPage() {
           </thead>
           <tbody>
             {users.map((user: any) => (
+
               <tr key={user.id} className="border-t">
                 <td className="p-2">{user.name}</td>
                 <td className="p-2">{user.email}</td>

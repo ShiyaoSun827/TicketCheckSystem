@@ -1,3 +1,6 @@
+//src/app/dashboard/staff/checkin/page.tsx
+
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -6,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import NavBarClient from "@/components/NavBarClient";
 
 export default function StaffCheckinPage() {
-    const { session } = authClient.useSession(); // ✅ 放在组件函数体顶层
+    const { session } = authClient.useSession();
     const [message, setMessage] = useState<string | null>(null);
     const scannerRef = useRef<any>(null);
 
@@ -38,3 +41,5 @@ export default function StaffCheckinPage() {
         </div>
     );
 }
+
+

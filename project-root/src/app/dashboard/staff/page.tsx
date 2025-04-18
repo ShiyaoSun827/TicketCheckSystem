@@ -1,12 +1,26 @@
+//src/app/dashboard/staff/page.tsx
+//src/app/dashboard/staff/checkin/checkedSeatMap.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import NavBarClient from "@/components/NavBarClient";
 import { useRouter } from "next/navigation";
-import { getRecentCheckins, getTodayShows } from "@/lib/staff-dashboard-actions";
+import CheckedSeatMap from "@/app/dashboard/staff/checkin/checkedSeatMap";
+import { getCheckedSeats, getRecentCheckins, getTodayShows, getAllShowsWithMovieNames } from "@/lib/staff-dashboard-actions";
+
 
 export default function StaffDashboardPage() {
+    const [loading, setLoading] = useState(true); // 加上 loading 状态
+    const [selectedShow, setSelectedShow] = useState("");
+    const [allShows, setAllShows] = useState<any[]>([]);
+
+    const [checkedSeats, setCheckedSeats] = useState<any[]>([]);
+
+    async function loadCheckedSeats(showId: string) {
+        const res = await getCheckedSeats(showId);
+        setCheckedSeats(res);
+    }
     const { session } = authClient.useSession();
     const [name, setName] = useState("");
     const router = useRouter();
@@ -15,10 +29,14 @@ export default function StaffDashboardPage() {
 
     useEffect(() => {
         async function loadData() {
+            setLoading(true);
             const checkins = await getRecentCheckins();
-            const shows = await getTodayShows();
+            const today = await getTodayShows();
+            const all = await getAllShowsWithMovieNames();
             setRecentCheckins(checkins);
-            setTodayShows(shows);
+            setTodayShows(today);
+            setAllShows(all);
+            setLoading(false);
         }
         loadData();
     }, []);
@@ -63,11 +81,12 @@ export default function StaffDashboardPage() {
                 )}
             </section>
 
-            {/* 最近签到 */}
             <section className="bg-white p-4 rounded-lg shadow space-y-2">
                 <h2 className="text-2xl font-semibold">📝 Recent Check-ins</h2>
                 <ul className="text-sm space-y-1">
-                    {recentCheckins.length === 0 ? (
+                    {loading ? (
+                        <p className="text-gray-500 italic">Loading recent check-ins...</p>
+                    ) : recentCheckins.length === 0 ? (
                         <p>No recent check-ins yet.</p>
                     ) : (
                         recentCheckins.map((checkin, i) => (
@@ -79,6 +98,31 @@ export default function StaffDashboardPage() {
                     )}
                 </ul>
             </section>
+
+            <section className="bg-white p-4 rounded-lg shadow space-y-4">
+                <h2 className="text-2xl font-semibold">🎟️ Preview Checked Seats</h2>
+                <select
+                    className="border p-2 rounded"
+                    value={selectedShow}
+                    onChange={(e) => {
+                        const showId = e.target.value;
+                        setSelectedShow(showId);
+                        if (showId) loadCheckedSeats(showId);
+                    }}
+                >
+                    <option value="">Select Show</option>
+                    {allShows.map((show: any) => (
+                        <option key={show.id} value={show.id}>
+                            {show.movieName} ({new Date(show.beginTime).toLocaleString()})
+                        </option>
+                    ))}
+                </select>
+
+                {checkedSeats && (
+                    <CheckedSeatMap seats={checkedSeats} />
+                )}
+            </section>
+
         </div>
     );
 }
