@@ -98,8 +98,8 @@ npx expo start --clear
 - Note:如果需要测试手机端，从Apple store或者Google store上下载 Expo Go
 - npx expo start --clear 该指令会生成一个二维码，用手机相机扫描即可
 
-  ** 关于配置环境 **
-  - 该.env文件应置于project-root/check_in_mobile/check-in-system文件夹下
+** 关于配置环境 **
+- 该.env文件应置于project-root/check_in_mobile/check-in-system文件夹下
 ```
 DATABASE_URL="postgresql://username:password@localhost:5432/paper_management?schema=public"
 
