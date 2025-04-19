@@ -42,6 +42,7 @@ export default function TicketManager() {
   useEffect(() => {
     getAllTickets().then(setTickets);
   }, []);
+  
 
   const toggleSelection = (id: string) => {
     setSelectedIds((prev) => {
@@ -57,6 +58,7 @@ export default function TicketManager() {
     setSelectedIds(new Set());
     setTickets(await getAllTickets());
   };
+  
 
   const filtered = tickets.filter((ticket) => {
     const matchesStatus = !statusFilter || ticket.status === statusFilter;

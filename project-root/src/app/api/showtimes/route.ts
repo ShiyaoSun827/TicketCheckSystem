@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const shows = await prisma.show.findMany({
       where: {
-        cancelled: false,
+        
         status: 'PUBLISHED',
       },
       orderBy: {

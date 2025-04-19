@@ -87,6 +87,14 @@ export default function NavBarClient() {
         {/* Main Navigation Links */}
         <div className="flex flex-wrap gap-3 text-sm sm:text-base">
           <Link href="/" className="text-blue-600 hover:underline">Home</Link>
+
+          {/* 管理员专属链接 */}
+          {session?.user?.role === "admin" && (
+            <Link href="/dashboard/admin" className="text-blue-600 hover:underline">
+              🛠️ Admin Dashboard
+            </Link>
+          )}
+
           <Link href="/dashboard/user" className="text-blue-600 hover:underline">Dashboard</Link>
           <Link href="/dashboard/user/cart" className="text-blue-600 hover:underline">
             🛒 Cart ({cartCount})
@@ -101,7 +109,7 @@ export default function NavBarClient() {
             💰 Wallet (¥{walletBalance.toFixed(2)})
           </Link>
           {!session?.user && (
-              <Link href="/signup" className="text-blue-600 hover:underline">Sign Up</Link>
+            <Link href="/signup" className="text-blue-600 hover:underline">Sign Up</Link>
           )}
         </div>
 
