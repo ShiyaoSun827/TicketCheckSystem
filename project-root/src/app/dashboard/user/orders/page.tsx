@@ -68,7 +68,7 @@ export default function OrdersPage() {
                         <div>
                           <p>🎬 {order.movieTitle}</p>
                           <p>📅 {new Date(order.showTime).toLocaleString()}</p>
-                          <p>💰 Total: ¥{order.total.toFixed(2)}</p>
+                          <p>💰 Total: ${order.total.toFixed(2)}</p>
                           <p>🎟️ Seats: {order.items.map((i: any) => i.seat).join(", ")}</p>
                         </div>
                         <div className="flex flex-col gap-2">
@@ -102,7 +102,7 @@ export default function OrdersPage() {
                     <li key={order.id} className="border rounded p-4 space-y-2 bg-gray-50">
                       <p>🎬 {order.movieTitle}</p>
                       <p>📅 {new Date(order.showTime).toLocaleString()}</p>
-                      <p>💰 Total: ¥{order.total.toFixed(2)}</p>
+                      <p>💰 Total: ${order.total.toFixed(2)}</p>
                       <p>🎟️ Seats: {order.items.map((i: any) => i.seat).join(", ")}</p>
                       <p className="text-green-600 font-semibold">Paid</p>
                     </li>

@@ -13,12 +13,12 @@ export default function DeleteShowButton({ showId }: Props) {
   const router = useRouter();
 
   const handleDelete = () => {
-    const confirmed = confirm("确定要删除该排片吗？此操作不可恢复！");
+    const confirmed = confirm("Are you sure you want to delete this show? This operation is irreversible and cannot be undone!");
     if (!confirmed) return;
 
     startTransition(async () => {
       await deleteShow(showId);
-      router.refresh(); // 刷新页面
+      router.refresh(); 
     });
   };
 
@@ -28,7 +28,7 @@ export default function DeleteShowButton({ showId }: Props) {
       disabled={isPending}
       className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
     >
-      {isPending ? "删除中..." : "删除"}
+      {isPending ? "Deleting..." : "Delete"}
     </button>
   );
 }

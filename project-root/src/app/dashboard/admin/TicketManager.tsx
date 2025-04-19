@@ -42,6 +42,7 @@ export default function TicketManager() {
   useEffect(() => {
     getAllTickets().then(setTickets);
   }, []);
+  
 
   const toggleSelection = (id: string) => {
     setSelectedIds((prev) => {
@@ -57,6 +58,7 @@ export default function TicketManager() {
     setSelectedIds(new Set());
     setTickets(await getAllTickets());
   };
+  
 
   const filtered = tickets.filter((ticket) => {
     const matchesStatus = !statusFilter || ticket.status === statusFilter;
@@ -214,7 +216,7 @@ export default function TicketManager() {
                           {ticket.seatCol + 1}
                         </p>
                         <p className="text-sm text-gray-700">
-                          💰 Price: ¥{ticket.show.price?.toFixed?.(2) ?? "Unknown"}
+                          💰 Price: ${ticket.show.price?.toFixed?.(2) ?? "Unknown"}
                         </p>
                         <p className="text-sm text-gray-600">
                           👤 User: {ticket.user.name} ({ticket.user.email})

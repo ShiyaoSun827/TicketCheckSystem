@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 interface Props {
   showId: string;
   beginTime: string;
-  length: number; // 秒
+  length: number; // seconds
 }
 
 export default function EditShowButton({ showId, beginTime, length }: Props) {
@@ -32,11 +32,11 @@ export default function EditShowButton({ showId, beginTime, length }: Props) {
           beginTime: begin.toISOString(),
           endTime: end.toISOString(),
         });
-        setMessage("✅ 修改成功");
+        setMessage("✅ modify successfully");
         setEditing(false);
         router.refresh();
       } catch (err: any) {
-        setMessage(`❌ 修改失败: ${err.message}`);
+        setMessage(`❌ fail to modify: ${err.message}`);
       }
     });
   };
@@ -57,13 +57,13 @@ export default function EditShowButton({ showId, beginTime, length }: Props) {
               disabled={isPending}
               className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
             >
-              提交修改
+              Submit modification
             </button>
             <button
               onClick={() => setEditing(false)}
               className="bg-gray-300 px-2 py-1 rounded"
             >
-              取消
+              Cancel
             </button>
           </div>
           {message && <p className="text-xs text-gray-700">{message}</p>}
@@ -73,7 +73,7 @@ export default function EditShowButton({ showId, beginTime, length }: Props) {
           onClick={() => setEditing(true)}
           className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-4 py-2 rounded"
         >
-          ✏️ 编辑
+          ✏️ Edit
         </button>
       )}
     </div>

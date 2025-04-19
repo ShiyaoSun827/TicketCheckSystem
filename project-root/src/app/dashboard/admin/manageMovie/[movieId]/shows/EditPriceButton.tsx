@@ -19,7 +19,7 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
   const handleSave = () => {
     const parsed = parseFloat(price);
     if (isNaN(parsed) || parsed <= 0) {
-      setMessage("价格必须为正数");
+      setMessage("The price must be a positive number.");
       return;
     }
     setMessage("");
@@ -29,7 +29,7 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
         setEditing(false);
         router.refresh();
       } catch (err: any) {
-        setMessage(`❌ 价格更新失败: ${err.message}`);
+        setMessage(`❌ Price update failed: ${err.message}`);
       }
     });
   };
@@ -50,13 +50,13 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
             onClick={handleSave}
             disabled={isPending}
           >
-            保存
+            Save
           </button>
           <button
             className="text-gray-500 text-sm underline"
             onClick={() => setEditing(false)}
           >
-            取消
+            Cancel
           </button>
         </div>
       ) : (
@@ -64,7 +64,7 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
           className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600"
           onClick={() => setEditing(true)}
         >
-          修改价格
+          Modify Price
         </button>
       )}
       {message && <p className="text-xs text-red-600 mt-1">{message}</p>}

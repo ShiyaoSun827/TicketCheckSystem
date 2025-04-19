@@ -19,7 +19,7 @@ interface Seat {
 
 export default function ShowDetailScreen() {
     const { showId } = useLocalSearchParams<{ showId: string }>();
-    const { id } = useLocalSearchParams(); // 这里的 id 是场次 ID
+    const { id } = useLocalSearchParams(); // show ID
   const router = useRouter();
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -70,7 +70,7 @@ export default function ShowDetailScreen() {
     <ScrollView contentContainerStyle={{ padding: 16 }}>
       <Text style={styles.title}>Seat Map</Text>
 
-      {/* 图例 */}
+      {/* Legend  */}
       <View style={styles.legendRow}>
         <Legend color="#E0E0E0" label="Available" />
         <Legend color="#FFC107" label="Sold (VALID)" />
@@ -78,7 +78,7 @@ export default function ShowDetailScreen() {
         <Legend color="#2196F3" label="Selected" />
       </View>
 
-      {/* 座位图 */}
+      {/* Seat map */}
       {uniqueRows.map((row) => (
         <View key={row} style={styles.row}>
           {seats

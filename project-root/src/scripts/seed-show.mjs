@@ -22,7 +22,7 @@ async function seedShows() {
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: baseTime,
-        price: 50,
+        price: 5,
         status: "DRAFT",
       });
 
@@ -30,7 +30,7 @@ async function seedShows() {
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: new Date(baseTime.getTime() + 3 * 3600000),
-        price: 60,
+        price: 6,
         status: "PUBLISHED",
       });
 
@@ -38,7 +38,7 @@ async function seedShows() {
       await createShowWithSeats({
         movieID: movie.id,
         beginTime: new Date(baseTime.getTime() + 6 * 3600000),
-        price: 40,
+        price: 4,
         status: "CANCELLED",
       });
 

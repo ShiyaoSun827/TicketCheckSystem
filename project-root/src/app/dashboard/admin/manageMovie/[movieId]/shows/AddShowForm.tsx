@@ -34,11 +34,11 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
 
     const parsedPrice = parseFloat(price);
     if (!beginTime) {
-      setMessage("❗ 请选择开始时间");
+      setMessage("❗ Please select the start time.");
       return;
     }
     if (isNaN(parsedPrice) || parsedPrice <= 0) {
-      setMessage("❗ 请输入有效的价格（正数）");
+      setMessage("❗ Please provide a valid price.");
       return;
     }
 
@@ -49,22 +49,22 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
           beginTime,
           price: parsedPrice,
         });
-        setMessage("✅ 排片添加成功");
+        setMessage("✅ Successfully add a show.");
         setBeginTime("");
         setPrice("");
         setComputedEndTime(null);
         router.refresh();
       } catch (err: any) {
-        setMessage(`❌ 添加失败：${err.message}`);
+        setMessage(`❌ Fail to add a show：${err.message}`);
       }
     });
   };
 
   return (
     <div className="border p-4 rounded mb-6">
-      <h3 className="text-xl font-semibold mb-2">➕ 添加新的排片</h3>
+      <h3 className="text-xl font-semibold mb-2">➕ Add new show</h3>
 
-      <label className="block mb-1">开始时间：</label>
+      <label className="block mb-1">Start time:</label>
       <input
         type="datetime-local"
         value={beginTime}
@@ -74,23 +74,23 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
 
       {computedEndTime && (
         <p className="text-sm text-green-700 mb-2">
-          🕓 自动计算的结束时间：<strong>{computedEndTime}</strong>
+          🕓 End time of automatic calculation: <strong>{computedEndTime}</strong>
         </p>
       )}
 
-      <label className="block mb-1">票价（¥）：</label>
+      <label className="block mb-1">Ticket peice ($)：</label>
       <input
         type="number"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
         min="0.01"
         step="0.01"
-        placeholder="请输入票价"
+        placeholder="Please enter the ticket price"
         className="border p-2 rounded w-64 mb-4"
       />
 
       <p className="text-sm text-gray-500 mb-4">
-        时长：{length} 秒（约 {Math.round(length / 60)} 分钟）
+        Duration: {length} seconds (about {Math.round(length / 60)} mintues)
       </p>
 
       <button
@@ -98,7 +98,7 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
         disabled={isPending}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {isPending ? "提交中..." : "添加排片"}
+        {isPending ? "Submitting..." : "add show"}
       </button>
 
       {message && <p className="mt-3 text-sm text-red-600">{message}</p>}

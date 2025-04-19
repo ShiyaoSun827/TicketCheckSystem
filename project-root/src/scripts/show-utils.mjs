@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// 默认的每场的座位布局：8 行 × 10 列
+// Default seating layout for each performance: 8 rows × 10 columns
 const NUM_ROWS = 8;
 const NUM_COLS = 10;
 

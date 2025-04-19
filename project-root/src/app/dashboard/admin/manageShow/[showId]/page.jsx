@@ -1,4 +1,4 @@
-//src/app/dashboard/admin/manageShow/[showId]/page.jsx
+// src/app/dashboard/admin/manageShow/[showId]/page.jsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ export default function ManageShowPage() {
     load();
   }, [showId]);
 
-  if (!show) return <p>加载中...</p>;
+  if (!show) return <p>Loading...</p>;
 
   const seatMap = new Map();
   seats.forEach((seat) => {
@@ -39,20 +39,20 @@ export default function ManageShowPage() {
   );
 
   const handleCancelShow = async () => {
-    const confirmed = window.confirm("确定要取消此排片并退款所有已售票吗？");
+    const confirmed = window.confirm("Are you sure you want to cancel this show and refund all sold tickets?");
     if (!confirmed) return;
 
     try {
       const result = await cancelShowAndRefundTickets(show.id);
       if (result.success) {
-        alert("✅ 排片已取消，票款已退！");
+        alert("✅ Show has been cancelled and tickets refunded!");
         location.reload();
       } else {
-        alert("❌ 取消失败：" + result.message);
+        alert("❌ Cancellation failed: " + result.message);
       }
     } catch (err) {
       console.error(err);
-      alert("❌ 请求失败");
+      alert("❌ Request failed");
     }
   };
 
@@ -76,21 +76,21 @@ export default function ManageShowPage() {
         <div className="flex-1 space-y-2">
           <h1 className="text-2xl font-bold">🎬 {show.movie.name}</h1>
           <p>
-            <strong>ShowId:</strong> {show.id}
+            <strong>Show ID:</strong> {show.id}
           </p>
           <p>
-            <strong>电影简介：</strong> {show.movie.description}
+            <strong>Description:</strong> {show.movie.description}
           </p>
           <p>
-            <strong>票价：</strong> ¥{show.price}
+            <strong>Price:</strong> ${show.price}
           </p>
           <p>
-            <strong>放映时间：</strong>{" "}
+            <strong>Showtime:</strong>{" "}
             {new Date(show.beginTime).toLocaleString()} -{" "}
             {new Date(show.endTime).toLocaleString()}
           </p>
           <p>
-            <strong>状态：</strong>{" "}
+            <strong>Status:</strong>{" "}
             <span
               className={`px-2 py-1 rounded text-white text-sm ${
                 show.status === "PUBLISHED"
@@ -105,15 +105,15 @@ export default function ManageShowPage() {
           </p>
         </div>
 
-        {/* ❌ Cancel Show 区域 */}
+        {/* ❌ Cancel Show Section */}
         {show.status !== "CANCELLED" && (
           <div className="flex flex-col justify-start">
-            <h2 className="text-xl font-semibold mb-2 text-red-600">❌ 操作</h2>
+            <h2 className="text-xl font-semibold mb-2 text-red-600">❌ Actions</h2>
             <button
               onClick={handleCancelShow}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
             >
-              取消此场排片并退款
+              Cancel this show and refund tickets
             </button>
           </div>
         )}
@@ -121,21 +121,21 @@ export default function ManageShowPage() {
 
       {/* 🎟️ Seat Picker */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">🪑 Seats status</h2>
+        <h2 className="text-xl font-semibold mb-2">🪑 Seats Status</h2>
 
-        {/* 图例说明 */}
+        {/* Legend */}
         <div className="flex items-center justify-center gap-6 my-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-blue-100 border rounded" />
-            <span className="text-sm text-gray-600">可购买</span>
+            <span className="text-sm text-gray-600">Available</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-green-500 rounded" />
-            <span className="text-sm text-gray-600">已购买</span>
+            <span className="text-sm text-gray-600">Purchased</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-purple-500 rounded" />
-            <span className="text-sm text-gray-600">已签到</span>
+            <span className="text-sm text-gray-600">Checked-in</span>
           </div>
         </div>
 
@@ -147,7 +147,7 @@ export default function ManageShowPage() {
                 .sort((a, b) => a.col - b.col)
                 .map((seat) => {
                   const ticketStatus = seat.ticket?.status;
-                  let color = "bg-blue-100"; // 可购买
+                  let color = "bg-blue-100"; // Available
 
                   if (ticketStatus === "CHECKED") {
                     color = "bg-purple-500 text-white";
@@ -170,10 +170,10 @@ export default function ManageShowPage() {
         </div>
       </div>
 
-      {/* ✅ Check-in 占位区 */}
+      {/* ✅ Check-in Section */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">✅ 签到详情</h2>
-        <p className="text-gray-500">暂无内容</p>
+        <h2 className="text-xl font-semibold mb-2">✅ Check-in Details</h2>
+        <p className="text-gray-500">No data available</p>
       </div>
     </div>
   );

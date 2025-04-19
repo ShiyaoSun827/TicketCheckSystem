@@ -146,8 +146,8 @@ export default function TransactionManager() {
 
               {/* Summary */}
               <div className="text-sm text-gray-700 font-medium space-x-4">
-                <span>🔼 Total Recharge: ¥{totalIncome.toFixed(2)}</span>
-                <span>🔽 Total Expense: ¥{totalOut.toFixed(2)}</span>
+                <span>🔼 Total Recharge: ${totalIncome.toFixed(2)}</span>
+                <span>🔽 Total Expense: ${totalOut.toFixed(2)}</span>
                 <span>📄 {filtered.length} Records</span>
               </div>
 
@@ -182,7 +182,7 @@ export default function TransactionManager() {
               {paginated.map((tx) => (
                   <div key={tx.id} className="border p-3 rounded space-y-1 text-sm">
                     <div>
-                      <span className="font-semibold">🧾 {tx.type}</span> — ¥
+                      <span className="font-semibold">🧾 {tx.type}</span> — $
                       {tx.amount.toFixed(2)}
                     </div>
                     {tx.show?.movie?.name && (
