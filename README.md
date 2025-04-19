@@ -21,6 +21,8 @@
 ~~基础的退票~~
 
 
+
+
 - [ ] 上传头像
 - [ ] 工单系统
 - [ ] 管理员功能扩充
@@ -45,7 +47,7 @@ npm install
 
 - 更新数据库
 ```
-npx prisma format (有时候数据库大改了就需要先跑这个)
+npx prisma format 
 npx prisma migrate reset
 npx prisma generate
 npx prisma migrate dev 
@@ -93,8 +95,7 @@ git merge upstream/main     更新合并到你当前所在的 main 分支
 1. **安装 cloudflared（仅需一次）**
 
 ```bash
-bash
-复制编辑
+
 npm install -g cloudflared
 
 ```
@@ -102,8 +103,7 @@ npm install -g cloudflared
 1. **运行本地开发服务器**
 
 ```bash
-bash
-复制编辑
+
 npm run dev
 
 ```
@@ -142,3 +142,43 @@ https://example-tunnel.trycloudflare.com
 ---
 
 如需自动二维码打开链接或扫码跳转，请自行生成上述链接对应的二维码用于扫码测试。
+
+
+** 增加了 手机端scanner的功能 **
+- Note: 注意在这个分支下的 project-root/src/app/api/checkin/route.ts 的api被修改。现在该API被用于手机端和后端数据库的交互。
+```
+cd project-root
+cd check_in_mobile
+cd check-in-system 
+```
+如果没有安装react-native/expo的按照以下步骤安装
+```
+npm install
+```
+```
+npx expo start --clear
+```
+- Note:如果需要测试手机端，从Apple store或者Google store上下载 Expo Go
+- npx expo start --clear 该指令会生成一个二维码，用手机相机扫描即可
+
+** 关于配置环境 **
+- 该.env文件应置于project-root/check_in_mobile/check-in-system文件夹下
+```
+DATABASE_URL="postgresql://username:password@localhost:5432/paper_management?schema=public"
+
+EXPO_PUBLIC_API_BASE_URL="http://ip地址:3000"
+
+BETTER_AUTH_SECRET=utODwsvVhC2eDYJYwZx2gE2uVufeK1a9
+```
+
+- 该.env文件应置于project-root文件夹下
+```
+
+DATABASE_URL="postgresql://username:password@localhost:5432/paper_management?schema=public"
+
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
+PUBLIC_IMAGE_BASE_URL= "http://ip地址:3000"
+
+BETTER_AUTH_SECRET=utODwsvVhC2eDYJYwZx2gE2uVufeK1a9
+```
+

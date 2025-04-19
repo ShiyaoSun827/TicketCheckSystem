@@ -14,7 +14,7 @@ import { authClient } from "@/lib/auth-client";
 import MovieCard, { Movie as MovieType } from "@/components/MovieCard";
 
 export default function ManageMoviesPage() {
-  // 新增电影的状态
+
   const [movies, setMovies] = useState<MovieType[]>([]);
   const [name, setName] = useState("");
   const [duration, setDuration] = useState(""); // 电影时长输入（字符串）
@@ -24,7 +24,7 @@ export default function ManageMoviesPage() {
   const [selectedFileName, setSelectedFileName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 编辑（更新）电影的状态
+
   const [editingMovieId, setEditingMovieId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [editingDuration, setEditingDuration] = useState("");
@@ -44,7 +44,7 @@ export default function ManageMoviesPage() {
     loadMovies();
   }, []);
 
-  // 上传图片函数（适用于新增/更新）
+
   async function uploadImage(file: File): Promise<string> {
     const formData = new FormData();
     formData.append("file", file);
@@ -59,22 +59,22 @@ export default function ManageMoviesPage() {
     return data.url;
   }
 
-  // 新增电影处理
+
   async function handleAddMovie() {
     if (!name || !duration || !rating) return;
 
-    // 转换并校验时长和评分
+
     const parsedDuration = parseInt(duration, 10);
     const parsedRating = parseFloat(rating);
     if (isNaN(parsedDuration) || parsedDuration <= 0) {
-      alert("时长必须为正整数（单位：秒）");
+      alert("Duration must be a positive integer (in seconds).");
       return;
     }
     if (isNaN(parsedRating) || parsedRating < 0 || parsedRating > 10) {
-      alert("评分必须介于 0 到 10 之间");
+      alert("Rating must be between 0 and 10.");
       return;
     }
-    // 格式化评分为一位小数
+
     const fixedRating = parseFloat(parsedRating.toFixed(1));
 
     let imageUrl: string | undefined = undefined;
@@ -82,7 +82,7 @@ export default function ManageMoviesPage() {
       try {
         imageUrl = await uploadImage(imageFile);
       } catch (error) {
-        console.error("图片上传失败:", error);
+        console.error("Image upload failed:", error);
         return;
       }
     }
@@ -95,7 +95,7 @@ export default function ManageMoviesPage() {
       description,
     });
 
-    // 清空新增表单状态
+
     setName("");
     setDuration("");
     setRating("");
@@ -116,16 +116,16 @@ export default function ManageMoviesPage() {
     setMovies(movies);
   }
 
-  // 更新电影处理
+
   async function handleUpdateMovie(id: string) {
     const parsedEditingDuration = parseInt(editingDuration, 10);
     const parsedEditingRating = parseFloat(editingRating);
     if (isNaN(parsedEditingDuration) || parsedEditingDuration <= 0) {
-      alert("时长必须为正整数（单位：秒）");
+      alert("Duration must be a positive integer (in seconds).");
       return;
     }
     if (isNaN(parsedEditingRating) || parsedEditingRating < 0 || parsedEditingRating > 10) {
-      alert("评分必须介于 0 到 10 之间");
+      alert("Rating must be between 0 and 10.");
       return;
     }
     const fixedEditingRating = parseFloat(parsedEditingRating.toFixed(1));
@@ -135,7 +135,7 @@ export default function ManageMoviesPage() {
       try {
         imageUrl = await uploadImage(editingImageFile);
       } catch (error) {
-        console.error("更新图片上传失败:", error);
+        console.error("Image upload failed during update:", error);
         return;
       }
     }
@@ -157,190 +157,187 @@ export default function ManageMoviesPage() {
   const { session } = authClient.useSession();
 
   return (
-    <div className="p-6">
-      <NavBarClient session={session} />
-      <h1 className="text-3xl font-bold mb-6">🎬 Manage Movies</h1>
+      <div className="p-6">
+        <NavBarClient session={session} />
+        <h1 className="text-3xl font-bold mb-6">🎬 Manage Movies</h1>
 
-      {/* 添加电影表单 */}
-      <div className="flex flex-col gap-2 mb-4">
-        <div className="flex gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Movie Name"
-            className="border px-2 py-1 rounded w-1/3"
+        {/* Add Movie Form */}
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="flex gap-2">
+            <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Movie Name"
+                className="border px-2 py-1 rounded w-1/3"
+            />
+            <input
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="Duration (seconds)"
+                type="number"
+                min="1"
+                className="border px-2 py-1 rounded w-1/3"
+            />
+            <input
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+                placeholder="Rating (0-10)"
+                type="number"
+                min="0"
+                max="10"
+                step="0.1"
+                className="border px-2 py-1 rounded w-1/3"
+            />
+          </div>
+          <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Movie Description"
+              className="border px-2 py-1 rounded w-full"
           />
-          <input
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            placeholder="Duration (秒)"
-            type="number"
-            min="1"
-            className="border px-2 py-1 rounded w-1/3"
-          />
-          <input
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            placeholder="Rating (0-10)"
-            type="number"
-            min="0"
-            max="10"
-            step="0.1"
-            className="border px-2 py-1 rounded w-1/3"
-          />
-        </div>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Movie Description"
-          className="border px-2 py-1 rounded w-full"
-        />
-        {/* 自定义文件上传区域（新增） */}
-        <div className="flex items-center gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
-                setImageFile(file);
-                setSelectedFileName(file.name);
-                e.target.value = "";
-              }
-            }}
-          />
-          <button
-            type="button"
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            选择文件
-          </button>
-          <span className="text-gray-600">
-            {selectedFileName || "未选择文件"}
-          </span>
-        </div>
-        <button
-          onClick={handleAddMovie}
-          className="bg-green-600 text-white px-3 py-1 rounded"
-        >
-          Add Movie
-        </button>
-      </div>
-
-      {/* 显示电影列表 */}
-      <ul className="space-y-4">
-        {movies.map((movie) => (
-          <li key={movie.id}>
-            {editingMovieId === movie.id ? (
-              // 显示更新表单
-              <div className="mt-4 p-4 border rounded bg-gray-50">
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    placeholder="Movie Name"
-                    className="border px-2 py-1 rounded"
-                  />
-                  <input
-                    type="number"
-                    value={editingDuration}
-                    onChange={(e) => setEditingDuration(e.target.value)}
-                    placeholder="Duration (秒)"
-                    min="1"
-                    className="border px-2 py-1 rounded"
-                  />
-                  <input
-                    type="number"
-                    value={editingRating}
-                    onChange={(e) => setEditingRating(e.target.value)}
-                    placeholder="Rating (0-10)"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    className="border px-2 py-1 rounded"
-                  />
-                  <textarea
-                    value={editingDescription}
-                    onChange={(e) => setEditingDescription(e.target.value)}
-                    placeholder="Movie Description"
-                    className="border px-2 py-1 rounded"
-                  />
-                  {/* 更新图片上传区域 */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      ref={editingFileInputRef}
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const file = e.target.files[0];
-                          setEditingImageFile(file);
-                          setEditingSelectedFileName(file.name);
-                          e.target.value = "";
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="bg-blue-500 text-white px-2 py-1 rounded"
-                      onClick={() => editingFileInputRef.current?.click()}
-                    >
-                      Choose Image
-                    </button>
-                    <span className="text-gray-600">
-                      {editingSelectedFileName || "No file chosen"}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleUpdateMovie(movie.id)}
-                      className="bg-green-600 text-white px-3 py-1 rounded"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingMovieId(null)}
-                      className="bg-gray-400 text-white px-3 py-1 rounded"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              // 调用 MovieCard 组件
-              <MovieCard
-                movie={movie}
-                isAdmin={true}
-                onDelete={handleDeleteMovie}
-                onEdit={(id) => {
-                  setEditingMovieId(id);
-                  setEditingName(movie.name);
-                  setEditingDuration(movie.length.toString());
-                  setEditingRating(movie.rate.toString());
-                  setEditingDescription(movie.description || "");
-                  setEditingImageFile(null);
-                  setEditingSelectedFileName("");
-                  if (editingFileInputRef.current) {
-                    editingFileInputRef.current.value = "";
+          {/* File Upload Area */}
+          <div className="flex items-center gap-2">
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    setImageFile(file);
+                    setSelectedFileName(file.name);
+                    e.target.value = "";
                   }
                 }}
-              />
-            )}
-          </li>
-        ))}
-      </ul>
-      <button
-        onClick={() => router.push("/dashboard/admin")}
-        className="bg-blue-600 text-white px-4 py-2 rounded mt-6"
-      >
-        Back to Dashboard
-      </button>
-    </div>
+            />
+            <button
+                type="button"
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+                onClick={() => fileInputRef.current?.click()}
+            >
+              Choose File
+            </button>
+            <span className="text-gray-600">
+            {selectedFileName || "No file chosen"}
+          </span>
+          </div>
+          <button
+              onClick={handleAddMovie}
+              className="bg-green-600 text-white px-3 py-1 rounded"
+          >
+            Add Movie
+          </button>
+        </div>
+
+        {/* Movie List */}
+        <ul className="space-y-4">
+          {movies.map((movie) => (
+              <li key={movie.id}>
+                {editingMovieId === movie.id ? (
+                    <div className="mt-4 p-4 border rounded bg-gray-50">
+                      <div className="flex flex-col gap-2">
+                        <input
+                            type="text"
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            placeholder="Movie Name"
+                            className="border px-2 py-1 rounded"
+                        />
+                        <input
+                            type="number"
+                            value={editingDuration}
+                            onChange={(e) => setEditingDuration(e.target.value)}
+                            placeholder="Duration (seconds)"
+                            min="1"
+                            className="border px-2 py-1 rounded"
+                        />
+                        <input
+                            type="number"
+                            value={editingRating}
+                            onChange={(e) => setEditingRating(e.target.value)}
+                            placeholder="Rating (0-10)"
+                            min="0"
+                            max="10"
+                            step="0.1"
+                            className="border px-2 py-1 rounded"
+                        />
+                        <textarea
+                            value={editingDescription}
+                            onChange={(e) => setEditingDescription(e.target.value)}
+                            placeholder="Movie Description"
+                            className="border px-2 py-1 rounded"
+                        />
+                        <div className="flex items-center gap-2">
+                          <input
+                              ref={editingFileInputRef}
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  const file = e.target.files[0];
+                                  setEditingImageFile(file);
+                                  setEditingSelectedFileName(file.name);
+                                  e.target.value = "";
+                                }
+                              }}
+                          />
+                          <button
+                              type="button"
+                              className="bg-blue-500 text-white px-2 py-1 rounded"
+                              onClick={() => editingFileInputRef.current?.click()}
+                          >
+                            Choose Image
+                          </button>
+                          <span className="text-gray-600">
+                      {editingSelectedFileName || "No file chosen"}
+                    </span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                              onClick={() => handleUpdateMovie(movie.id)}
+                              className="bg-green-600 text-white px-3 py-1 rounded"
+                          >
+                            Save
+                          </button>
+                          <button
+                              onClick={() => setEditingMovieId(null)}
+                              className="bg-gray-400 text-white px-3 py-1 rounded"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                ) : (
+                    <MovieCard
+                        movie={movie}
+                        isAdmin={true}
+                        onDelete={handleDeleteMovie}
+                        onEdit={(id) => {
+                          setEditingMovieId(id);
+                          setEditingName(movie.name);
+                          setEditingDuration(movie.length.toString());
+                          setEditingRating(movie.rate.toString());
+                          setEditingDescription(movie.description || "");
+                          setEditingImageFile(null);
+                          setEditingSelectedFileName("");
+                          if (editingFileInputRef.current) {
+                            editingFileInputRef.current.value = "";
+                          }
+                        }}
+                    />
+                )}
+              </li>
+          ))}
+        </ul>
+        <button
+            onClick={() => router.push("/dashboard/admin")}
+            className="bg-blue-600 text-white px-4 py-2 rounded mt-6"
+        >
+          Back to Dashboard
+        </button>
+      </div>
   );
 }

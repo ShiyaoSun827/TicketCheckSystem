@@ -48,8 +48,8 @@ const SeatPicker: React.FC<SeatPickerProps> = ({
     return () => window.removeEventListener("mouseup", handleMouseUp);
   }, []);
 
-  if (!seats) return <p className="text-gray-500 italic">加载座位中...</p>;
-  if (seats.length === 0) return <p className="text-red-600">❌ 无可用的座位表</p>;
+  if (!seats) return <p className="text-gray-500 italic">Seats loading...</p>;
+  if (seats.length === 0) return <p className="text-red-600">❌ No seating chart available</p>;
 
   const getSeatKey = (row: string, col: number) => `${row}${col}`;
   const reservedSet = new Set(seats.filter((s) => s.reserved).map((s) => getSeatKey(s.row, s.col)));
@@ -108,7 +108,7 @@ const SeatPicker: React.FC<SeatPickerProps> = ({
                 onMouseDown={() => startDrag(seatKey)}
                 onMouseEnter={() => continueDrag(seatKey)}
                 disabled={isReserved || isInCart}
-                title={isInCart ? "该座位已在你的购物车中" : undefined}
+                title={isInCart ? "The seat is in your shopping cart" : undefined}
                 className={`w-8 h-8 text-xs rounded border font-mono
                   ${isReserved ? "bg-gray-400 cursor-not-allowed" : ""}
                   ${isInCart ? "bg-yellow-300 cursor-not-allowed" : ""}

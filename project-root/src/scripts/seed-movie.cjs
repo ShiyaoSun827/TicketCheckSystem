@@ -8,8 +8,8 @@ async function seedMovies() {
   const moviesData = [
     {
       name: "Movie1",
-      length: 7200,  // 电影时长（秒）
-      rate: 8.5,     // 电影评分（0-10 的小数）
+      length: 7200,
+      rate: 8.5,
       image: "/images/76963db1e35df0f3c76b21ef7ab12f3db21c2b9e5d089f4d816c6c368c0f80cb.jpg", // 图片 URL 代替值
       description: "An epic journey through uncharted lands.",
     },
@@ -52,7 +52,7 @@ async function seedMovies() {
 
   for (const movie of moviesData) {
     try {
-      // 检查是否已存在相同名字的电影（你可以根据需要修改唯一性判断逻辑）
+      // check if movie repeated
       const existing = await prisma.movie.findFirst({ where: { name: movie.name } });
     //   if (!existing) {
     if(true){

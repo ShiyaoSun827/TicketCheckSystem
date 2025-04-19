@@ -55,9 +55,9 @@ export default function SignInPage() {
           {message && <p className="text-center text-red-600 text-sm">{message}</p>}
 
           <p className="text-center text-sm text-gray-600">
-            没有账号？
+            Not registered yet？
             <Link href="/signup" className="text-blue-600 hover:underline ml-1">
-              注册一个新账号
+              Register
             </Link>
           </p>
         </div>

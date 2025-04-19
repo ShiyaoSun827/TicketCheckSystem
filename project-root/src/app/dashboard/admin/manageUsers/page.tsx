@@ -25,7 +25,6 @@ export default function ManageUsersPage() {
     const handleRoleChange = async (userId: string, newRole: string) => {
         await updateUserRole(userId, newRole);
         setMessage(`✅ Role updated to ${newRole}`);
-        // 重新拉取数据
         const updated = await getAllUsers();
         setUsers(updated);
     };
