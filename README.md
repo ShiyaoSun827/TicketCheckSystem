@@ -20,8 +20,9 @@
 
 ~~基础的退票~~
 
+~~出票系统--通过邮箱下发ticket？~~
 
-
+~~登录系统--提供修改邮箱、验证邮箱功能（要查better auth文档~~
 
 - [ ] 上传头像
 - [ ] 工单系统
@@ -29,13 +30,6 @@
 - [ ] 美化一下login页面
 
 - [ ] 各种staff界面（重量级）
-- [ ] 出票系统--通过邮箱下发ticket？
-- [ ] 登录系统--提供修改邮箱、验证邮箱功能（要查better auth文档
-
-
-
-
-
 
 - 启动 PostgreSQL 服务：net start postgresql-x64-16 （使用postgresql16）
 
@@ -45,7 +39,7 @@ cd \project-root\
 npm install
 ```
 
-- 更新数据库
+- 更新数据库(更新时先停止服务器)
 ```
 npx prisma format (有时候数据库大改了就需要先跑这个)
 npx prisma migrate reset
@@ -54,11 +48,9 @@ npx prisma migrate dev
 ```
 
 
-
-
 - 有时候突发恶疾的话可以试一下这个`npx @better-auth/cli migrate` (忘了这一行要不要跑了)
 
-- 自动创建初始管理员、添加一些电影、添加一些show的脚本（这些脚本都要npm run dev之后运行，因为直接用的prisma的方法）
+- 自动seed脚本（这些脚本都要npm run dev之后运行，因为直接用的prisma的方法）
 
 - 管理员账号： admin@example.com admin123
 
@@ -69,6 +61,9 @@ npx prisma migrate dev
 node src/scripts/seed-admin.cjs
 node src/scripts/seed-movie.cjs
 node src/scripts/seed-show.mjs
+node src/scripts/seed-user.cjs
+node src/scripts/seed-ticket.mjs
+node src/scripts/seed-transaction.cjs
 ```
 
 - git命令（老是忘）

@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 export async function getAllTransactions() {
-  return await prisma.walletTransaction.findMany({
+  const transactions = await prisma.walletTransaction.findMany({
     include: {
       wallet: {
         include: {
@@ -18,6 +18,12 @@ export async function getAllTransactions() {
       createdAt: "desc",
     },
   });
+
+  // 解包 user 到顶层
+  return transactions.map((tx) => ({
+    ...tx,
+    user: tx.wallet?.user || null,
+  }));
 }
 
 export async function cancelShowAndRefundTickets(showId: string) {
@@ -141,6 +147,8 @@ export async function getAllTickets() {
       show: {
         select: {
           beginTime: true,
+          endTime: true,
+          price: true,
           movie: {
             select: {
               name: true,
