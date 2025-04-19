@@ -26,7 +26,6 @@ async function seedUsers() {
       const result = await res.json();
 
       if (result.success) {
-        // ✅ 更新 emailVerified 字段为 true
         await prisma.user.update({
           where: { email: user.email },
           data: { emailVerified: true },

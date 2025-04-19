@@ -14,7 +14,7 @@ export default function CancelShowButton({ showId }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleCancel = () => {
-    const confirmed = confirm("确定要取消此排片吗？");
+    const confirmed = confirm("Are you sure you want to cancel this show?");
     if (!confirmed) return;
 
     startTransition(async () => {
@@ -29,7 +29,7 @@ export default function CancelShowButton({ showId }: Props) {
       disabled={isPending}
       className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
     >
-      取消
+      Cancel
     </button>
   );
 }

@@ -23,15 +23,15 @@ export default function ShowtimesScreen() {
 
   useEffect(() => {
     const url = `${process.env.EXPO_PUBLIC_API_BASE_URL}/api/showtimes`;
-    console.log('📦 Fetching showtimes from:', url); //  打印地址
+    console.log('📦 Fetching showtimes from:', url); 
   
     axios.get<Show[]>(url)
       .then((res) => {
-        console.log('Received showtimes:', res.data); // 打印结果
+        console.log('Received showtimes:', res.data); 
         setShows(res.data);
       })
       .catch((err) => {
-        console.error('Failed to fetch showtimes:', err.message); // 错误信息
+        console.error('Failed to fetch showtimes:', err.message); 
       });
   }, []);
 

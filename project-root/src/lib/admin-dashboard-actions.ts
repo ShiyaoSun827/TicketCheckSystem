@@ -19,7 +19,7 @@ export async function getAllTransactions() {
     },
   });
 
-  // 解包 user 到顶层
+  // umpack user to top level
   return transactions.map((tx) => ({
     ...tx,
     user: tx.wallet?.user || null,

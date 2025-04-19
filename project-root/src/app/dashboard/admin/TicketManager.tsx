@@ -216,7 +216,7 @@ export default function TicketManager() {
                           {ticket.seatCol + 1}
                         </p>
                         <p className="text-sm text-gray-700">
-                          💰 Price: ¥{ticket.show.price?.toFixed?.(2) ?? "Unknown"}
+                          💰 Price: ${ticket.show.price?.toFixed?.(2) ?? "Unknown"}
                         </p>
                         <p className="text-sm text-gray-600">
                           👤 User: {ticket.user.name} ({ticket.user.email})

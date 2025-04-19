@@ -93,7 +93,7 @@ export default function CartPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-right text-lg font-semibold">
-                    Total: ¥{total.toFixed(2)}
+                    Total: ${total.toFixed(2)}
                   </div>
 
                   <div className="text-right">
@@ -150,7 +150,7 @@ export default function CartPage() {
                         <p>📅 {new Date(item.showTime).toLocaleString()}</p>
                         <p>💺 Seat: {item.seat}</p>
                         <p>🕒 Added at: {new Date(item.addedAt).toLocaleString()}</p>
-                        <p>💰 Price: ¥{item.price.toFixed(2)}</p>
+                        <p>💰 Price: ${item.price.toFixed(2)}</p>
                       </div>
                       <button
                           onClick={() => handleDeleteItem(item.id)}

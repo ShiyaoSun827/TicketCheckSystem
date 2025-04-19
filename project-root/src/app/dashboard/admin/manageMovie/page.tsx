@@ -17,8 +17,8 @@ export default function ManageMoviesPage() {
 
   const [movies, setMovies] = useState<MovieType[]>([]);
   const [name, setName] = useState("");
-  const [duration, setDuration] = useState(""); // 电影时长输入（字符串）
-  const [rating, setRating] = useState("");     // 电影评分输入（字符串）
+  const [duration, setDuration] = useState(""); 
+  const [rating, setRating] = useState("");     
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState("");

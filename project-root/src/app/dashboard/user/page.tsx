@@ -92,7 +92,7 @@ export default function DashboardPage() {
             </div>
             <div className="bg-gray-100 p-4 rounded shadow text-center">
               <p className="text-sm text-gray-600">Wallet Balance</p>
-              <p className="text-xl font-bold">¥{balance.toFixed(2)}</p>
+              <p className="text-xl font-bold">${balance.toFixed(2)}</p>
             </div>
           </div>
         </section>

@@ -1,4 +1,4 @@
-//src/scripts/seed-user.cjs
+// src/scripts/seed-user.cjs
 "use strict";
 
 const { PrismaClient } = require("@prisma/client");
@@ -16,12 +16,12 @@ async function seedTransactions() {
     });
 
     if (users.length === 0) {
-      console.log("❌ 没有非管理员用户，请先注册一些用户");
+      console.log("❌ No non-admin users found. Please register some users first.");
       return;
     }
 
     for (const user of users) {
-      // 若无钱包则创建一个
+      // Create a wallet if not exists
       let wallet = user.Wallet;
 
       if (!wallet) {
@@ -31,10 +31,10 @@ async function seedTransactions() {
             balance: 0,
           },
         });
-        console.log(`💼 为用户 ${user.email} 创建新钱包`);
+        console.log(`💼 Created new wallet for user ${user.email}`);
       }
 
-      const baseNote = `用户 ${user.email}`;
+      const baseNote = `User ${user.email}`;
 
       await prisma.walletTransaction.createMany({
         data: [
@@ -42,30 +42,30 @@ async function seedTransactions() {
             walletId: wallet.id,
             type: "RECHARGE",
             amount: 100.0,
-            note: `${baseNote} 手动充值`,
+            note: `${baseNote} manual recharge`,
           },
           {
             walletId: wallet.id,
             type: "PAYMENT",
             amount: -45.0,
-            note: `${baseNote} 电影购票`,
+            note: `${baseNote} movie ticket payment`,
           },
           {
             walletId: wallet.id,
             type: "REFUND",
             amount: 30.0,
-            note: `${baseNote} 退票退款`,
+            note: `${baseNote} ticket refund`,
           },
         ],
         skipDuplicates: true,
       });
 
-      console.log(`✅ 为 ${user.email} 插入了 3 条交易记录`);
+      console.log(`✅ Inserted 3 transactions for ${user.email}`);
     }
 
-    console.log("🎉 WalletTransaction 数据插入完毕！");
+    console.log("🎉 WalletTransaction seeding completed.");
   } catch (err) {
-    console.error("❌ 出错:", err.message);
+    console.error("❌ Error occurred:", err.message);
   } finally {
     await prisma.$disconnect();
   }

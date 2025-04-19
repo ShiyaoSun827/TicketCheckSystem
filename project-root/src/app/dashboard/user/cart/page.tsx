@@ -9,7 +9,7 @@ export default async function CartPage() {
   return (
     <div className="p-6 space-y-6">
       <NavBarClient />
-      <h1 className="text-2xl font-bold">🛒 我的购物车</h1>
+      <h1 className="text-2xl font-bold">🛒 My Cart</h1>
       <CartClient items={items} />
     </div>
   );

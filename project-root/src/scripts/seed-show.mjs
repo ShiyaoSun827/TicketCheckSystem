@@ -39,7 +39,7 @@ async function seedShows() {
         movieID: movie.id,
         beginTime: new Date(baseTime.getTime() + 6 * 3600000),
         price: 4,
-        status: "CANCELLED", // ✅ 替代 cancelled: true
+        status: "CANCELLED",
       });
 
       console.log(`✅ Done for movie: ${movie.name}`);

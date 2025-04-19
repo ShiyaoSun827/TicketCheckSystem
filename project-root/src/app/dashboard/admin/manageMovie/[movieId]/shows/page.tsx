@@ -24,7 +24,7 @@ export default async function ShowManagementPage(props: PageProps) {
   if (!movie) {
     return (
       <div className="p-6">
-        <h1 className="text-2xl font-semibold text-red-600">❌ 未找到该电影</h1>
+        <h1 className="text-2xl font-semibold text-red-600">❌ The movie was not found.</h1>
       </div>
     );
   }
@@ -37,7 +37,7 @@ export default async function ShowManagementPage(props: PageProps) {
     <div className="p-6 space-y-8">
       <NavBar />
 
-      {/* 上方区域：展示电影详情 */}
+      {/* Top section: movie details */}
       <div className="flex flex-col md:flex-row gap-6 border p-4 rounded-lg shadow-sm">
         {movie.image && (
           <div className="flex-shrink-0">
@@ -52,35 +52,34 @@ export default async function ShowManagementPage(props: PageProps) {
         )}
 
         <div className="flex flex-col justify-start">
-          <h1 className="text-3xl font-bold mb-4">🎬 《{movie.name}》</h1>
-          <p className="mb-2"><strong>类型：</strong>{movie.type}</p>
-          <p className="mb-2"><strong>上映时间：</strong>{new Date(movie.showTime).toLocaleString()}</p>
-          <p className="mb-2"><strong>时长：</strong>{movie.length} 秒</p>
-          <p className="mb-2"><strong>图片路径：</strong>{movie.image}</p>
-          <p className="mb-2"><strong>简介：</strong>{movie.description}</p>
+          <h1 className="text-3xl font-bold mb-4">🎬 {movie.name}</h1>
+          <p className="mb-2"><strong>Release Time: </strong>{new Date(movie.updatedAt).toLocaleString()}</p>
+          <p className="mb-2"><strong>Duration: </strong>{movie.length} seconds</p>
+          <p className="mb-2"><strong>Image Path: </strong>{movie.image}</p>
+          <p className="mb-2"><strong>Description: </strong>{movie.description}</p>
         </div>
       </div>
 
-      {/* 下方区域：Show 管理功能 */}
+      {/* Bottom section: show management */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4">🎟️ 排片管理</h2>
+        <h2 className="text-2xl font-semibold mb-4">🎟️ Show Management</h2>
 
         <AddShowForm movieId={movie.id} length={movie.length} />
 
-        {/* 未提交排片 */}
+        {/* Draft Shows */}
         <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-2">📝 待提交排片</h3>
+          <h3 className="text-xl font-semibold mb-2">📝 Draft Shows</h3>
           {draftShows.length > 0 ? (
             <ul className="space-y-2">
               {draftShows.map((show) => (
                 <li key={show.id} className="border p-2 rounded">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <p className="font-semibold whitespace-nowrap">🎬 《{movie.name}》</p>
+                      <p className="font-semibold whitespace-nowrap">🎬 {movie.name}</p>
                       <p className="text-sm text-gray-700 ml-8">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
-                      <p className="text-sm text-blue-600 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
+                      <p className="text-sm text-blue-600 ml-4">💰 ${show.price?.toFixed(2)}</p>
                       <span className="text-xs text-gray-500">[{show.status}]</span>
                     </div>
                     <div className="flex gap-2">
@@ -95,24 +94,24 @@ export default async function ShowManagementPage(props: PageProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-600">暂无待提交排片</p>
+            <p className="text-sm text-gray-600">No draft shows available</p>
           )}
         </div>
 
-        {/* ✅ 已提交排片 */}
+        {/* Published Shows */}
         <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-2">✅ 已提交排片</h3>
+          <h3 className="text-xl font-semibold mb-2">✅ Published Shows</h3>
           {publishedShows.length > 0 ? (
             <ul className="space-y-2">
               {publishedShows.map((show) => (
                 <li key={show.id} className="border p-2 rounded">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <p className="font-semibold whitespace-nowrap">🎬 《{movie.name}》</p>
+                      <p className="font-semibold whitespace-nowrap">🎬 {movie.name}</p>
                       <p className="text-sm text-gray-700 ml-8">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
-                      <p className="text-sm text-blue-600 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
+                      <p className="text-sm text-blue-600 ml-4">💰 ${show.price?.toFixed(2)}</p>
                       <span className="text-xs text-gray-500">[{show.status}]</span>
                     </div>
                     <CancelShowButton showId={show.id} />
@@ -121,24 +120,24 @@ export default async function ShowManagementPage(props: PageProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-600">暂无已提交排片</p>
+            <p className="text-sm text-gray-600">No published shows available</p>
           )}
         </div>
 
-        {/* ❌ 已取消排片 */}
+        {/* Cancelled Shows */}
         <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-2">❌ 已取消排片</h3>
+          <h3 className="text-xl font-semibold mb-2">❌ Cancelled Shows</h3>
           {cancelledShows.length > 0 ? (
             <ul className="space-y-2">
               {cancelledShows.map((show) => (
                 <li key={show.id} className="border p-2 rounded bg-gray-100">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <p className="font-semibold text-gray-500">🎬 《{movie.name}》</p>
+                      <p className="font-semibold text-gray-500">🎬 {movie.name}</p>
                       <p className="text-sm text-gray-500">
                         🎞 {new Date(show.beginTime).toLocaleString()} — {new Date(show.endTime).toLocaleString()}
                       </p>
-                      <p className="text-sm text-gray-500 ml-4">💰 ¥{show.price?.toFixed(2)}</p>
+                      <p className="text-sm text-gray-500 ml-4">💰 ${show.price?.toFixed(2)}</p>
                       <span className="text-xs text-red-500 font-semibold">[CANCELLED]</span>
                     </div>
                     <DeleteShowButton showId={show.id} />
@@ -147,7 +146,7 @@ export default async function ShowManagementPage(props: PageProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-600">暂无已取消排片</p>
+            <p className="text-sm text-gray-600">No cancelled shows available</p>
           )}
         </div>
       </div>

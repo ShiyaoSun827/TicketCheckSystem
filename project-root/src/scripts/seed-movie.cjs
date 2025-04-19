@@ -52,7 +52,7 @@ async function seedMovies() {
   for (const movie of moviesData) {
     try {
       const existing = await prisma.movie.findFirst({ where: { name: movie.name } });
-      if (true) { // 或改为 if (!existing)
+      if (true) { // or if (!existing)
         await prisma.movie.create({ data: movie });
         console.log(`Created movie: ${movie.name}`);
       } else {

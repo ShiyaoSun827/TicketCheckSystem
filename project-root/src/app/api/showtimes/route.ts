@@ -22,7 +22,7 @@ export async function GET() {
       },
     });
 
-    // 👇 拼接完整的图片地址
+    // 👇 Concatenate to form the complete image address
     const baseUrl = process.env.PUBLIC_IMAGE_BASE_URL || 'http://localhost:3000';
 
     const result = shows.map((show) => ({

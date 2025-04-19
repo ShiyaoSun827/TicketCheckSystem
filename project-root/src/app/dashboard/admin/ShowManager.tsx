@@ -203,7 +203,7 @@ export default function ShowManager() {
                         <div className="space-y-1">
                           <p className="text-lg font-semibold">{show.movie.name}</p>
                           <p className="text-sm text-gray-700">⏰ {formatDate(show.beginTime)} - {formatDate(show.endTime)}</p>
-                          <p className="text-sm text-gray-600">💰 Price: ¥{show.price?.toFixed(2) ?? "N/A"}</p>
+                          <p className="text-sm text-gray-600">💰 Price: ${show.price?.toFixed(2) ?? "N/A"}</p>
                           <p className="text-sm text-gray-600">
                             📦 Status:
                             {show.status === "DRAFT" && <span className="text-yellow-600 font-medium">Draft</span>}

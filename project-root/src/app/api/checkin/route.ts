@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         qrCode,
         scanTime: new Date(),
         status: "SCANNED",
-        scannedBy: "STAFF", // 网页端的 staff 页面
+        scannedBy: "STAFF", //  staff page on website
       },
     });
 

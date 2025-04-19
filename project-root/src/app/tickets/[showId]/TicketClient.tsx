@@ -106,7 +106,7 @@ export default function TicketClient({
             <p>🎬 Title: {show.movie.name}</p>
             <p>📅 Time: {new Date(show.beginTime).toLocaleString()}</p>
             <p>⌛ Duration: {Math.round(show.movie.length / 60)} minutes</p>
-            <p>💰 Price: ¥{show.price?.toFixed(2) ?? "N/A"}</p>
+            <p>💰 Price: ${show.price?.toFixed(2) ?? "N/A"}</p>
           </div>
         </div>
 
@@ -192,8 +192,8 @@ export default function TicketClient({
 
             <hr className="my-4" />
             <div className="text-sm text-gray-800 space-y-1">
-              <p>🧮 Total: ¥{totalPrice.toFixed(2)}</p>
-              <p>💰 Wallet Balance: ¥{walletBalance.toFixed(2)}</p>
+              <p>🧮 Total: ${totalPrice.toFixed(2)}</p>
+              <p>💰 Wallet Balance: ${walletBalance.toFixed(2)}</p>
             </div>
 
             <button

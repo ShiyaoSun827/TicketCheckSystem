@@ -5,19 +5,19 @@ const prisma = new PrismaClient();
 
 async function seedTickets() {
   try {
-    // 获取一个任意普通用户（可按条件筛选非管理员）
+    // Get a regular user (excluding admin)
     const user = await prisma.user.findFirst({
       where: { role: "user" },
     });
 
-    if (!user) throw new Error("未找到用户");
+    if (!user) throw new Error("No regular user found");
 
-    // 获取一个 PUBLISHED 状态的 show
+    // Get a PUBLISHED show
     const show = await prisma.show.findFirst({
       where: { status: "PUBLISHED" },
     });
 
-    if (!show) throw new Error("未找到有效的排片");
+    if (!show) throw new Error("No valid show found");
 
     console.log(`🎯 Creating tickets for user ${user.email}, show ${show.id}`);
 
@@ -28,7 +28,7 @@ async function seedTickets() {
       for (const col of cols) {
         const seatString = `${row}${col}`;
 
-        // 跳过已被预订的座位
+        // Skip already reserved seats
         const existingSeat = await prisma.seat.findFirst({
           where: {
             showId: show.id,
@@ -67,7 +67,7 @@ async function seedTickets() {
       }
     }
 
-    console.log("🎉 Seeding complete.");
+    console.log("🎉 Ticket seeding completed successfully.");
   } catch (error) {
     console.error("❌ Error:", error.message);
   } finally {

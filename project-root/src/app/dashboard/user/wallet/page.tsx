@@ -30,11 +30,11 @@ export default function WalletPage() {
 
   const handleRecharge = async () => {
     if (rechargeAmount <= 0 || isNaN(rechargeAmount)) {
-      alert("请输入有效的充值金额");
+      alert("Please enter a valid amount to recharge");
       return;
     }
     if (rechargeAmount > 200) {
-      const confirmLarge = confirm("⚠️ 充值数额较大，你确认继续吗？");
+      const confirmLarge = confirm("⚠️ The amount is large. Are you sure you want to proceed?");
       if (!confirmLarge) return;
     }
 
@@ -46,7 +46,7 @@ export default function WalletPage() {
       setRechargeAmount(0);
       setShowRechargeForm(false);
     } catch (err) {
-      alert("充值失败");
+      alert("Recharge failed");
       console.error(err);
     } finally {
       setLoading(false);
@@ -66,11 +66,11 @@ export default function WalletPage() {
   return (
     <div className="p-6 space-y-6">
       <NavBarClient session={session} />
-      <h1 className="text-2xl font-bold">💰 我的钱包</h1>
+      <h1 className="text-2xl font-bold">💰 My Wallet</h1>
 
       <div className="bg-white rounded shadow p-4">
         <p className="text-xl font-semibold text-green-700">
-          当前余额：¥{walletInfo?.balance.toFixed(2) ?? "加载中..."}
+          Current Balance: ${walletInfo?.balance.toFixed(2) ?? "Loading..."}
         </p>
 
         {!showRechargeForm ? (
@@ -82,14 +82,14 @@ export default function WalletPage() {
                   onClick={() => handleAmountClick(amount)}
                   className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                 >
-                  充值 ¥{amount}
+                  Recharge ${amount}
                 </button>
               ))}
               <button
                 onClick={() => setShowRechargeForm(true)}
                 className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
               >
-                自定义金额
+                Custom Amount
               </button>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function WalletPage() {
                 }
               }}
               className="border rounded px-3 py-1 w-40"
-              placeholder="输入金额"
+              placeholder="Enter amount"
             />
             <div className="space-x-2">
               <button
@@ -115,7 +115,7 @@ export default function WalletPage() {
                 disabled={loading}
                 className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
               >
-                {loading ? "处理中..." : "确认充值"}
+                {loading ? "Processing..." : "Confirm Recharge"}
               </button>
               <button
                 onClick={() => {
@@ -124,7 +124,7 @@ export default function WalletPage() {
                 }}
                 className="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500"
               >
-                取消
+                Cancel
               </button>
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function WalletPage() {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-2">📜 交易记录</h2>
+        <h2 className="text-xl font-semibold mb-2">📜 Transaction History</h2>
         <div className="flex gap-4 mb-4">
           {["ALL", "RECHARGE", "PAYMENT", "REFUND"].map((type) => (
             <button
@@ -144,15 +144,15 @@ export default function WalletPage() {
                   : "bg-white text-gray-800 hover:bg-gray-100"
               }`}
             >
-              {type === "ALL" && "全部"}
-              {type === "RECHARGE" && "充值记录"}
-              {type === "PAYMENT" && "消费记录"}
-              {type === "REFUND" && "退票记录"}
+              {type === "ALL" && "All"}
+              {type === "RECHARGE" && "Recharge"}
+              {type === "PAYMENT" && "Payment"}
+              {type === "REFUND" && "Refund"}
             </button>
           ))}
         </div>
         {filteredTransactions?.length === 0 ? (
-          <p className="text-gray-600">暂无符合条件的交易记录</p>
+          <p className="text-gray-600">No matching transactions found</p>
         ) : (
           <ul className="space-y-2">
             {filteredTransactions.map((t) => (
@@ -162,7 +162,7 @@ export default function WalletPage() {
               >
                 <div>
                   <p>
-                    <span className="font-medium">{t.type}</span>：¥{t.amount.toFixed(2)}
+                    <span className="font-medium">{t.type}</span>: ${t.amount.toFixed(2)}
                   </p>
                   {t.note && <p className="text-sm text-gray-600">{t.note}</p>}
                 </div>

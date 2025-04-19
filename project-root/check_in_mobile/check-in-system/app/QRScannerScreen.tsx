@@ -7,7 +7,7 @@ import axios from 'axios';
 export default function QRScannerScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [qrData, setQrData] = useState<string | null>(null);
-  const lockRef = useRef(false); // ✅ 扫描锁
+  const lockRef = useRef(false); // ✅ scan lock
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
@@ -18,8 +18,8 @@ export default function QRScannerScreen() {
   }, [permission]);
 
   const handleBarcodeScanned = async (result: BarcodeScanningResult) => {
-    if (lockRef.current) return; // ✅ 已锁住
-    lockRef.current = true; // ✅ 加锁
+    if (lockRef.current) return; // ✅ locked
+    lockRef.current = true; // ✅ add lock
 
     const code = result?.data ?? '';
     setQrData(code);
@@ -34,7 +34,7 @@ export default function QRScannerScreen() {
       console.error('❌ Check-in failed', error);
       Alert.alert('❌ Error', 'Failed to check in ticket.');
     } finally {
-      // ✅ 稍等一会再跳转，避免立即中断摄像头关闭
+      // ✅ Please wait for a moment before jumping to the next step. This is to avoid immediately interrupting the camera shut-down process.
       setTimeout(() => {
         router.replace({ pathname: '/showtimes/id', params: { showId: id as string } });
       }, 1000);
