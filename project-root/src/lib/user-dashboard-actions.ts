@@ -4,10 +4,15 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
+import { sendEmail } from "@/lib/email";
+import QRCode from "qrcode";
+
 
 // src/lib/user-dashboard-actions.ts
 
 import { getSession } from "@/hooks/getSession";
+
+
 
 export async function refundTicket(ticketId: string) {
   const session = await getSession();
@@ -738,4 +743,70 @@ export async function getProfile() {
       name: user.name,
       email: user.email,
     };
+  }
+
+  export async function emailMyTicket(ticketId: string) {
+    const session = await auth.api.getSession({
+      headers: new Headers(await headers()),
+    });
+  
+    const user = session?.user;
+    if (!user) return { success: false, message: "Not logged in" };
+  
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: ticketId },
+      select: {
+        seatRow: true,
+        seatCol: true,
+        qrCode: true,
+        status: true,
+        userID: true,
+        show: {
+          select: {
+            beginTime: true,
+            movie: { select: { name: true } },
+          },
+        },
+      },
+    });
+  
+    if (!ticket || ticket.userID !== user.id) {
+      return { success: false, message: "Ticket not found or unauthorized" };
+    }
+  
+    const qrImageDataUrl = await QRCode.toDataURL(ticket.qrCode || "Missing QR");
+    const base64Data = qrImageDataUrl.split("base64,")[1];
+  
+    const emailBody = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h1 style="color: #4F46E5;">🎬 Your Movie Ticket Confirmation</h1>
+        <p>Hello ${user.name || "Guest"},</p>
+        <p>Thanks for booking with us! Here are your ticket details:</p>
+        <hr />
+        <p><strong>Movie:</strong> ${ticket.show.movie.name}</p>
+        <p><strong>Seat:</strong> ${ticket.seatRow}${ticket.seatCol}</p>
+        <p><strong>Date:</strong> ${ticket.show.beginTime.toLocaleString()}</p>
+        <p><strong>Status:</strong> ${ticket.status}</p>
+        <p><strong>QR Code:</strong></p>
+        <img src="cid:qrcode.png" alt="QR Code" width="150" />
+        <br />
+        <p style="color: #888;">Powered by MovieTicketing 🎟️</p>
+      </div>
+    `;
+  
+    await sendEmail(
+      user.email,
+      "🎟️ Your Movie Ticket Confirmation",
+      emailBody,
+      [
+        {
+          filename: "qrcode.png",
+          content: base64Data,
+          encoding: "base64",
+          cid: "qrcode.png",
+        },
+      ]
+    );
+  
+    return { success: true, message: "Email sent" };
   }
