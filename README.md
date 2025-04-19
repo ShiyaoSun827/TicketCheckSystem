@@ -41,7 +41,7 @@ npm install
 
 - 更新数据库(更新时先停止服务器)
 ```
-npx prisma format (有时候数据库大改了就需要先跑这个)
+npx prisma format 
 npx prisma migrate reset
 npx prisma generate
 npx prisma migrate dev 
@@ -90,8 +90,7 @@ git merge upstream/main     更新合并到你当前所在的 main 分支
 1. **安装 cloudflared（仅需一次）**
 
 ```bash
-bash
-复制编辑
+
 npm install -g cloudflared
 
 ```
@@ -99,8 +98,7 @@ npm install -g cloudflared
 1. **运行本地开发服务器**
 
 ```bash
-bash
-复制编辑
+
 npm run dev
 
 ```

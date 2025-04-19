@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function seedShows() {
   const movies = await prisma.movie.findMany();
   if (!movies.length) {
-    console.error("❌ 没有找到任何电影，请先运行 seed-movie 脚本");
+    console.error("❌ no movies find，run seed-movie script first");
     return;
   }
 
@@ -15,7 +15,7 @@ async function seedShows() {
 
   for (let i = 0; i < movies.length; i++) {
     const movie = movies[i];
-    const baseTime = new Date(baseDate.getTime() + i * 86400000); // 每部电影相隔一天
+    const baseTime = new Date(baseDate.getTime() + i * 86400000);
 
     try {
       // Draft

@@ -4,7 +4,7 @@
 import { authClient } from "@/lib/auth-client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendEmail } from "@/lib/email";
 
 
 export async function signUpWithEmail(formData: FormData) {
@@ -29,7 +29,7 @@ export async function signUpWithEmail(formData: FormData) {
   // ✅ Construct verification link
   const verificationUrl = `${baseUrl}/api/verify?email=${encodeURIComponent(email)}`;
   // ✅ Send email
-  await sendVerificationEmail(
+  await sendEmail(
     email,
     "Verify your email",
     `

@@ -1,6 +1,5 @@
 //src/app/dashboard/staff/checkin/page.tsx
 
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";

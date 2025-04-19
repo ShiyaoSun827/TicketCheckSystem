@@ -22,7 +22,7 @@ export default function ProfileEditor({ name, email }: { name: string; email: st
     if (newEmail && newEmail !== email) updateData.email = newEmail;
 
     if (Object.keys(updateData).length === 0) {
-      setMessage("没有需要更新的字段");
+      setMessage("No fields to update.");
       return;
     }
 
@@ -30,21 +30,21 @@ export default function ProfileEditor({ name, email }: { name: string; email: st
       const result = await authClient.updateUser(updateData);
 
       if (result?.error) {
-        setMessage("❌ 更新失败：" + result.error.message);
+        setMessage("❌ Update failed: " + result.error.message);
       } else {
-        await authClient.session.refresh(); // ✅ 刷新全局 session
+        await authClient.session.refresh();
         setDisplayName(newName);
         setDisplayEmail(newEmail);
         setEditingProfile(false);
-        setMessage("✅ 用户信息已更新");
+        setMessage("✅ Profile updated successfully.");
       }
     } catch (err: any) {
-      setMessage("❌ 更新失败：" + (err.message || "未知错误"));
+      setMessage("❌ Update failed: " + (err.message || "Unknown error"));
     }
   }
 
   async function handleChangePassword() {
-    setMessage(""); // 清空旧信息
+    setMessage("");
 
     const result = await authClient.changePassword({
       currentPassword,
@@ -55,106 +55,106 @@ export default function ProfileEditor({ name, email }: { name: string; email: st
     if (result?.error) {
       const msg = result.error.message;
       const userFriendlyMessage =
-        msg.includes("Password is too short")
-          ? "❌ 新密码太短，请输入至少 8 位字符"
-          : msg.includes("Invalid credentials")
-          ? "❌ 当前密码错误"
-          : "❌ 修改失败：" + msg;
+          msg.includes("Password is too short")
+              ? "❌ New password too short. Please enter at least 8 characters."
+              : msg.includes("Invalid credentials")
+                  ? "❌ Incorrect current password."
+                  : "❌ Password change failed: " + msg;
 
       setMessage(userFriendlyMessage);
       return;
     }
 
-    setMessage("✅ 密码修改成功！");
+    setMessage("✅ Password changed successfully.");
     setCurrentPassword("");
     setNewPassword("");
     setEditingPassword(false);
   }
 
   return (
-    <div className="space-y-4 border p-4 rounded">
-      <h3 className="text-xl font-semibold mb-2">🧾 用户资料</h3>
+      <div className="space-y-4 border p-4 rounded">
+        <h3 className="text-xl font-semibold mb-2">🧾 Profile Info</h3>
 
-      <div className="space-y-2">
-        <p><strong>用户名：</strong> {displayName}</p>
-        <p><strong>邮箱：</strong> {displayEmail}</p>
+        <div className="space-y-2">
+          <p><strong>Username:</strong> {displayName}</p>
+          <p><strong>Email:</strong> {displayEmail}</p>
 
-        <div className="flex gap-4">
-          <button
-            onClick={() => {
-              setEditingProfile((prev) => !prev);
-              setEditingPassword(false);
-              setMessage("");
-            }}
-            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
-          >
-            修改资料
-          </button>
+          <div className="flex gap-4">
+            <button
+                onClick={() => {
+                  setEditingProfile((prev) => !prev);
+                  setEditingPassword(false);
+                  setMessage("");
+                }}
+                className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+            >
+              Edit Profile
+            </button>
 
-          <button
-            onClick={() => {
-              setEditingPassword((prev) => !prev);
-              setEditingProfile(false);
-              setMessage("");
-            }}
-            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
-          >
-            修改密码
-          </button>
+            <button
+                onClick={() => {
+                  setEditingPassword((prev) => !prev);
+                  setEditingProfile(false);
+                  setMessage("");
+                }}
+                className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+            >
+              Change Password
+            </button>
+          </div>
         </div>
+
+        {editingProfile && (
+            <div className="space-y-2 pt-2 border-t">
+              <input
+                  placeholder="New username"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="border px-2 py-1 rounded w-full"
+              />
+              <input
+                  placeholder="New email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="border px-2 py-1 rounded w-full"
+              />
+              <button
+                  onClick={handleUpdateUser}
+                  className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+              >
+                Confirm Update
+              </button>
+            </div>
+        )}
+
+        {editingPassword && (
+            <div className="space-y-2 pt-2 border-t">
+              <input
+                  type="password"
+                  placeholder="Current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="border px-2 py-1 rounded w-full"
+              />
+              <input
+                  type="password"
+                  placeholder="New password (min 8 characters)"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="border px-2 py-1 rounded w-full"
+              />
+              <button
+                  onClick={handleChangePassword}
+                  className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+              >
+                Confirm Password Change
+              </button>
+            </div>
+        )}
+
+        {message && (
+            <p className="text-sm text-center text-gray-700 mt-2">{message}</p>
+        )}
       </div>
-
-      {editingProfile && (
-        <div className="space-y-2 pt-2 border-t">
-          <input
-            placeholder="新用户名"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
-          />
-          <input
-            placeholder="新邮箱"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
-          />
-          <button
-            onClick={handleUpdateUser}
-            className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
-          >
-            确认更新资料
-          </button>
-        </div>
-      )}
-
-      {editingPassword && (
-        <div className="space-y-2 pt-2 border-t">
-          <input
-            type="password"
-            placeholder="当前密码"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
-          />
-          <input
-            type="password"
-            placeholder="新密码（至少8位）"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
-          />
-          <button
-            onClick={handleChangePassword}
-            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
-          >
-            确认修改密码
-          </button>
-        </div>
-      )}
-
-      {message && (
-        <p className="text-sm text-center text-gray-700 mt-2">{message}</p>
-      )}
-    </div>
   );
 }

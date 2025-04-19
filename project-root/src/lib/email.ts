@@ -1,6 +1,13 @@
 import nodemailer from "nodemailer";
 
-export async function sendVerificationEmail(to: string, subject: string, html: string) {
+
+interface EmailAttachment {
+  filename: string;
+  content: string;
+  encoding: "base64";
+  cid: string;
+}
+export async function sendEmail(to: string, subject: string, html: string, attachments: EmailAttachment[] = []) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -17,6 +24,7 @@ export async function sendVerificationEmail(to: string, subject: string, html: s
       to,
       subject,
       html,
+      attachments,
     });
     console.log("✅ Email sent successfully");
   } catch (err) {

@@ -1,9 +1,9 @@
-// src/app/api/upload/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import { createHash } from "crypto";
 
+// Disable body parser for file uploads
 export const config = {
   api: {
     bodyParser: false,
@@ -12,7 +12,7 @@ export const config = {
 
 export async function POST(req: Request) {
   try {
-    // 使用 req.formData() 获取表单数据
+    // Use req.formData() to parse multipart form data
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
@@ -20,25 +20,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // 将 File 对象转换为 Buffer
+    // Convert File object to Buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // 生成文件内容的 SHA256 校验值
+    // Generate SHA256 hash of file content
     const hash = createHash("sha256").update(buffer).digest("hex");
 
-    // 取出原文件扩展名
+    // Get original file extension
     const ext = path.extname(file.name);
-    // 拼接生成的文件名，用校验值加上扩展名
+    // Generate file name using hash + extension
     const fileName = `${hash}${ext}`;
     const filePath = path.join(process.cwd(), "public", "images", fileName);
 
     try {
-      // 尝试访问该文件，如果存在则直接返回 URL
+      // Check if file already exists, return URL if so
       await fs.access(filePath);
       console.log("File already exists:", fileName);
       return NextResponse.json({ url: `/images/${fileName}` });
     } catch (e) {
-      // 文件不存在，则先确保目录存在，然后写入文件
+      // File doesn't exist, ensure directory exists and write file
       await fs.mkdir(path.dirname(filePath), { recursive: true });
       await fs.writeFile(filePath, buffer);
       return NextResponse.json({ url: `/images/${fileName}` });

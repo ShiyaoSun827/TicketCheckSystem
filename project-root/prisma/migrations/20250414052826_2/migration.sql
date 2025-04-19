@@ -1,2 +1,0 @@
--- AddForeignKey
-ALTER TABLE "Show" ADD CONSTRAINT "Show_movieID_fkey" FOREIGN KEY ("movieID") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

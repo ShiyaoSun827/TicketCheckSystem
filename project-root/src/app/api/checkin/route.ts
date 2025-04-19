@@ -1,47 +1,51 @@
 // src/app/api/checkin/route.ts
-import { prisma } from '@/lib/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const { qrCode } = await req.json();
 
     if (!qrCode) {
-      return NextResponse.json({ success: false, message: '❌ Missing QR Code' }, { status: 400 });
+      return NextResponse.json({ message: "Missing qrCode" }, { status: 400 });
     }
 
-    // 查找票据
     const ticket = await prisma.ticket.findFirst({
       where: { qrCode },
     });
 
     if (!ticket) {
-      return NextResponse.json({ success: false, message: '❌ Invalid QR Code' }, { status: 404 });
+      return NextResponse.json({ message: "❌ Invalid QR Code" }, { status: 404 });
     }
 
-    if (ticket.status === 'CHECKED') {
-      return NextResponse.json({ success: false, message: '⚠️ Ticket already checked in' }, { status: 409 });
+    if (ticket.status === "CHECKED") {
+      return NextResponse.json({ message: "⚠️ Already Checked-in" }, { status: 409 });
     }
 
-    // 更新票据状态
+    if (ticket.status !== "VALID") {
+      return NextResponse.json({ message: `Cannot check-in. Status is ${ticket.status}` }, { status: 400 });
+    }
+
+    // ✅ Update ticket status
     await prisma.ticket.update({
       where: { id: ticket.id },
-      data: { status: 'CHECKED' },
+      data: { status: "CHECKED" },
     });
 
-    // 写入扫码记录
+    // ✅ Record scan
     await prisma.qRScanRecord.create({
       data: {
         qrCode,
         scanTime: new Date(),
-        status: 'SCANNED',
-        scannedBy: 'MOBILE', // 或者根据需要传入身份
+        status: "SCANNED",
+        scannedBy: "STAFF", // 网页端的 staff 页面
       },
     });
 
-    return NextResponse.json({ success: true, message: '✅ Check-in successful!' });
-  } catch (error) {
-    console.error('❌ Check-in error:', error);
-    return NextResponse.json({ success: false, message: '❌ Internal error' }, { status: 500 });
+    return NextResponse.json({ success: true, message: "✅ Check-in Successful!" });
+  } catch (err) {
+    console.error("❌ Check-in error:", err);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

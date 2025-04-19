@@ -11,7 +11,7 @@ import { getCheckedSeats, getRecentCheckins, getTodayShows, getAllShowsWithMovie
 
 
 export default function StaffDashboardPage() {
-    const [loading, setLoading] = useState(true); // 加上 loading 状态
+    const [loading, setLoading] = useState(true);
     const [selectedShow, setSelectedShow] = useState("");
     const [allShows, setAllShows] = useState<any[]>([]);
 
@@ -52,7 +52,7 @@ export default function StaffDashboardPage() {
             <NavBarClient session={session} />
             <h1 className="text-3xl font-bold">👋 Welcome, {name || "Staff"}!</h1>
 
-            {/* 快捷按钮区域 */}
+
             <section className="bg-white p-4 rounded-lg shadow space-y-4">
                 <h2 className="text-2xl font-semibold">📲 Quick Actions</h2>
                 <button
@@ -63,7 +63,6 @@ export default function StaffDashboardPage() {
                 </button>
             </section>
 
-            {/* 今日场次 */}
             <section className="bg-white p-4 rounded-lg shadow space-y-2">
                 <h2 className="text-2xl font-semibold">🎬 Today’s Shows</h2>
                 {todayShows.length === 0 ? (

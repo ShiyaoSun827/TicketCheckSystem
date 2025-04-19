@@ -25,10 +25,10 @@ model Ticket {
   seatRow String
   seatCol Int
 
-  qrCode     String? // 二维码内容或图片地址
+  qrCode     String? // QR code content or image URL
   status     TicketStatus @default(VALID)
   createdAt  DateTime     @default(now())
-  refundedAt DateTime? // ✅ 退票时间（可选）
+  refundedAt DateTime? // Optional refund time
 
   Seat Seat[]
 }
@@ -48,7 +48,7 @@ model Favorite {
   movieId   String
   createdAt DateTime @default(now())
 
-  @@unique([userId, movieId]) // 防止重复收藏
+  @@unique([userId, movieId]) // Prevent duplicate favorites
 }
 
 model User {
@@ -154,7 +154,7 @@ model CartItem {
   userId  String
   show    Show     @relation(fields: [showId], references: [id])
   showId  String
-  seat    String // 预选座位
+  seat    String // Reserved seat
   addedAt DateTime @default(now())
 }
 
@@ -188,7 +188,7 @@ model Show {
   movie   Movie  @relation(fields: [movieID], references: [id], onDelete: Cascade)
   movieID String
 
-  price Float // 🆕 添加价格字段（不带默认值）
+  price Float // Added price field (no default)
 
   tickets   Ticket[]
   waitlist  WaitList[]
@@ -217,15 +217,15 @@ model Seat {
   ticket   Ticket? @relation(fields: [ticketId], references: [id])
   ticketId String?
 
-  @@unique([showId, row, col]) // 同一个场次不能重复座位
+  @@unique([showId, row, col]) // No duplicate seats in the same show
 }
 
 model Movie {
   id          String     @id @default(uuid())
   name        String
-  length      Int // 电影时长（单位：秒）
-  rate        Float // 电影评分（0-10 的小数）
-  image       String? // 保存图片 URL，例如 "/images/your-image.jpg"
+  length      Int // Movie duration (in seconds)
+  rate        Float // Movie rating (decimal 0-10)
+  image       String? // Saved image URL like "/images/your-image.jpg"
   description String?
   shows       Show[]
   createdAt   DateTime   @default(now())

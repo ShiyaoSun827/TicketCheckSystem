@@ -65,15 +65,15 @@ export default function CartPage() {
 
   const handleCreateOrder = async () => {
     if (selectedIds.size === 0) {
-      alert("请先选择要生成订单的座位");
+      alert("Please select items to create an order.");
       return;
     }
     try {
       await createOrderFromCart(Array.from(selectedIds));
       router.push("/dashboard/user/orders");
     } catch (err) {
-      console.error("生成订单失败", err);
-      alert("生成订单失败");
+      console.error("Failed to create order", err);
+      alert("Failed to create order");
     }
   };
 
@@ -83,86 +83,86 @@ export default function CartPage() {
   );
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">🛒 我的购物车</h1>
+      <div className="p-6 space-y-6">
+        <h1 className="text-2xl font-bold">🛒 My Cart</h1>
 
-      {items.length === 0 ? (
-        <p className="text-gray-600">购物车为空</p>
-      ) : (
-        <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="text-right text-lg font-semibold">
-                总计：¥{total.toFixed(2)}
-              </div>
+        {items.length === 0 ? (
+            <p className="text-gray-600">Your cart is empty.</p>
+        ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-right text-lg font-semibold">
+                    Total: ¥{total.toFixed(2)}
+                  </div>
 
-              <div className="text-right">
-                <button
-                  onClick={handleCreateOrder}
-                  className="bg-green-600 text-white px-4 py-2 rounded mt-4"
-                >
-                  生成订单
-                </button>
-              </div>
-            </div>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-                className="mr-2"
-              />
-              全选
-            </label>
-            <button
-              onClick={handleBatchDelete}
-              className="bg-red-500 text-white px-3 py-1 rounded"
-            >
-              删除选中
-            </button>
-          </div>
-
-          <ul className="space-y-4">
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="border p-4 rounded shadow-sm flex gap-4"
-              >
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.movieTitle}
-                    width={100}
-                    height={150}
-                    className="rounded"
-                  />
-                )}
-                <div className="flex-1 space-y-1">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(item.id)}
-                      onChange={() => toggleSelect(item.id)}
-                      className="mr-2"
-                    />
-                    <span className="font-semibold">🎬 {item.movieTitle}</span>
-                  </label>
-                  <p>📅 {new Date(item.showTime).toLocaleString()}</p>
-                  <p>💺 座位：{item.seat}</p>
-                  <p>🕒 加入时间：{new Date(item.addedAt).toLocaleString()}</p>
-                  <p>💰 单价：¥{item.price.toFixed(2)}</p>
+                  <div className="text-right">
+                    <button
+                        onClick={handleCreateOrder}
+                        className="bg-green-600 text-white px-4 py-2 rounded mt-4"
+                    >
+                      Create Order
+                    </button>
+                  </div>
                 </div>
+                <label className="flex items-center">
+                  <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                      className="mr-2"
+                  />
+                  Select All
+                </label>
                 <button
-                  onClick={() => handleDeleteItem(item.id)}
-                  className="text-red-600 hover:underline"
+                    onClick={handleBatchDelete}
+                    className="bg-red-500 text-white px-3 py-1 rounded"
                 >
-                  删除
+                  Delete Selected
                 </button>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
+              </div>
+
+              <ul className="space-y-4">
+                {items.map((item) => (
+                    <li
+                        key={item.id}
+                        className="border p-4 rounded shadow-sm flex gap-4"
+                    >
+                      {item.image && (
+                          <Image
+                              src={item.image}
+                              alt={item.movieTitle}
+                              width={100}
+                              height={150}
+                              className="rounded"
+                          />
+                      )}
+                      <div className="flex-1 space-y-1">
+                        <label className="flex items-center">
+                          <input
+                              type="checkbox"
+                              checked={selectedIds.has(item.id)}
+                              onChange={() => toggleSelect(item.id)}
+                              className="mr-2"
+                          />
+                          <span className="font-semibold">🎬 {item.movieTitle}</span>
+                        </label>
+                        <p>📅 {new Date(item.showTime).toLocaleString()}</p>
+                        <p>💺 Seat: {item.seat}</p>
+                        <p>🕒 Added at: {new Date(item.addedAt).toLocaleString()}</p>
+                        <p>💰 Price: ¥{item.price.toFixed(2)}</p>
+                      </div>
+                      <button
+                          onClick={() => handleDeleteItem(item.id)}
+                          className="text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                ))}
+              </ul>
+            </>
+        )}
+      </div>
   );
 }

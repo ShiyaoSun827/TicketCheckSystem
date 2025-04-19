@@ -12,7 +12,7 @@ export default async function TicketPage({ params }: { params: { showId: string 
 
   const show = await getShowById(showId);
   if (!show) {
-    return <div className="p-6 text-red-600">❌ 无法找到排片信息</div>;
+    return <div className="p-6 text-red-600">❌ Unable to find movie row information</div>;
   }
 
   const seats = await prisma.seat.findMany({
@@ -21,23 +21,23 @@ export default async function TicketPage({ params }: { params: { showId: string 
   });
 
   const cartItems = await getCartItems();
-  console.log("🧺 所有购物车数据：", cartItems);
+  console.log("🧺 All shopping cart data：", cartItems);
 
   const inCartSeats = cartItems
     .filter((item) => item.showId === showId)
     .map((item) => item.seat);
 
-  const clearKey = Date.now(); // 用于 SeatPicker 清除标记
+  const clearKey = Date.now(); // Used for SeatPicker to clear markers
 
   return (
     <div className="container mx-auto p-6">
       <NavBar />
-      <div className="text-2xl font-bold mb-4">🎟️ 选座购票</div>
+      <div className="text-2xl font-bold mb-4">🎟️ Select seats for tickets</div>
       <TicketClient
         show={show}
         seats={seats}
         inCartSeats={inCartSeats}
-        clearKey={clearKey} // ✅ 传递清除信号
+        clearKey={clearKey}
       />
     </div>
   );

@@ -7,6 +7,18 @@ import { QRCodeSVG } from "qrcode.react";
 import { authClient } from "@/lib/auth-client";
 import NavBarClient from "@/components/NavBarClient";
 import { getMyTickets, refundTicket } from "@/lib/user-dashboard-actions";
+import { emailMyTicket } from "@/lib/user-dashboard-actions";
+
+
+const handleEmailTicket = async (ticketId: string) => {
+  const result = await emailMyTicket(ticketId);
+  if (result.success) {
+    alert("📨 Ticket sent to your email.");
+  } else {
+    alert("❌ Failed to send ticket: " + result.message);
+  }
+};
+
 
 export default function MyTicketsPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -38,82 +50,93 @@ export default function MyTicketsPage() {
   };
 
   const renderTicketList = (title: string, list: any[]) => (
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        {list.length === 0 ? (
-            <p className="text-gray-500">No records found.</p>
-        ) : (
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {list.map((ticket) => (
-                  <li
-                      key={ticket.id}
-                      className="border rounded shadow p-4 space-y-2 bg-white"
-                  >
-                    <div className="flex gap-4">
-                      {ticket.image && (
-                          <Image
-                              src={ticket.image}
-                              alt={ticket.eventTitle}
-                              width={80}
-                              height={120}
-                              className="rounded"
-                          />
-                      )}
-                      <div className="flex-1 space-y-1">
-                        <p className="font-semibold">🎬 {ticket.eventTitle}</p>
-                        <p>
-                          📅{" "}
-                          {new Date(ticket.date).toLocaleDateString("en-CA", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })}
-                        </p>
-                        <p>
-                          ⏰{" "}
-                          {new Date(ticket.date).toLocaleTimeString("en-CA", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                            hour12: false,
-                          })}
-                        </p>
-                        <p>💺 Seat: {ticket.seat}</p>
-                        <p>🔐 Status: {ticket.status}</p>
-                      </div>
-                    </div>
-
-                    {ticket.status === "VALID" &&
-                        ticket.qrCode &&
-                        typeof ticket.qrCode === "string" && (
-                            <div className="flex flex-col items-center mt-2">
-                              <QRCodeSVG value={ticket.qrCode} size={100} />
-                              <p className="text-sm text-gray-500 mt-1">Scan to check-in</p>
-                            </div>
-                        )}
-
-                    {ticket.status === "VALID" && (
-                        <div className="mt-4 text-center">
-                          <button
-                              onClick={() => handleRefund(ticket.id)}
-                              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                          >
-                            Refund
-                          </button>
-                        </div>
-                    )}
-
-                    {ticket.status === "REFUNDED" && (
-                        <div className="mt-4 text-center text-red-500 font-semibold">
-                          ❌ Refunded
-                        </div>
-                    )}
-                  </li>
-              ))}
-            </ul>
-        )}
-      </section>
+    <section className="space-y-4">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      {list.length === 0 ? (
+        <p className="text-gray-500">No records found.</p>
+      ) : (
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {list.map((ticket) => (
+            <li
+              key={ticket.id}
+              className="border rounded shadow p-4 space-y-2 bg-white"
+            >
+              <div className="flex gap-4">
+                {ticket.image && (
+                  <Image
+                    src={ticket.image}
+                    alt={ticket.eventTitle}
+                    width={80}
+                    height={120}
+                    className="rounded"
+                  />
+                )}
+                <div className="flex-1 space-y-1">
+                  <p className="font-semibold">🎬 {ticket.eventTitle}</p>
+                  <p>
+                    📅{" "}
+                    {new Date(ticket.date).toLocaleDateString("en-CA", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })}
+                  </p>
+                  <p>
+                    ⏰{" "}
+                    {new Date(ticket.date).toLocaleTimeString("en-CA", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    })}
+                  </p>
+                  <p>💺 Seat: {ticket.seat}</p>
+                  <p>🔐 Status: {ticket.status}</p>
+                </div>
+              </div>
+  
+              {ticket.status === "VALID" &&
+                ticket.qrCode &&
+                typeof ticket.qrCode === "string" && (
+                  <div className="flex flex-col items-center mt-2">
+                    <QRCodeSVG value={ticket.qrCode} size={100} />
+                    <p className="text-sm text-gray-500 mt-1">Scan to check-in</p>
+                  </div>
+                )}
+  
+              {ticket.status === "VALID" && (
+                <>
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={() => handleRefund(ticket.id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                    >
+                      Refund
+                    </button>
+                  </div>
+                  <div className="mt-2 text-center">
+                    <button
+                      onClick={() => handleEmailTicket(ticket.id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                      📧 Email Ticket
+                    </button>
+                  </div>
+                </>
+              )}
+  
+              {ticket.status === "REFUNDED" && (
+                <div className="mt-4 text-center text-red-500 font-semibold">
+                  ❌ Refunded
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
+  
 
   const validTickets = tickets.filter((t) => t.status === "VALID");
   const refundedTickets = tickets.filter((t) => t.status === "REFUNDED");
