@@ -19,7 +19,7 @@ To address these challenges, we built an end-to-end event ticketing and QR code-
 
 Our objective was not only to meet the technical expectations of the course (authentication, API interaction, database modeling, file handling, and live updates), but to also create a fully operational product that mimics real-world cinema ticketing workflows. By combining design, engineering, and user experience principles, we aimed to deliver a project that is robust, extendable, and ready for production deployment.
 
-### **1.1 Target Users**
+### **2.1 Target Users**
 
 This project serves three major user roles, each of which has been carefully considered in our system design:
 
@@ -27,7 +27,7 @@ This project serves three major user roles, each of which has been carefully con
 - **Attendees (Users)**: Logged-in users can browse upcoming movies, choose from available showtimes, reserve seats through an intuitive seat picker, make wallet-based payments, and download QR code tickets for entry.
 - **Event Staff**: Staff users operate a dedicated check-in interface where they can scan QR codes from attendees and monitor real-time seat occupancy. Staff views are optimized for mobile scanning and include scheduling and check-in history views.
 
-### **1.2 Existing Solutions & Limitations**
+### **2.2 Existing Solutions & Limitations**
 
 Although ticketing is a well-explored domain, many commercial platforms prioritize scalability and monetization over user experience and customization. After surveying existing services and identifying user complaints, we observed the following issues:
 
@@ -38,7 +38,7 @@ Although ticketing is a well-explored domain, many commercial platforms prioriti
 - **Minimal Role Customization**: Most systems lack fine-grained permission models, which limits their flexibility across diverse user types such as volunteers, temporary staff, or instructors.
 - **Poor Cross-Device Support**: Systems are typically optimized for desktop, with limited functionality on mobile or tablet devices, especially in terms of check-in scanning.
 
-### **1.3 How Our Project Solves These Issues**
+### **2.3 How Our Project Solves These Issues**
 
 We tackled the above issues directly through deliberate architectural and design decisions. The following table summarizes key challenges and how our project responds:
 
@@ -51,7 +51,7 @@ We tackled the above issues directly through deliberate architectural and design
 | Rigid user roles | A role-based access control system supporting Admin, Staff, and User roles |
 | Lack of mobile optimization | Mobile-first responsive design and Cloudflare Tunnel integration for device testing |
 
-### **1.4 Why This Project Is Worth Pursuing**
+### **2.4 Why This Project Is Worth Pursuing**
 
 This project goes beyond a traditional academic web application by addressing real-world scalability, reliability, and user-experience challenges. It introduces components such as:
 
