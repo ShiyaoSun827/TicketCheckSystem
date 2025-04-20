@@ -731,3 +731,23 @@ Using **BetterAuth** and implementing **role-based access control (RBAC)** helpe
 ### Team Collaboration & Git Workflow
 
 We collaborated using **feature branches**, **pull requests**, and **upstream merges**, simulating a professional development workflow. This improved our communication and code coordination skills.
+
+## Contributor Clarification (Mingtao Wang)
+Mingtao Wang (GitHub: [superw23](https://github.com/superw23)) has contributed significantly to this project—especially in developing the **staff dashboard**, **check-in system**, and **real-time features**—GitHub’s contributor graph did not reflect his commits due to the way we merged into the repository.
+
+- His changes were pushed **directly to the upstream repository (`main` branch)** via command-line Git operations, rather than through pull requests from a forked repository.
+- GitHub only **attributes contributor statistics** to accounts when commits are merged through a pull request from a personal fork.
+- The bar graph below (from `fly-ing-fish`) includes commits by multiple people, including those authored by Mingtao Wang, which were merged without proper metadata attribution.
+- As a result, although **Mingtao’s commits are clearly visible in the Git history** ([see commit log](https://github.com/ShiyaoSun827/TicketCheckSystem/commits/main)), his name does **not appear in the Contributors tab**.
+
+![image.png](./image/image.png)
+
+The contributor chart for `fly-ing-fish` also includes multiple commits authored by Mingtao Wang, but those were merged in a way that did not preserve author metadata. Thus, were attributed to others in the graph.
+
+![image.png](./image/image (1).png)
+
+To further confirm Mingtao's contributions:
+
+- A local `git log --author=superw23` was run to verify his commit signatures
+
+![image.png](./image/image (2).png)
