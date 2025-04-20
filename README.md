@@ -181,6 +181,7 @@ Content:
 `BETTER_AUTH_SECRET = <your-secret>`
 
 ## Main folder structure
+```
 project-root
 ├─check_in_mobile
 │  └─check-in-system
@@ -241,3 +242,4 @@ project-root
     ├─hooks
     ├─lib
     └─scripts
+```
