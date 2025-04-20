@@ -6,9 +6,7 @@
 | --- | --- | --- |
 | Zheyuan Cong | 1010309220 | fly-ing-fish |
 | Mingtao Wang | 1011777579 | superw23 |
-| Lisa Ji | 1006093843 | lisaaaa912,
-lisaAA912
- |
+| Lisa Ji | 1006093843 | lisaaaa912,lisaAA912 |
 | Shiyao Sun | 1006769793 | ShiyaoSun827 |
 
 ## 2. Motivation
@@ -172,11 +170,7 @@ Users can view all movies on the homepage, add movies to the collection list and
 
 The administrator can access his on the dashboard interface and view various detailed information. This includes comprehensive and detailed viewing capabilities with filtering functions for all movie records, all show records, all ticket records, and all transaction records. The administrator can add and delete movies. The administrator can modify movies on their detailed pages and add, delete, modify and query all shows associated with the movie. When creating a show, a draft will be created first and then submitted. Only the submitted shows can be viewed by users, and after submission, the shows can only be cancelled but not modified. If a show is cancelled, the corresponding ticket status will be updated to "cancel" and a refund will be made.
 
-### **5.3 Tiered Ticket Pricing and Discounts**
-
-*(To be completed)*
-
-### **5.4 QR Code Check-in**
+### **5.3 QR Code Check-in**
 
 A central feature of our system is the ability to check in users securely at the event entrance using QR codes. Each ticket generated upon payment includes a unique QR code stored in the database (`Ticket.qrCode` field), and optionally rendered via the [qrcode](https://www.npmjs.com/package/qrcode) library.
 
@@ -199,7 +193,7 @@ Additionally, the system supports:
 
 This architecture ensures high concurrency and prevents race conditions during peak entrance times at events.
 
-### **5.5 Dashboards: Admin, Staff, and User**
+### **5.4 Dashboards: Admin, Staff, and User**
 
 To accommodate the three main user roles in the system—**Administrators**, **Staff**, and **Attendees (Users)**—we designed and implemented role-specific dashboards that expose tailored functionalities, permissions, and real-time information.
 
@@ -243,15 +237,15 @@ The User Dashboard provides a clean and responsive interface for attendees to ma
 
 By separating interfaces and logic based on user role, we ensured clarity, security, and ease of use for all participants in the event ticketing workflow.
 
-### **5.6 Real-time Check-in Dashboard**
+### **5.5 Real-time Check-in Dashboard**
 
 The **Real-time Check-in Dashboard** is a dedicated admin and staff interface designed to monitor and manage user attendance for each movie screening. It provides a visual seat map with different color-coded seat statuses. Admins and staff can select a specific show and view its seat status in real time.
 
-### **5.7 Attendance Analytics and Reporting**
+### **5.6 Attendance Analytics and Reporting**
 
 In admin dashboard, the ticket management module provides administrators with insights into ticket usage and user engagement across all movie shows. It aggregates data from ticketing, check-in, and transaction records to support better operational decisions
 
-### **5.8 Automated Email Confirmations**
+### **5.7 Automated Email Confirmations**
 
 To enhance user experience and reinforce transaction reliability, our system includes robust **automated email notifications** using **SMTP via Nodemailer**. These email services are triggered at key points in the user journey and dynamically populated with personalized content.
 
@@ -285,7 +279,7 @@ After completing a ticket purchase, users can choose to **email their ticket** d
 
 These email confirmations provide professionalism, convenience, and assurance that users’ transactions and accounts are handled securely.
 
-### **5.9 Mobile-Responsive Staff Check-in Interface**
+### **5.8 Mobile-Responsive Staff Check-in Interface**
 
 This interface allows venue staff to swiftly and reliably check-in guests using QR code scanning via mobile devices.Staff views available showtimes on their mobile device, quickly identifying the relevant movie session.Access the interactive seat map to visualize current reservations and occupancy.Initiate QR scanning mode directly within the app interface.Scan guest’s QR ticket, automatically triggering a backend API call to verify and update ticket status.Instant validation feedback is provided to the staff, while the seat map dynamically updates to reflect the newly checked-in ticket.
 
@@ -326,7 +320,7 @@ This interface allows venue staff to swiftly and reliably check-in guests using 
     The `/api/checkin` endpoint robustly validates QR codes, updating ticket statuses only if they are valid and unclaimed, thereby ensuring data integrity and preventing ticket fraud. Each check-in also triggers logging into the `QRScanRecord` database table for auditing purposes.
     
 
-### **5.10 Cloud Storage for Event Assets**
+### **5.9 Cloud Storage for Event Assets**
 
 To enhance the efficiency, scalability, and overall user experience of our application, we integrated DigitalOcean Spaces and its integrated CDN service for managing event-related assets, such as images and multimedia content.
 
