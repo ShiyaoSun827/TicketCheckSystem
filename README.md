@@ -744,10 +744,10 @@ Mingtao Wang (GitHub: [superw23](https://github.com/superw23)) has contributed s
 
 The contributor chart for `fly-ing-fish` also includes multiple commits authored by Mingtao Wang, but those were merged in a way that did not preserve author metadata. Thus, were attributed to others in the graph.
 
-![image.png](./image/image (1).png)
+![image.png](./image/image(1).png)
 
 To further confirm Mingtao's contributions:
 
 - A local `git log --author=superw23` was run to verify his commit signatures
 
-![image.png](./image/image (2).png)
+![image.png](./image/image(2).png)
