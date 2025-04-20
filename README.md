@@ -179,3 +179,65 @@ Content:
 `PUBLIC_IMAGE_BASE_URL = "http://<your-ip>:3000"`
 
 `BETTER_AUTH_SECRET = <your-secret>`
+
+## Main folder structure
+project-root
+├─check_in_mobile
+│  └─check-in-system
+│      ├─app
+│      │  ├─(tabs)
+│      │  └─showtimes
+│      ├─assets
+│      │  ├─fonts
+│      │  └─images
+│      ├─components
+│      │  ├─ui
+│      │  └─__tests__
+│      │      └─__snapshots__
+│      ├─constants
+│      ├─hooks
+│      └─scripts
+├─prisma
+│  └─migrations
+│      └─20250419014145_new
+├─public
+│  ├─images
+│  └─qr
+└─src
+    ├─app
+    │  ├─api
+    │  │  ├─auth
+    │  │  │  └─[...all]
+    │  │  ├─checkin
+    │  │  ├─showtimes
+    │  │  │  └─id
+    │  │  │      └─seats
+    │  │  ├─signup
+    │  │  ├─upload
+    │  │  └─verify
+    │  ├─dashboard
+    │  │  ├─admin
+    │  │  │  ├─manageMovie
+    │  │  │  │  └─[movieId]
+    │  │  │  │      └─shows
+    │  │  │  ├─manageShow
+    │  │  │  │  └─[showId]
+    │  │  │  └─manageUsers
+    │  │  ├─staff
+    │  │  │  └─checkin
+    │  │  └─user
+    │  │      ├─cart
+    │  │      ├─myTickets
+    │  │      ├─orders
+    │  │      └─wallet
+    │  ├─movies
+    │  │  └─[movieId]
+    │  ├─signin
+    │  ├─signup
+    │  └─tickets
+    │      └─[showId]
+    ├─components
+    │  └─ui
+    ├─hooks
+    ├─lib
+    └─scripts
