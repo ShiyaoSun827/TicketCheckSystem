@@ -133,3 +133,27 @@ dist
 #.env
 .env
 **/.env
+project-root/.env
+project-root/.env.example
+project-root/.env.development
+project-root/.env.test
+project-root/.env.production
+project-root/.env.local
+# Uncomment if using Expo
+# .expo/
+# Uncomment if using React Native
+# android/
+# ios/
+# Uncomment if using React Native
+# android/
+# ios/
+# Uncomment if using React Native
+# android/
+# ios/
+project-root/check_in_mobile/check-in-system/.env
+project-root/check_in_mobile/check-in-system/.env.example
+project-root/check_in_mobile/check-in-system/.env.development
+project-root/check_in_mobile/check-in-system/.env.test
+project-root/check_in_mobile/check-in-system/.env.production
+project-root/check_in_mobile/check-in-system/.env.local
+project-root/check_in_mobile/check-in-system/.env.development.local

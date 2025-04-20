@@ -68,7 +68,8 @@ export async function POST(req: Request) {
 
         // File exists — skip upload
         console.log("File already exists in DO Spaces:", fileName);
-        return NextResponse.json({ imageUrl: `${cdnUrl}/${fileName}` });
+        return NextResponse.json({ url: `${process.env.CDN_URL}/${fileName}` });
+        //return NextResponse.json({ imageUrl: `${cdnUrl}/${fileName}` });
       } catch (headErr: any) {
         if (headErr.name !== "NotFound") {
           throw headErr; // some other error, not just "file not found"

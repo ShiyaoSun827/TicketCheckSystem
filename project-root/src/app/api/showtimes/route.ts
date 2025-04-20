@@ -34,7 +34,7 @@ export async function GET() {
         name: show.movie.name,
         length: show.movie.length,
         image: show.movie.image
-          ? `${baseUrl}${show.movie.image}`
+          ? show.movie.image
           : undefined,
       },
     }));

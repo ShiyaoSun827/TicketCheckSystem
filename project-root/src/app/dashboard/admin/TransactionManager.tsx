@@ -146,8 +146,8 @@ export default function TransactionManager() {
 
               {/* Summary */}
               <div className="text-sm text-gray-700 font-medium space-x-4">
-                <span>🔼 Total Recharge: ${totalIncome.toFixed(2)}</span>
-                <span>🔽 Total Expense: ${totalOut.toFixed(2)}</span>
+                <span>🔼 Total User Recharge: ${totalIncome.toFixed(2)}</span>
+                <span>🔽 Total (payment-refund): ${totalOut.toFixed(2)}</span>
                 <span>📄 {filtered.length} Records</span>
               </div>
 

@@ -13,45 +13,33 @@
 - User profile updates: name and email
 - Basic refund mechanism for valid tickets
 
-### 🔧 Upcoming / Planned Features
-
-- Avatar upload support
-- Customer support ticket system
-- Enhanced admin panel with more granular controls
-- UI/UX improvements on the login page
-- Full-featured staff dashboard
-- Email-based ticket delivery
-- Login system improvements including email update and verification (BetterAuth integration required)
-
----
 
 ## ⚙️ Project Setup Guide
 
-**Start PostgreSQL (for version 16):**
+**Start PostgreSQL (for version 16) in Windows CMD:**
 
-net start postgresql-x64-16
+`net start postgresql-x64-16`
 
 **Install Dependencies:**
 
 Navigate to the `project-root` directory and install packages:
 
-cd project-root
+`cd project-root`
 
-npm install
+`npm install`
 
 **Database Migration Workflow:**
 
+```
 npx prisma format
-
 npx prisma migrate reset
-
 npx prisma generate
-
 npx prisma migrate dev
+```
 
 If any issues occur, try running:
 
-npx @better-auth/cli migrate
+`npx @better-auth/cli migrate`
 
 ---
 
@@ -61,51 +49,53 @@ To automatically populate the system with mock data, use the following scripts:
 
 **Run All Seeds Together:**
 
-./src/scripts/seed-all.bat
+`./src/scripts/seed-all.bat`
 
 **Or Run Individually:**
-
+```
 node src/scripts/seed-admin.cjs
-
 node src/scripts/seed-movie.cjs
-
 node src/scripts/seed-show.mjs
+node src/scripts/seed-user.cjs
+node src/scripts/seed-ticket.mjs
+node src/scripts/seed-transaction.cjs
+
+```
 
 Default Admin Account:
 
 Email: admin@example.com
 
 Password: admin123
-
 ---
 
 ## 🛠️ Common Git Commands
 
 Add upstream for syncing:
 
-git remote add upstream <upstream repository URL>
+`git remote add upstream <upstream repository URL>`
 
 Check remotes:
 
-git remote -v
+`git remote -v`
 
 Change upstream remote if necessary:
 
-git remote set-url upstream <new URL>
+`git remote set-url upstream <new URL>`
 
 Push main branch to upstream:
 
-git push upstream main
+`git push upstream main`
 
 Pull and merge from upstream into local main branch:
 
-git fetch upstream
+`git fetch upstream`
 
-git merge upstream/main
+`git merge upstream/main`
 
 Alternatively:
 
-git pull upstream main
+`git pull upstream main`
 
 ---
 
@@ -117,19 +107,19 @@ To access your development environment on mobile (localhost:3000), use Cloudflar
 
 1. Install Cloudflared:
 
-   npm install -g cloudflared
+   `npm install -g cloudflared`
 
 2. Start your local development server:
 
-   npm run dev
+   `npm run dev`
 
 3. Open a new terminal and run:
 
-   cloudflared tunnel --url [http://localhost:3000](http://localhost:3000/)
+   `cloudflared tunnel --url [http://localhost:3000](http://localhost:3000/)`
 
 4. Cloudflare will generate a public URL
 
-   Copy the link and open it in your phone browser
+   `Copy the link and open it in your phone browser`
 
    Alternatively, generate a QR code from this URL for scanning
 
@@ -146,15 +136,15 @@ To access your development environment on mobile (localhost:3000), use Cloudflar
 
 Navigate to:
 
-project-root/check_in_mobile/check-in-system
+`project-root/check_in_mobile/check-in-system`
 
 Install dependencies:
 
-npm install
+`npm install`
 
 Start the app via Expo:
 
-npx expo start --clear
+`npx expo start --clear`
 
 Use the QR code generated to open the app in **Expo Go** on your phone
 
@@ -166,26 +156,26 @@ Create a `.env` file in the following two directories:
 
 **For React Native:**
 
-Path: project-root/check_in_mobile/check-in-system
+Path: `project-root/check_in_mobile/check-in-system`
 
 Content:
 
-DATABASE_URL = "postgresql://username:password@localhost:5432/paper_management?schema=public"
+`DATABASE_URL = "postgresql://username:password@localhost:5432/paper_management?schema=public"`
 
-EXPO_PUBLIC_API_BASE_URL = "http://<your-ip>:3000"
+`EXPO_PUBLIC_API_BASE_URL = "http://<your-ip>:3000"`
 
-BETTER_AUTH_SECRET = <your-secret>
+`BETTER_AUTH_SECRET = <your-secret>`
 
 **For Next.js App:**
 
-Path: project-root
+Path: `project-root`
 
 Content:
 
-DATABASE_URL = "postgresql://username:password@localhost:5432/paper_management?schema=public"
+`DATABASE_URL = "postgresql://username:password@localhost:5432/paper_management?schema=public"`
 
-NEXT_PUBLIC_API_BASE_URL = "[http://localhost:3000](http://localhost:3000/)"
+`NEXT_PUBLIC_API_BASE_URL = "[http://localhost:3000](http://localhost:3000/)"`
 
-PUBLIC_IMAGE_BASE_URL = "http://<your-ip>:3000"
+`PUBLIC_IMAGE_BASE_URL = "http://<your-ip>:3000"`
 
-BETTER_AUTH_SECRET = <your-secret>
+`BETTER_AUTH_SECRET = <your-secret>`
