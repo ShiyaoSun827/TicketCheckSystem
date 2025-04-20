@@ -6,6 +6,8 @@ import { Ticket, Show, Movie } from "@prisma/client";
 import { headers } from "next/headers";
 import { sendEmail } from "@/lib/email";
 import QRCode from "qrcode";
+import path from "path";
+import fs from "fs/promises";
 
 
 // src/lib/user-dashboard-actions.ts
@@ -751,6 +753,7 @@ export async function getProfile() {
     const ticket = await prisma.ticket.findUnique({
       where: { id: ticketId },
       select: {
+        id: true,
         seatRow: true,
         seatCol: true,
         qrCode: true,
@@ -769,8 +772,10 @@ export async function getProfile() {
       return { success: false, message: "Ticket not found or unauthorized" };
     }
   
-    const qrImageDataUrl = await QRCode.toDataURL(ticket.qrCode || "Missing QR");
-    const base64Data = qrImageDataUrl.split("base64,")[1];
+    // const qrImageDataUrl = await QRCode.toDataURL(ticket.qrCode || "Missing QR");
+    // const base64Data = qrImageDataUrl.split("base64,")[1];
+    const qrImagePath = path.join(process.cwd(), "public", "qr", `${ticket.id}.png`);
+    await QRCode.toFile(qrImagePath, ticket.qrCode || "Missing QR");
   
     const emailBody = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -782,8 +787,8 @@ export async function getProfile() {
         <p><strong>Seat:</strong> ${ticket.seatRow}${ticket.seatCol}</p>
         <p><strong>Date:</strong> ${ticket.show.beginTime.toLocaleString()}</p>
         <p><strong>Status:</strong> ${ticket.status}</p>
-        <p><strong>QR Code:</strong></p>
-        <img src="cid:qrcode.png" alt="QR Code" width="150" />
+       <p><strong>QR Code:</strong></p>
+         <img src="cid:qrcode" alt="QR Code" width="150" />
         <br />
         <p style="color: #888;">Powered by MovieTicketing 🎟️</p>
       </div>
@@ -792,14 +797,13 @@ export async function getProfile() {
     await sendEmail(
       user.email,
       "🎟️ Your Movie Ticket Confirmation",
-      emailBody,
+      emailBody, // your HTML below
       [
         {
           filename: "qrcode.png",
-          content: base64Data,
-          encoding: "base64",
-          cid: "qrcode.png",
-        },
+          path: qrImagePath,       // 👈 MUST use path, not base64
+          cid: "qrcode"            // 👈 same as your <img src="cid:qrcode" />
+        }
       ]
     );
   
