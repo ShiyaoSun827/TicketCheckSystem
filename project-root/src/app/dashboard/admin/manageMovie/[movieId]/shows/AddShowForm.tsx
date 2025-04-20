@@ -78,7 +78,7 @@ export default function AddShowForm({ movieId, length }: AddShowFormProps) {
         </p>
       )}
 
-      <label className="block mb-1">Ticket peice ($)：</label>
+      <label className="block mb-1">Ticket peice ($):</label>
       <input
         type="number"
         value={price}

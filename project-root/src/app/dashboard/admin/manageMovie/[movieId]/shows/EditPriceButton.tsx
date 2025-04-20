@@ -42,18 +42,18 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-20 px-2 py-1 border rounded"
+            className="w-20 px-2 py-1 border rounded text-sm"
             min="1"
           />
           <button
-            className="bg-green-600 text-white px-2 py-1 rounded text-sm"
+            className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
             onClick={handleSave}
             disabled={isPending}
           >
             Save
           </button>
           <button
-            className="text-gray-500 text-sm underline"
+            className="text-gray-600 text-sm underline px-2 py-1"
             onClick={() => setEditing(false)}
           >
             Cancel
@@ -61,7 +61,7 @@ export default function EditPriceButton({ showId, currentPrice }: EditPriceButto
         </div>
       ) : (
         <button
-          className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600"
+          className="bg-yellow-500 text-white px-4 py-2 rounded text-sm hover:bg-yellow-600 min-w-[120px]"
           onClick={() => setEditing(true)}
         >
           Modify Price
