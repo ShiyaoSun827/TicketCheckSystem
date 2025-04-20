@@ -13,17 +13,6 @@
 - User profile updates: name and email
 - Basic refund mechanism for valid tickets
 
-### 🔧 Upcoming / Planned Features
-
-- Avatar upload support
-- Customer support ticket system
-- Enhanced admin panel with more granular controls
-- UI/UX improvements on the login page
-- Full-featured staff dashboard
-- Email-based ticket delivery
-- Login system improvements including email update and verification (BetterAuth integration required)
-
----
 
 ## ⚙️ Project Setup Guide
 
